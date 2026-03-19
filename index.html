@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="kmr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Plinko - Luxury Edition</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background: #050508;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #plinko-board {
+            position: relative;
+            background: radial-gradient(circle at center, #111 0%, #050508 100%);
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0,0,0,1), inset 0 0 20px rgba(255,215,0,0.05);
+            border: 1px solid rgba(255,215,0,0.1);
+        }
+
+        .ui-panel {
+            margin-top: 20px;
+            width: 400px;
+            padding: 20px;
+            background: rgba(20, 20, 25, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .balance {
+            font-size: 28px;
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .drop-btn {
+            background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
+            color: #000;
+            border: none;
+            padding: 12px 40px;
+            font-size: 18px;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .drop-btn:active { transform: scale(0.95); }
+        .drop-btn:hover { box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+    </style>
+</head>
+<body>
+
+    <div id="plinko-board"></div>
+
+    <div class="ui-panel">
+        <div class="balance">$ <span id="balance">1000.00</span></div>
+        <button class="drop-btn" onclick="spawnBall()">DROP BALL</button>
+    </div>
+
+    <script>
+        const { Engine, Render, Runner, Bodies, Composite, Events, Body } = Matter;
+
+        const engine = Engine.create();
+        const world = engine.world;
+        engine.gravity.y = 1.2;
+
+        const render = Render.create({
+            element: document.getElementById('plinko-board'),
+            engine: engine,
+            options: {
+                width: 450,
+                height: 550,
+                wireframes: false,
+                background: 'transparent'
+            }
+        });
+
+        // دەنگەکان (بەکارھێنانی Audio Context بۆ خێرایی)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTick() {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // بزمارەکان (Pegs)
+        const rows = 14;
+        for (let i = 3; i <= rows; i++) {
+            for (let j = 0; j < i; j++) {
+                const x = 225 + (j - (i - 1) / 2) * 30;
+                const y = i * 35;
+                const peg = Bodies.circle(x, y, 3, {
+                    isStatic: true,
+                    render: { fillStyle: '#444' }
+                });
+                Composite.add(world, peg);
+            }
+        }
+
+        // خانەکان (Buckets)
+        const multipliers = [10, 5, 2, 1.1, 0.5, 0.2, 0.5, 1.1, 2, 5, 10];
+        const bucketWidth = 450 / multipliers.length;
+        multipliers.forEach((m, i) => {
+            const x = i * bucketWidth + bucketWidth / 2;
+            const color = m >= 1 ? '#00ff88' : '#ff4444';
+            const rect = Bodies.rectangle(x, 530, bucketWidth - 6, 25, {
+                isStatic: true,
+                isSensor: true,
+                render: { fillStyle: color + '22', strokeStyle: color, lineWidth: 1 }
+            });
+            rect.multiplier = m;
+            Composite.add(world, rect);
+        });
+
+        let balance = 1000.00;
+
+        function spawnBall() {
+            if (balance < 10) return;
+            balance -= 10;
+            document.getElementById('balance').innerText = balance.toFixed(2);
+
+            const ball = Bodies.circle(225 + (Math.random() * 4 - 2), 40, 7, {
+                restitution: 0.5,
+                friction: 0.01,
+                render: { 
+                    fillStyle: '#ffd700',
+                    shadowBlur: 15,
+                    shadowColor: '#ffd700'
+                }
+            });
+            Composite.add(world, ball);
+        }
+
+        Events.on(engine, 'collisionStart', (event) => {
+            event.pairs.forEach(pair => {
+                if (pair.bodyB.isStatic && !pair.bodyB.isSensor) {
+                    playTick(); // کاتی بەرکەوتن بە بزمار
+                }
+                if (pair.bodyB.isSensor) {
+                    const m = pair.bodyB.multiplier;
+                    balance += 10 * m;
+                    document.getElementById('balance').innerText = balance.toFixed(2);
+                    Composite.remove(world, pair.bodyA);
+                }
+            });
+        });
+
+        Render.run(render);
+        Runner.run(Runner.create(), engine);
+    </script>
+</body>
+</html>
