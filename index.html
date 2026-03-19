@@ -3,21 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Pixel Plinko TON</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Plinko Pro TON - Stake Clone</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    
+    <style>
+        :root {
+            --bg: #0f212e;
+            --secondary: #1a2c38;
+            --accent: #00e676;
+            --text: #b1bad3;
+            --gold: #ffcc00;
+        }
+
+        body {
+            margin: 0; background-color: var(--bg);
+            color: white; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; min-height: 100vh; overflow: hidden;
+        }
+
+        /* جزدانی TON لە سەرەوە */
+        #ton-connect-btn {
+            position: absolute; top: 15px; right: 15px; z-index: 100;
+        }
+
+        #game-wrapper {
+            position: relative; width: 100%; max-width: 450px;
+            background: var(--secondary); padding: 15px; border-radius: 12px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+        }
+
+        canvas { width: 100%; height: auto; display: block; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); }
+
+        .ui-panel {
+            margin-top: 15px; background: rgba(0,0,0,0.3);
+            padding: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .stats {
+            display: flex; justify-content: space-between; margin-bottom: 15px;
+            font-weight: bold; font-size: 14px; color: var(--text);
+        }
+
+        #balance { color: var(--gold); }
+
+        .btn-main {
+            width: 100%; background: var(--accent); color: #013e23;
+            border: none; padding: 16px; border-radius: 6px;
+            font-weight: 900; font-size: 18px; cursor: pointer;
+            text-transform: uppercase; transition: 0.1s;
+            box-shadow: 0 4px 0 #009e52;
+        }
+
+        .btn-main:active { transform: translateY(2px); box-shadow: 0 2px 0 #009e52; }
+    </style>
 </head>
 <body>
-    <div id="ton-connect"></div> <div class="game-ui">
-        <div class="pixel-stats">TON: <span id="balance">0.00</span></div>
-        <canvas id="plinkoCanvas"></canvas>
-        <div class="controls">
-            <button id="drop-btn" class="pixel-btn">DROP BALL</button>
-        </div>
+
+<div id="ton-connect-btn"></div>
+
+<div id="game-wrapper">
+    <div class="stats">
+        <span>WALLET BALANCE</span>
+        <span id="balance">0.00 TON</span>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
-    <script src="script.js"></script>
+    <canvas id="plinkoCanvas"></canvas>
+
+    <div class="ui-panel">
+        <button id="drop-btn" class="btn-main">BET / DROP</button>
+    </div>
+</div>
+
+<script>
+    // 1. Initialize Telegram WebApp
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    // 2. Initialize TON Connect
+    const tonConnectUI = new TONConnectUI.TonConnectUI({
+        manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test-jest/public/tonconnect-manifest.json',
+        buttonRootId: 'ton-connect-btn'
+    });
+
+    // 3. Matter.js Engine Setup
+    const { Engine, Render, Runner, Bodies, Composite, Events, Body } = Matter;
+    const engine = Engine.create();
+    const world = engine.world;
+    engine.gravity.y = 1.2;
+
+    const canvas = document.getElementById('plinkoCanvas');
+    const width = 400;
+    const height = 500;
+
+    const render = Render.create({
+        canvas: canvas,
+        engine: engine,
+        options: {
+            width: width, height: height,
+            wireframes: false, background: 'transparent'
+        }
+    });
+
+    Render.run(render);
+    Runner.run(Runner.create(), engine);
+
+    // 4. Create Pegs (Stake Style Triangle)
+    const rows = 12;
+    const pegGap = 30;
+    for (let i = 2; i <= rows; i++) {
+        for (let j = 0; j <= i; j++) {
+            const x = width / 2 + (j - i / 2) * pegGap;
+            const y = 50 + (i * pegGap);
+            const peg = Bodies.circle(x, y, 3.5, {
+                isStatic: true,
+                restitution: 0.6,
+                render: { fillStyle: '#ffffff88' }
+            });
+            Composite.add(world, peg);
+        }
+    }
+
+    // 5. Multipliers & Particles
+    const multipliers = [10, 5, 2, 1.1, 0.5, 0.2, 0.5, 1.1, 2, 5, 10];
+    const colors = ["#ff003f", "#ff4000", "#ff8000", "#ffbf00", "#ffff00", "#bfff00", "#ffff00", "#ffbf00", "#ff8000", "#ff4000", "#ff003f"];
+    
+    let particles = [];
+    
+    // Create Visual Multipliers
+    multipliers.forEach((val, i) => {
+        const x = width / 2 + (i - (multipliers.length - 1) / 2) * 32;
+        const box = Bodies.rectangle(x, height - 30, 28, 20, {
+            isStatic: true,
+            label: 'multiplier',
+            render: { fillStyle: colors[i] }
+        });
+        Composite.add(world, box);
+    });
+
+    // 6. Gameplay Logic
+    document.getElementById('drop-btn').onclick = () => {
+        if (!tonConnectUI.connected) {
+            tg.showPopup({ message: "Connect your TON wallet first!" });
+            return;
+        }
+
+        const ball = Bodies.circle(width / 2 + (Math.random() * 4 - 2), 20, 7, {
+            restitution: 0.5,
+            friction: 0.02,
+            render: { fillStyle: '#ff0055' }
+        });
+        Composite.add(world, ball);
+
+        // Telegram Haptic
+        tg.HapticFeedback.impactOccurred('medium');
+    };
+
+    // Collision & Visual Effects
+    Events.on(engine, 'collisionStart', (event) => {
+        event.pairs.forEach(pair => {
+            if (pair.bodyB.label === 'multiplier') {
+                // Glow effect & Particle explosion
+                createExplosion(pair.bodyB.position.x, pair.bodyB.position.y, pair.bodyB.render.fillStyle);
+                tg.HapticFeedback.notificationOccurred('success');
+                Composite.remove(world, pair.bodyA);
+            }
+        });
+    });
+
+    function createExplosion(x, y, color) {
+        for (let i = 0; i < 10; i++) {
+            particles.push({
+                x, y, 
+                vx: (Math.random() - 0.5) * 8, 
+                vy: (Math.random() - 0.5) * 8,
+                life: 1.0, color
+            });
+        }
+    }
+
+    // Custom Animation Loop for Particles
+    Events.on(render, 'afterRender', () => {
+        const ctx = render.context;
+        particles.forEach((p, i) => {
+            p.x += p.vx; p.y += p.vy; p.life -= 0.02;
+            if (p.life <= 0) particles.splice(i, 1);
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = p.color;
+            ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+    });
+
+</script>
 </body>
 </html>
