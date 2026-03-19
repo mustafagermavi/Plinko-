@@ -1,172 +1,194 @@
 <!DOCTYPE html>
-<html lang="kmr">
+<html lang="kmr" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Plinko - Luxury Edition</title>
+    <title>Plinko Master - Ultra Luxury</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        
         body {
-            margin: 0;
-            background: #050508;
-            color: white;
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
+            margin: 0; background: #020205; color: white;
+            font-family: 'Orbitron', sans-serif;
+            display: flex; flex-direction: column; align-items: center;
+            height: 100vh; overflow: hidden;
         }
 
-        #plinko-board {
-            position: relative;
-            background: radial-gradient(circle at center, #111 0%, #050508 100%);
-            border-radius: 20px;
-            box-shadow: 0 0 50px rgba(0,0,0,1), inset 0 0 20px rgba(255,215,0,0.05);
-            border: 1px solid rgba(255,215,0,0.1);
+        /* Luxury Board Design */
+        #game-wrapper {
+            position: relative; margin-top: 20px;
+            border: 4px solid #1a1a2e; border-radius: 25px;
+            background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%);
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.1);
         }
 
-        .ui-panel {
-            margin-top: 20px;
-            width: 400px;
-            padding: 20px;
-            background: rgba(20, 20, 25, 0.8);
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-            text-align: center;
+        /* Top Panel - Balance */
+        .top-bar {
+            width: 100%; max-width: 450px; padding: 15px;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        .balance {
-            font-size: 28px;
-            color: #ffd700;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px; border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #ffd700; font-size: 1.2rem;
         }
 
-        .drop-btn {
-            background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
-            color: #000;
-            border: none;
-            padding: 12px 40px;
-            font-size: 18px;
-            font-weight: 800;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        /* Control Panel */
+        .controls {
+            width: 100%; max-width: 450px; background: #0f0f1a;
+            padding: 20px; border-radius: 20px 20px 0 0;
+            display: flex; flex-direction: column; gap: 15px;
+            position: fixed; bottom: 0; border-top: 2px solid #ffd700;
         }
 
-        .drop-btn:active { transform: scale(0.95); }
-        .drop-btn:hover { box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+        .risk-selector {
+            display: flex; gap: 10px; justify-content: center;
+        }
+
+        .risk-btn {
+            flex: 1; padding: 8px; border: none; border-radius: 8px;
+            cursor: pointer; font-weight: bold; opacity: 0.5; transition: 0.3s;
+        }
+
+        .risk-btn.active { opacity: 1; transform: scale(1.05); }
+        .low { background: #00ff88; color: #000; }
+        .med { background: #ffcc00; color: #000; }
+        .high { background: #ff4444; color: #fff; }
+
+        .btn-drop {
+            background: linear-gradient(90deg, #ffd700, #ff8800);
+            border: none; padding: 18px; border-radius: 12px;
+            font-size: 1.5rem; font-weight: bold; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 136, 0, 0.4);
+        }
+
+        .btn-drop:active { transform: translateY(3px); }
+
+        /* Multiplier Animation */
+        .multiplier-tag {
+            position: absolute; bottom: 10px; width: 100%;
+            display: flex; justify-content: space-around;
+        }
     </style>
 </head>
 <body>
 
-    <div id="plinko-board"></div>
+    <div class="top-bar">
+        <div class="stat-box">Balance: $<span id="balance">1000.00</span></div>
+    </div>
 
-    <div class="ui-panel">
-        <div class="balance">$ <span id="balance">1000.00</span></div>
-        <button class="drop-btn" onclick="spawnBall()">DROP BALL</button>
+    <div id="game-wrapper"></div>
+
+    <div class="controls">
+        <div class="risk-selector">
+            <button class="risk-btn low active" onclick="setRisk('low')">LOW</button>
+            <button class="risk-btn med" onclick="setRisk('med')">MEDIUM</button>
+            <button class="risk-btn high" onclick="setRisk('high')">HIGH</button>
+        </div>
+        <button class="btn-drop" onclick="dropBall()">SPAWN BALL</button>
     </div>
 
     <script>
-        const { Engine, Render, Runner, Bodies, Composite, Events, Body } = Matter;
-
+        const { Engine, Render, Runner, Bodies, Composite, Events } = Matter;
         const engine = Engine.create();
         const world = engine.world;
-        engine.gravity.y = 1.2;
+        engine.gravity.y = 1.5;
 
+        const width = 450, height = 550;
         const render = Render.create({
-            element: document.getElementById('plinko-board'),
+            element: document.getElementById('game-wrapper'),
             engine: engine,
-            options: {
-                width: 450,
-                height: 550,
-                wireframes: false,
-                background: 'transparent'
-            }
+            options: { width, height, wireframes: false, background: 'transparent' }
         });
 
-        // دەنگەکان (بەکارھێنانی Audio Context بۆ خێرایی)
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playTick() {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
-        }
-
-        // بزمارەکان (Pegs)
+        // 1. Create Pegs (The Triangle)
         const rows = 14;
         for (let i = 3; i <= rows; i++) {
             for (let j = 0; j < i; j++) {
-                const x = 225 + (j - (i - 1) / 2) * 30;
-                const y = i * 35;
-                const peg = Bodies.circle(x, y, 3, {
-                    isStatic: true,
-                    render: { fillStyle: '#444' }
-                });
-                Composite.add(world, peg);
+                const x = width/2 + (j - (i - 1) / 2) * 28;
+                const y = i * 32;
+                Composite.add(world, Bodies.circle(x, y, 3.5, {
+                    isStatic: true, render: { fillStyle: '#333b4d' }
+                }));
             }
         }
 
-        // خانەکان (Buckets)
-        const multipliers = [10, 5, 2, 1.1, 0.5, 0.2, 0.5, 1.1, 2, 5, 10];
-        const bucketWidth = 450 / multipliers.length;
-        multipliers.forEach((m, i) => {
-            const x = i * bucketWidth + bucketWidth / 2;
-            const color = m >= 1 ? '#00ff88' : '#ff4444';
-            const rect = Bodies.rectangle(x, 530, bucketWidth - 6, 25, {
-                isStatic: true,
-                isSensor: true,
-                render: { fillStyle: color + '22', strokeStyle: color, lineWidth: 1 }
+        // 2. Buckets & Multipliers
+        let currentRisk = 'low';
+        const risks = {
+            low: [5, 2, 1.2, 1, 0.5, 1, 1.2, 2, 5],
+            med: [15, 8, 3, 1, 0.2, 1, 3, 8, 15],
+            high: [50, 20, 5, 0.1, 0, 0.1, 5, 20, 50]
+        };
+
+        let bucketSensors = [];
+        function createBuckets() {
+            bucketSensors.forEach(b => Composite.remove(world, b));
+            bucketSensors = [];
+            const mults = risks[currentRisk];
+            const bWidth = width / mults.length;
+            
+            mults.forEach((m, i) => {
+                const sensor = Bodies.rectangle(i * bWidth + bWidth/2, height - 20, bWidth - 4, 30, {
+                    isStatic: true, isSensor: true, label: m.toString(),
+                    render: { fillStyle: m >= 1 ? '#00ff8811' : '#ff444411' }
+                });
+                bucketSensors.push(sensor);
+                Composite.add(world, sensor);
             });
-            rect.multiplier = m;
-            Composite.add(world, rect);
-        });
+        }
+        createBuckets();
 
+        // 3. Audio Synth (No files needed)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function sound(freq, type, duration) {
+            const osc = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            osc.type = type; osc.frequency.value = freq;
+            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+            osc.connect(g); g.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+
+        // 4. Game Logic
         let balance = 1000.00;
-
-        function spawnBall() {
+        function dropBall() {
             if (balance < 10) return;
-            balance -= 10;
-            document.getElementById('balance').innerText = balance.toFixed(2);
+            balance -= 10; updateUI();
+            sound(400, 'sine', 0.1);
 
-            const ball = Bodies.circle(225 + (Math.random() * 4 - 2), 40, 7, {
-                restitution: 0.5,
-                friction: 0.01,
-                render: { 
-                    fillStyle: '#ffd700',
-                    shadowBlur: 15,
-                    shadowColor: '#ffd700'
-                }
+            const ball = Bodies.circle(width/2 + (Math.random()*4-2), 30, 7, {
+                restitution: 0.6, friction: 0.01,
+                render: { fillStyle: '#ffd700', shadowBlur: 10, shadowColor: '#ffd700' }
             });
             Composite.add(world, ball);
         }
 
         Events.on(engine, 'collisionStart', (event) => {
             event.pairs.forEach(pair => {
-                if (pair.bodyB.isStatic && !pair.bodyB.isSensor) {
-                    playTick(); // کاتی بەرکەوتن بە بزمار
-                }
+                if (pair.bodyB.isStatic && !pair.bodyB.isSensor) sound(600, 'square', 0.05);
                 if (pair.bodyB.isSensor) {
-                    const m = pair.bodyB.multiplier;
-                    balance += 10 * m;
-                    document.getElementById('balance').innerText = balance.toFixed(2);
+                    const win = 10 * parseFloat(pair.bodyB.label);
+                    balance += win; updateUI();
+                    if (win > 10) sound(800, 'triangle', 0.3);
                     Composite.remove(world, pair.bodyA);
                 }
             });
         });
+
+        function setRisk(r) {
+            currentRisk = r;
+            document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.' + r).classList.add('active');
+            createBuckets();
+            sound(300, 'sine', 0.2);
+        }
+
+        function updateUI() { document.getElementById('balance').innerText = balance.toFixed(2); }
 
         Render.run(render);
         Runner.run(Runner.create(), engine);
