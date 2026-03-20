@@ -3,101 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Rocket Pro V2</title>
+    <title>Pixel Rocket Pro Max</title>
     <style>
         :root {
-            --primary-glow: #00ffa3;
-            --rocket-main: #e2e8f0;
-            --rocket-dark: #cbd5e1;
-            --accent-red: #ef4444;
-            --accent-dark-red: #b91c1c;
+            --bg-color: #020617;
+            --primary-text: #00ffa3;
+            /* Rocket Colors */
+            --r-body: #f8fafc;
+            --r-shade: #cbd5e1;
+            --r-accent: #ef4444;
+            --r-accent-dark: #b91c1c;
+            --r-window: #38bdf8;
         }
 
         body {
-            margin: 0; background-color: #020617;
+            margin: 0; background-color: var(--bg-color);
             color: white; font-family: 'Courier New', Courier, monospace;
             display: flex; flex-direction: column; align-items: center;
             justify-content: center; height: 100vh; overflow: hidden;
             image-rendering: pixelated;
         }
 
-        /* 1. پاشبنەمایێ ئاسمانی (هەمان ستایلێ تە ب دڵ) */
+        /* 1. پاشبنەما (وەک تە ڤیا بێ دەستکاری) */
         #game-screen {
             width: 360px; height: 500px;
             background: linear-gradient(to bottom, #020617, #0f172a);
             border: 4px solid #334155; position: relative;
-            overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,0.6);
+            overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.7);
         }
 
         .star { position: absolute; background: white; width: 2px; height: 2px; opacity: 0.5; }
 
-        /* 2. دیزاینێ پێشکەفتی یێ موشەکێ */
+        /* 2. دیزاینێ موشەکا پرۆفیشناڵ */
         #rocket-container {
             position: absolute; bottom: 50px; left: 50%;
             transform: translateX(-50%); transition: bottom 0.1s linear;
         }
 
         #rocket {
-            width: 40px; height: 65px; background: var(--rocket-main);
-            position: relative; border: 3px solid #000;
-            box-shadow: inset -8px 0px 0px var(--rocket-dark);
+            width: 44px; height: 75px; background: var(--r-body);
+            position: relative; border: 4px solid #000;
+            /* سێبەرا لایێ ڕاستێ بۆ شێوازێ 3D پیکسڵ */
+            box-shadow: inset -10px 0px 0px var(--r-shade);
         }
 
-        #rocket::before { /* سەرێ موشەکێ */
-            content: ""; position: absolute; top: -18px; left: -3px;
-            width: 40px; height: 15px; background: var(--accent-red);
-            border: 3px solid #000; box-shadow: inset -8px 0px 0px var(--accent-dark-red);
+        /* سەرێ موشەکێ */
+        #rocket::before {
+            content: ""; position: absolute; top: -20px; left: -4px;
+            width: 44px; height: 16px; background: var(--r-accent);
+            border: 4px solid #000; box-shadow: inset -10px 0px 0px var(--r-accent-dark);
         }
 
+        /* پەنجەرا بازنەیی */
         .window {
-            position: absolute; top: 15px; left: 10px;
-            width: 12px; height: 12px; background: #38bdf8;
-            border: 3px solid #000; box-shadow: inset -3px -3px 0px #0ea5e9;
+            position: absolute; top: 18px; left: 12px;
+            width: 14px; height: 14px; background: var(--r-window);
+            border: 4px solid #000; box-shadow: inset -4px -4px 0px #0ea5e9;
         }
 
+        /* باڵێن موشەکێ */
         .wing-l, .wing-r {
-            position: absolute; bottom: 5px; width: 12px; height: 20px;
-            background: var(--accent-red); border: 3px solid #000;
+            position: absolute; bottom: 10px; width: 14px; height: 24px;
+            background: var(--r-accent); border: 4px solid #000;
         }
-        .wing-l { left: -18px; box-shadow: inset 4px 0px 0px var(--accent-dark-red); }
-        .wing-r { right: -18px; box-shadow: inset -4px 0px 0px var(--accent-dark-red); }
+        .wing-l { left: -22px; box-shadow: inset 5px 0px 0px var(--r-accent-dark); }
+        .wing-r { right: -22px; box-shadow: inset -5px 0px 0px var(--r-accent-dark); }
 
-        /* ئاگرێ سێ ڕەنگی */
+        /* ئاگرێ داینامیکی یێ سێ ڕەنگی */
         .exhaust {
-            position: absolute; bottom: -28px; left: 50%;
-            transform: translateX(-50%); width: 20px; height: 25px;
+            position: absolute; bottom: -32px; left: 50%;
+            transform: translateX(-50%); width: 24px; height: 30px;
             background: #fbbf24; display: none;
             box-shadow: 0 8px 0 #f97316, 0 16px 0 #ef4444;
-            animation: thrust 0.15s infinite;
+            animation: thrust 0.1s infinite;
         }
 
         @keyframes thrust {
-            0% { height: 20px; } 50% { height: 30px; } 100% { height: 20px; }
+            0% { height: 25px; opacity: 0.9; }
+            50% { height: 35px; opacity: 1; }
+            100% { height: 25px; opacity: 0.9; }
         }
 
         /* 3. UI و کەنترۆل */
         #multiplier {
             position: absolute; top: 40px; width: 100%;
             text-align: center; font-size: 3.5rem; font-weight: bold;
-            color: var(--primary-glow); text-shadow: 4px 4px 0px #000; z-index: 10;
+            color: var(--primary-text); text-shadow: 5px 5px 0px #000; z-index: 10;
         }
 
         .controls {
-            width: 360px; background: #1e293b; padding: 20px;
+            width: 360px; background: #1e293b; padding: 25px;
             border: 4px solid #334155; border-top: none; box-sizing: border-box;
         }
 
         .btn {
-            width: 100%; padding: 15px; font-size: 1.3rem;
+            width: 100%; padding: 18px; font-size: 1.4rem;
             font-family: 'Courier New', Courier, monospace; font-weight: bold;
-            color: white; background: #22c55e; border: none;
-            border-bottom: 8px solid #166534; cursor: pointer;
+            color: white; background: #16a34a; border: none;
+            border-bottom: 8px solid #14532d; cursor: pointer;
         }
 
-        .btn.cashout { background: #d97706; border-bottom-color: #92400e; }
-        .btn:disabled { background: #475569; border-bottom: 4px solid #1e293b; opacity: 0.7; }
+        .btn.cashout { background: #ca8a04; border-bottom-color: #713f12; }
+        .btn:disabled { background: #475569; opacity: 0.6; }
 
-        #status-text { margin-top: 10px; text-align: center; font-size: 0.85rem; color: #94a3b8; }
+        #status { margin-top: 15px; text-align: center; font-size: 0.9rem; color: #94a3b8; }
     </style>
 </head>
 <body>
@@ -115,8 +124,8 @@
     </div>
 
     <div class="controls">
-        <button id="actionBtn" class="btn" onclick="handleAction()">دەستپێبکە (BET)</button>
-        <div id="status-text">ئامادەیە بۆ گەشتەکا نوی</div>
+        <button id="actionBtn" class="btn" onclick="handleAction()">BET TON</button>
+        <div id="status">ئامادەیە بۆ گەشتەکا پرۆفیشناڵ...</div>
     </div>
 
     <script>
@@ -126,14 +135,13 @@
         let crashPoint;
 
         const rocketCont = document.getElementById('rocket-container');
-        const rocketBody = document.getElementById('rocket');
+        const rocketDiv = document.getElementById('rocket');
         const fire = document.getElementById('fire');
         const multEl = document.getElementById('multiplier');
         const actionBtn = document.getElementById('actionBtn');
-        const statusEl = document.getElementById('status-text');
+        const statusEl = document.getElementById('status');
         const screen = document.getElementById('game-screen');
 
-        // دروستکرنا ستارەیان
         function spawnStar() {
             const star = document.createElement('div');
             star.className = 'star';
@@ -142,7 +150,7 @@
             screen.appendChild(star);
             let pos = -10;
             let move = setInterval(() => {
-                pos += 3;
+                pos += 4;
                 star.style.top = pos + 'px';
                 if (pos > 500) { clearInterval(move); star.remove(); }
             }, 30);
@@ -156,24 +164,25 @@
         function startGame() {
             isRunning = true;
             multiplier = 1.00;
-            crashPoint = (Math.random() * 6 + 1.1).toFixed(2);
+            crashPoint = (Math.random() * 5 + 1.1).toFixed(2);
             
             actionBtn.innerText = "CASH OUT";
             actionBtn.classList.add('cashout');
             fire.style.display = 'block';
             statusEl.innerText = "موشەک یا بلند دبیت...";
             multEl.style.color = "#00ffa3";
-            rocketBody.style.background = "var(--rocket-main)";
+            rocketDiv.style.opacity = "1";
 
-            let starInterval = setInterval(() => { if(!isRunning) clearInterval(starInterval); spawnStar(); }, 100);
+            let starInterval = setInterval(() => { if(!isRunning) clearInterval(starInterval); spawnStar(); }, 80);
 
             gameLoop = setInterval(() => {
-                multiplier += 0.03;
+                multiplier += 0.04;
                 multEl.innerText = multiplier.toFixed(2) + "x";
 
-                let yPos = Math.min((multiplier - 1) * 45, 250);
+                let yPos = Math.min((multiplier - 1) * 50, 260);
                 rocketCont.style.bottom = (50 + yPos) + 'px';
-                rocketCont.style.transform = `translateX(-50%) rotate(${(Math.random()-0.5)*4}deg)`;
+                // لرزینا موشەکێ (Shake effect)
+                rocketCont.style.transform = `translateX(-50%) rotate(${(Math.random()-0.5)*5}deg)`;
 
                 if (multiplier >= crashPoint) endGame(true);
             }, 100);
@@ -181,10 +190,10 @@
 
         function cashOut() {
             endGame(false);
-            statusEl.innerText = `✅ پیرۆزە! تە ${multiplier.toFixed(2)}x قازانج کر.`;
+            statusEl.innerText = `✅ تە قازانج کر! مڵتیپلایەر: ${multiplier.toFixed(2)}x`;
             multEl.style.color = "#38bdf8";
             rocketCont.style.transition = "bottom 1.5s ease-in";
-            rocketCont.style.bottom = "700px";
+            rocketCont.style.bottom = "800px"; 
         }
 
         function endGame(isCrash) {
@@ -197,8 +206,8 @@
             if (isCrash) {
                 statusEl.innerText = "💥 موشەک تەقیا! تە دۆڕاندن.";
                 multEl.style.color = "#ef4444";
-                rocketBody.style.background = "#7c2d12"; // ڕەنگێ سوتی
-                rocketCont.style.transform = "translateX(-50%) scale(0.8)";
+                rocketDiv.style.opacity = "0.5";
+                rocketCont.style.transform = "translateX(-50%) scale(0.9)";
             }
         }
     </script>
