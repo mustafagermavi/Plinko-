@@ -3,187 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TON APEX TRADER</title>
+    <title>TON APEX MASTERPIECE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-blue: #00f3ff; --neon-green: #39ff14; --neon-red: #ff0055;
-            --neon-yellow: #fefe33; --dark-bg: #050508;
+            --neon: #00f3ff; --gain: #39ff14; --loss: #ff0055; --gold: #fefe33;
         }
 
-        body {
-            margin: 0; background: var(--dark-bg); color: white;
-            font-family: 'Press Start 2P', cursive; overflow-x: hidden;
+        body, html {
+            margin: 0; padding: 0; background: #020205; color: white;
+            font-family: 'Press Start 2P', cursive; overflow: hidden; height: 100vh;
+        }
+
+        /* 3D Parallax Background */
+        #starfield { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; }
+
+        .app-wrapper {
             display: flex; flex-direction: column; align-items: center;
+            height: 100vh; padding: 15px; box-sizing: border-box;
+            background: radial-gradient(circle at center, rgba(0, 243, 255, 0.05) 0%, transparent 70%);
         }
 
-        /* Arcade Screen */
-        .game-frame {
-            width: 92%; max-width: 400px; margin-top: 15px;
-            border: 4px solid #1a1a2e; border-radius: 12px;
-            background: #000; position: relative;
-            box-shadow: 0 0 25px rgba(0, 243, 255, 0.15);
+        /* The Cyber Console */
+        .console-frame {
+            width: 100%; max-width: 400px; border: 4px solid #1a1a2e;
+            background: rgba(0, 0, 0, 0.9); position: relative;
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.2), inset 0 0 20px rgba(0, 243, 255, 0.1);
+            border-radius: 5px; overflow: hidden;
         }
 
-        .top-bar {
-            padding: 10px; border-bottom: 2px solid #111;
-            display: flex; justify-content: space-between; font-size: 8px; color: var(--neon-blue);
+        .crt-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 2px 100%; pointer-events: none; z-index: 10;
         }
 
-        .price-section { padding: 15px 0; text-align: center; }
-        #price { font-size: 26px; color: var(--neon-yellow); text-shadow: 0 0 8px var(--neon-yellow); }
-
-        canvas { width: 100%; height: 180px; image-rendering: pixelated; }
-
-        /* Whale Alert Box */
-        .whale-box {
-            background: rgba(0, 243, 255, 0.05); border: 1px dashed var(--neon-blue);
-            margin: 10px; padding: 8px; font-size: 7px; color: var(--neon-blue);
-            height: 20px; overflow: hidden; display: flex; align-items: center;
+        .status-bar {
+            padding: 8px 12px; background: #111; font-size: 7px;
+            display: flex; justify-content: space-between; border-bottom: 2px solid #222;
         }
 
-        /* Controls */
-        .ui-panel { width: 92%; max-width: 400px; margin-top: 15px; }
-        .bet-input {
-            width: 100%; background: #000; border: 2px solid #222;
-            color: var(--neon-green); font-family: 'Press Start 2P';
-            padding: 12px; text-align: center; font-size: 14px; box-sizing: border-box;
+        .main-display { padding: 20px 0; text-align: center; position: relative; }
+        #price { font-size: 28px; color: var(--gold); text-shadow: 0 0 15px var(--gold); letter-spacing: -2px; }
+
+        canvas#tradeCanvas { width: 100%; height: 180px; image-rendering: pixelated; }
+
+        /* Pro Controls */
+        .button-deck {
+            width: 100%; max-width: 400px; margin-top: 20px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
         }
 
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .btn {
-            border: 4px solid; padding: 15px; font-family: 'Press Start 2P';
-            font-size: 12px; color: white; cursor: pointer; transition: 0.1s;
+        .input-wrap {
+            grid-column: span 2; position: relative; background: #000;
+            border: 2px solid #333; padding: 10px;
         }
-        .up { background: #064e3b; border-color: var(--neon-green); }
-        .down { background: #7f1d1d; border-color: var(--neon-red); }
-        .btn:active { transform: scale(0.95); }
 
-        /* History */
-        .history { margin-top: 15px; width: 100%; font-size: 7px; color: #444; }
-        .hist-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #111; }
+        input {
+            width: 100%; background: transparent; border: none; color: var(--gain);
+            font-family: 'Press Start 2P'; font-size: 16px; text-align: center; outline: none;
+        }
 
-        /* Mascot Animation */
-        #mascot { position: absolute; bottom: 5px; left: 5px; font-size: 18px; }
+        .apex-btn {
+            height: 70px; border: none; font-family: 'Press Start 2P'; font-size: 12px;
+            color: white; cursor: pointer; position: relative; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            transition: 0.1s;
+        }
+        .btn-up { background: linear-gradient(45deg, #064e3b, #0ecb81); border-right: 5px solid #39ff14; }
+        .btn-down { background: linear-gradient(45deg, #7f1d1d, #f6465d); border-left: 5px solid #ff0055; }
+        .apex-btn:active { filter: brightness(1.5); transform: scale(0.98); }
+
+        .whale-feed {
+            width: 100%; font-size: 7px; color: var(--neon); margin-top: 15px;
+            height: 40px; border-left: 2px solid var(--neon); padding-left: 10px;
+            display: flex; align-items: center; opacity: 0.7;
+        }
     </style>
 </head>
 <body>
 
-    <div class="game-frame">
-        <div class="top-bar">
-            <span id="user-name">GUEST</span>
-            <span id="balance">1000 PTS</span>
+<canvas id="starfield"></canvas>
+<div class="app-wrapper">
+    
+    <div class="console-frame">
+        <div class="crt-overlay"></div>
+        <div class="status-bar">
+            <span id="user-tag">SYSTEM: READY</span>
+            <span id="balance-val" style="color: var(--neon);">CREDITS: 1000.00</span>
         </div>
+
+        <div class="main-display">
+            <div style="font-size: 8px; color: #555; margin-bottom: 5px;">TON/USDT REALTIME</div>
+            <div id="price">FETCHING...</div>
+        </div>
+
+        <canvas id="tradeCanvas"></canvas>
         
-        <div class="price-section">
-            <div id="price">SYNCING...</div>
-            <div id="whale-msg" class="whale-box">SCANNING WHALE WALLETS...</div>
+        <div class="whale-feed" id="whale-log">
+            > INITIALIZING NEURAL NETWORK...
         </div>
-
-        <canvas id="chart"></canvas>
-        <div id="mascot">👾</div>
     </div>
 
-    <div class="ui-panel">
-        <input type="number" id="betAmount" class="bet-input" value="100">
-        <div class="btn-grid">
-            <button class="btn up" onclick="trade('up')">BULL ▲</button>
-            <button class="btn down" onclick="trade('down')">BEAR ▼</button>
+    <div class="button-deck">
+        <div class="input-wrap">
+            <div style="font-size: 6px; color: #444; position: absolute; top: 2px; left: 5px;">BET AMOUNT</div>
+            <input type="number" id="betAmt" value="100">
         </div>
-        <div id="historyList" class="history"></div>
+        <button class="apex-btn btn-up" onclick="execute('up')">BULLISH</button>
+        <button class="apex-btn btn-down" onclick="execute('down')">BEARISH</button>
     </div>
+
+</div>
 
 <script>
     const tg = window.Telegram.WebApp;
     tg.ready(); tg.expand();
 
-    if(tg.initDataUnsafe?.user) document.getElementById('user-name').innerText = tg.initDataUnsafe.user.first_name.toUpperCase();
+    // 1. 3D Parallax Starfield
+    const sCanvas = document.getElementById('starfield');
+    const sCtx = sCanvas.getContext('2d');
+    let stars = [];
 
-    let balance = 1000;
-    let currentPrice = 0;
-    let prices = Array(50).fill(0);
+    function initStars() {
+        sCanvas.width = window.innerWidth; sCanvas.height = window.innerHeight;
+        stars = Array(150).fill().map(() => ({
+            x: Math.random() * sCanvas.width, y: Math.random() * sCanvas.height,
+            z: Math.random() * sCanvas.width, s: Math.random() * 2
+        }));
+    }
+
+    function drawStars() {
+        sCtx.fillStyle = '#020205'; sCtx.fillRect(0,0,sCanvas.width,sCanvas.height);
+        stars.forEach(st => {
+            st.z -= 2; if(st.z <= 0) st.z = sCanvas.width;
+            let k = 128 / st.z;
+            let px = (st.x - sCanvas.width/2) * k + sCanvas.width/2;
+            let py = (st.y - sCanvas.height/2) * k + sCanvas.height/2;
+            if(px>=0 && px<=sCanvas.width && py>=0 && py<=sCanvas.height) {
+                let size = (1 - st.z/sCanvas.width) * 3;
+                sCtx.fillStyle = `rgba(255,255,255,${1 - st.z/sCanvas.width})`;
+                sCtx.fillRect(px, py, size, size);
+            }
+        });
+        requestAnimationFrame(drawStars);
+    }
+
+    // 2. Realtime Engine
+    let priceData = Array(60).fill(0);
+    let curPrice = 0;
     let entryPrice = 0;
-    let isActive = false;
+    let isLive = false;
+    const tCanvas = document.getElementById('tradeCanvas');
+    const tCtx = tCanvas.getContext('2d');
+    tCanvas.width = 400; tCanvas.height = 200;
 
-    const canvas = document.getElementById('chart');
-    const ctx = canvas.getContext('2d');
-    canvas.width = 400; canvas.height = 200;
-
-    // 1. نرخە ڕاستەقینەکان
-    async function syncPrice() {
+    async function sync() {
         try {
-            const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=TONUSDT');
-            const data = await res.json();
-            let p = parseFloat(data.price);
-            if(currentPrice === 0) prices.fill(p);
-            currentPrice = p;
-            prices.push(p); prices.shift();
-            document.getElementById('price').innerText = currentPrice.toFixed(4);
-            render();
+            const r = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=TONUSDT');
+            const d = await r.json();
+            let p = parseFloat(d.price);
+            if(curPrice === 0) priceData.fill(p);
+            curPrice = p; priceData.push(p); priceData.shift();
+            document.getElementById('price').innerText = curPrice.toFixed(4);
+            renderChart();
         } catch(e) {}
     }
 
-    // 2. نەهەنگەکان (Whale Tracker)
-    const whaleActions = ["🐳 Whale moved 500k TON to Wallet", "🚀 Huge Buy Order detected!", "📉 Whale dumping 200k TON", "🏦 Institutional Buy in progress"];
-    function updateWhale() {
-        document.getElementById('whale-msg').innerText = whaleActions[Math.floor(Math.random()*whaleActions.length)];
-    }
+    function renderChart() {
+        tCtx.clearRect(0,0,400,200);
+        tCtx.strokeStyle = 'rgba(0, 243, 255, 0.1)'; tCtx.lineWidth = 1;
+        for(let i=0; i<400; i+=20) { tCtx.beginPath(); tCtx.moveTo(i,0); tCtx.lineTo(i,200); tCtx.stroke(); }
 
-    function render() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // Grid
-        ctx.strokeStyle = '#0a0a1a'; ctx.lineWidth = 1;
-        for(let i=0; i<canvas.width; i+=25) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); ctx.stroke(); }
-        
-        // Chart Line
-        ctx.strokeStyle = isActive ? (currentPrice >= entryPrice ? "#39ff14" : "#ff0055") : "#00f3ff";
-        ctx.lineWidth = 4; ctx.beginPath();
-        let min = Math.min(...prices), max = Math.max(...prices);
-        prices.forEach((p, i) => {
-            let x = (i / (prices.length - 1)) * canvas.width;
-            let y = canvas.height - ((p - min) / (max - min || 1)) * canvas.height;
-            if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        tCtx.shadowBlur = 15;
+        tCtx.shadowColor = isLive ? (curPrice >= entryPrice ? "#39ff14" : "#ff0055") : "#00f3ff";
+        tCtx.strokeStyle = tCtx.shadowColor; tCtx.lineWidth = 4;
+        tCtx.beginPath();
+        let min = Math.min(...priceData), max = Math.max(...priceData);
+        priceData.forEach((p, i) => {
+            let x = (i / 59) * 400;
+            let y = 200 - ((p-min)/(max-min || 1)) * 200;
+            if(i===0) tCtx.moveTo(x,y); else tCtx.lineTo(x,y);
         });
-        ctx.stroke();
+        tCtx.stroke();
+        tCtx.shadowBlur = 0;
     }
 
-    function trade(dir) {
-        let amt = parseInt(document.getElementById('betAmount').value);
-        if(amt > balance || isActive) return;
-
-        isActive = true; balance -= amt;
-        entryPrice = currentPrice;
-        document.getElementById('balance').innerText = `${balance} PTS`;
-        document.getElementById('mascot').innerText = "🤔";
-        tg.HapticFeedback.impactOccurred('medium');
-
+    function execute(dir) {
+        let amt = parseFloat(document.getElementById('betAmt').value);
+        isLive = true; entryPrice = curPrice;
+        tg.HapticFeedback.notificationOccurred('warning');
+        document.getElementById('whale-log').innerText = `> EXECUTING ${dir.toUpperCase()} ORDER...`;
+        
         setTimeout(() => {
-            let win = (dir === 'up' && currentPrice > entryPrice) || (dir === 'down' && currentPrice < entryPrice);
+            let win = (dir==='up' && curPrice > entryPrice) || (dir==='down' && curPrice < entryPrice);
             if(win) {
-                balance += Math.floor(amt * 1.9);
-                document.getElementById('mascot').innerText = "😎";
                 tg.HapticFeedback.notificationOccurred('success');
+                document.getElementById('whale-log').innerText = `> ANALYSIS: PROFIT DETECTED.`;
             } else {
-                document.getElementById('mascot').innerText = "💀";
                 tg.HapticFeedback.notificationOccurred('error');
+                document.getElementById('whale-log').innerText = `> ANALYSIS: LIQUIDATION EVENT.`;
             }
-            addLog(dir, amt, win);
-            document.getElementById('balance').innerText = `${balance} PTS`;
-            isActive = false;
-        }, 5000);
+            isLive = false;
+        }, 4000);
     }
 
-    function addLog(dir, amt, win) {
-        const item = document.createElement('div');
-        item.className = 'hist-item';
-        item.style.color = win ? '#39ff14' : '#ff0055';
-        item.innerHTML = `<span>${dir.toUpperCase()} ${amt}</span> <span>${win ? '+'+Math.floor(amt*0.9) : '-'+amt}</span>`;
-        document.getElementById('historyList').prepend(item);
-    }
-
-    setInterval(syncPrice, 1000);
-    setInterval(updateWhale, 7000);
+    initStars(); drawStars();
+    setInterval(sync, 1000);
+    setInterval(() => {
+        const msgs = ["> WHALE ALERT: 1M TON MOVED", "> MONITORING LIQUIDITY...", "> NETWORK LATENCY: 12ms", "> APEX PROTOCOL ACTIVE"];
+        document.getElementById('whale-log').innerText = msgs[Math.floor(Math.random()*msgs.length)];
+    }, 5000);
 </script>
 </body>
 </html>
