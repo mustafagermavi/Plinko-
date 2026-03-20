@@ -1,645 +1,618 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>⎾ CYBER WALLET SCANNER ⏌ | HACKER TERMINAL</title>
-  <!-- Font Awesome 6 (free icons) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Google Font: modern monospace for hacker style -->
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>NEO·CRACK | Crypto Wallet Auditor</title>
+    <!-- Font Awesome 6 (free icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts: modern, clean -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
 
-    body {
-      background: #0b0f16;
-      font-family: 'Share Tech Mono', 'Space Mono', 'Courier New', monospace;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px 12px;
-    }
+        body {
+            background-color: #1e2124;
+            padding: 24px 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    /* Mobile-first container (360px optimized) */
-    .dashboard {
-      max-width: 360px;
-      width: 100%;
-      margin: 0 auto;
-      background: #0f141c;
-      border-radius: 40px;
-      box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(46, 255, 158, 0.2);
-      overflow: hidden;
-      backdrop-filter: blur(0.5px);
-      transition: all 0.2s;
-    }
+        /* main dashboard container */
+        .dashboard {
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+        }
 
-    .content {
-      padding: 22px 18px 28px 18px;
-    }
+        /* ========= NEUMORPHISM CORE ========= */
+        /* popping out elements (outer shadow) */
+        .neumorph-card {
+            background: #1e2124;
+            border-radius: 32px;
+            box-shadow: -8px -8px 16px rgba(0, 0, 0, 0.5),
+                        8px 8px 16px rgba(255, 255, 255, 0.08);
+            transition: all 0.2s ease;
+        }
 
-    /* ========== HEADER ========== */
-    .header {
-      text-align: center;
-      margin-bottom: 22px;
-    }
-    .cyber-title {
-      font-size: 1.7rem;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-      background: linear-gradient(135deg, #d0ffdd, #2eff9e);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 8px rgba(46, 255, 158, 0.3);
-      font-family: 'Space Mono', monospace;
-    }
-    .title-badge {
-      font-size: 0.58rem;
-      background: #10161f;
-      color: #2eff9e;
-      border-radius: 30px;
-      padding: 4px 12px;
-      display: inline-block;
-      margin-top: 8px;
-      border: 0.5px solid #2eff9e80;
-      letter-spacing: 1.2px;
-    }
+        /* inset "carved in" fields */
+        .neumorph-inset {
+            background: #1e2124;
+            border-radius: 28px;
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.55),
+                        inset -4px -4px 8px rgba(255, 255, 255, 0.06);
+        }
 
-    /* ========== TERMINAL CONSOLE ========== */
-    .terminal {
-      background: #03050b;
-      border-radius: 24px;
-      border: 1px solid #222c3c;
-      margin-bottom: 22px;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(46, 255, 158, 0.1);
-    }
-    .term-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 14px 6px 14px;
-      border-bottom: 1px solid #1f2a3a;
-    }
-    .term-led {
-      width: 10px;
-      height: 10px;
-      background: #2eff9e;
-      border-radius: 50%;
-      box-shadow: 0 0 6px #2eff9e;
-      animation: pulseLed 1.4s infinite;
-    }
-    .term-header span {
-      color: #90a1c2;
-      font-size: 0.7rem;
-      letter-spacing: 0.8px;
-    }
-    .console-window {
-      height: 240px;
-      overflow-y: auto;
-      padding: 14px 14px 12px 14px;
-      font-size: 0.68rem;
-      line-height: 1.5;
-      color: #cbf5e2;
-      font-family: 'Share Tech Mono', monospace;
-      scroll-behavior: smooth;
-    }
-    .console-line {
-      border-left: 2px solid #2eff9e;
-      padding-left: 10px;
-      margin-bottom: 9px;
-      word-break: break-word;
-      white-space: pre-wrap;
-      animation: lineFade 0.2s ease-out;
-    }
-    @keyframes lineFade {
-      0% { opacity: 0; transform: translateX(-4px);}
-      100% { opacity: 1; transform: translateX(0);}
-    }
-    @keyframes pulseLed {
-      0% { opacity: 0.5; transform: scale(0.9);}
-      100% { opacity: 1; transform: scale(1);}
-    }
-    .blinking-cursor {
-      display: inline-block;
-      width: 8px;
-      height: 14px;
-      background-color: #2eff9e;
-      vertical-align: middle;
-      margin-left: 4px;
-      animation: blink 1s step-end infinite;
-      box-shadow: 0 0 3px #2eff9e;
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-    .terminal-prompt-line {
-      margin-top: 8px;
-      color: #2eff9e;
-      font-size: 0.68rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .console-window::-webkit-scrollbar {
-      width: 4px;
-    }
-    .console-window::-webkit-scrollbar-track {
-      background: #0a0e18;
-    }
-    .console-window::-webkit-scrollbar-thumb {
-      background: #2eff9e;
-      border-radius: 8px;
-    }
+        /* buttons with popping + active press effect */
+        .btn-neo {
+            background: #1e2124;
+            border: none;
+            padding: 16px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 60px;
+            color: #e0e4e9;
+            cursor: pointer;
+            transition: all 0.12s linear;
+            box-shadow: -6px -6px 12px rgba(0, 0, 0, 0.5),
+                        6px 6px 12px rgba(255, 255, 255, 0.07);
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
 
-    /* ========== FOUND COUNTER ========== */
-    .counter-section {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 18px;
-    }
-    .found-panel {
-      background: #02060ecc;
-      border-radius: 80px;
-      padding: 5px 20px;
-      border: 1px solid #2eff9e60;
-      backdrop-filter: blur(4px);
-    }
-    .found-panel .label {
-      font-size: 0.75rem;
-      color: #b7c7e5;
-      font-weight: 500;
-    }
-    .found-panel .number {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #2eff9e;
-      text-shadow: 0 0 5px #1eff8a;
-      margin-left: 12px;
-      line-height: 1;
-    }
-    .scan-icon {
-      font-size: 0.75rem;
-      color: #2eff9e;
-    }
+        .btn-neo:active {
+            transform: scale(0.97);
+            box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.6),
+                        2px 2px 5px rgba(255, 255, 255, 0.05);
+        }
 
-    /* ========== RESULT BOX (Found Wallets) ========== */
-    .result-box {
-      background: #080c18;
-      border-radius: 24px;
-      border: 1px solid #252f42;
-      padding: 14px 12px;
-      margin-bottom: 26px;
-      max-height: 170px;
-      overflow-y: auto;
-    }
-    .result-box h4 {
-      font-size: 0.7rem;
-      color: #bbd4ff;
-      border-left: 3px solid #2eff9e;
-      padding-left: 12px;
-      margin-bottom: 14px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-    }
-    .wallets-container {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .wallet-card {
-      background: #0d1222;
-      border-radius: 18px;
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-left: 3px solid #2eff9e;
-      font-size: 0.65rem;
-      transition: 0.1s;
-      animation: fadeSlide 0.2s ease;
-    }
-    .coin-badge {
-      background: #1f2a48;
-      border-radius: 40px;
-      padding: 3px 12px;
-      font-weight: bold;
-      font-size: 0.6rem;
-      color: #e2ffef;
-      letter-spacing: 0.5px;
-    }
-    .wallet-address {
-      font-family: monospace;
-      word-break: break-all;
-      color: #cdeada;
-    }
-    .empty-placeholder {
-      text-align: center;
-      color: #6c7a96;
-      font-size: 0.7rem;
-      padding: 14px 0;
-      font-style: italic;
-    }
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateX(-5px);}
-      to { opacity: 1; transform: translateX(0);}
-    }
+        /* stat cards style */
+        .stat-card {
+            background: #1e2124;
+            border-radius: 28px;
+            padding: 20px 12px;
+            text-align: center;
+            flex: 1;
+            box-shadow: -6px -6px 12px rgba(0, 0, 0, 0.5),
+                        6px 6px 12px rgba(255, 255, 255, 0.07);
+        }
 
-    /* ========== 3x3 COIN GRID (circular + green check) ========== */
-    .coin-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px 12px;
-      margin-bottom: 28px;
-      margin-top: 6px;
-    }
-    .coin-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-    .coin-circle {
-      width: 68px;
-      height: 68px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5), 0 0 0 1.5px rgba(46, 255, 158, 0.3);
-      transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-      font-size: 2rem;
-      color: white;
-      margin-bottom: 8px;
-    }
-    /* glow effect on hover */
-    .coin-circle:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 14px rgba(46, 255, 158, 0.7), 0 0 0 2px #2eff9e;
-    }
-    .check-mark {
-      color: #2eff9e;
-      font-size: 0.95rem;
-      background: rgba(0, 0, 0, 0.5);
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 30px;
-      backdrop-filter: blur(2px);
-      margin-top: 4px;
-    }
-    .check-mark i {
-      filter: drop-shadow(0 0 2px #0aff70);
-    }
+        .stat-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+            color: #9aa3b3;
+            margin-bottom: 8px;
+        }
 
-    /* ========== START SCAN BUTTON (neon gradient) ========== */
-    .btn-container {
-      margin-top: 4px;
-    }
-    .start-scan {
-      width: 100%;
-      background: linear-gradient(100deg, #10dd7a, #009f4d);
-      border: none;
-      font-family: 'Space Mono', monospace;
-      font-weight: 800;
-      font-size: 1.2rem;
-      padding: 14px 12px;
-      border-radius: 80px;
-      letter-spacing: 1.8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 0 12px #2eff9e, 0 4px 8px rgba(0, 0, 0, 0.4);
-      color: #021f0e;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-    }
-    .start-scan i {
-      font-size: 1.2rem;
-      color: #011007;
-    }
-    .start-scan:active {
-      transform: scale(0.97);
-      box-shadow: 0 0 20px #3effa0;
-    }
-    /* button glow animation (pulse) */
-    .start-scan {
-      animation: btnPulse 1.8s infinite;
-    }
-    @keyframes btnPulse {
-      0% { box-shadow: 0 0 6px #2eff9e, 0 4px 8px rgba(0,0,0,0.4);}
-      50% { box-shadow: 0 0 18px #2eff9e, 0 4px 10px rgba(0,0,0,0.4);}
-      100% { box-shadow: 0 0 6px #2eff9e, 0 4px 8px rgba(0,0,0,0.4);}
-    }
+        .stat-value {
+            font-size: 2.3rem;
+            font-weight: 700;
+            color: #e9f0ff;
+            line-height: 1;
+        }
 
-    /* responsive tweaks */
-    @media (max-width: 380px) {
-      .coin-circle {
-        width: 60px;
-        height: 60px;
-        font-size: 1.6rem;
-      }
-      .content {
-        padding: 18px 14px 24px;
-      }
-    }
-  </style>
+        /* terminal & found box (inset carved look) */
+        .inset-panel {
+            background: #1e2124;
+            border-radius: 28px;
+            padding: 18px 16px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: inset 4px 4px 12px rgba(0, 0, 0, 0.6),
+                        inset -4px -4px 10px rgba(255, 255, 255, 0.04);
+        }
+
+        .panel-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #bbc4d4;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 3px solid #3f8eff;
+            padding-left: 12px;
+        }
+
+        .terminal-log {
+            flex: 1;
+            min-height: 220px;
+            max-height: 280px;
+            overflow-y: auto;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #cbd5e6;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .log-line {
+            font-family: monospace;
+            font-size: 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            padding: 4px 0;
+            word-break: break-word;
+        }
+
+        .found-list {
+            flex: 1;
+            min-height: 220px;
+            max-height: 280px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .found-item {
+            background: rgba(30,33,36,0.7);
+            border-radius: 20px;
+            padding: 12px 14px;
+            box-shadow: inset 0px 1px 2px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.02);
+            border-left: 3px solid #2ecc71;
+            font-size: 0.75rem;
+            transition: 0.1s;
+        }
+
+        .found-wallet {
+            font-weight: 600;
+            color: #d9f0ff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .found-pass {
+            font-family: monospace;
+            color: #98b0d4;
+            font-size: 0.7rem;
+            margin-top: 5px;
+            word-break: break-all;
+        }
+
+        /* 3x3 crypto grid */
+        .crypto-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin: 20px 0 28px;
+        }
+
+        .crypto-icon-card {
+            background: #1e2124;
+            border-radius: 28px;
+            padding: 18px 8px;
+            text-align: center;
+            transition: all 0.2s;
+            box-shadow: -6px -6px 12px rgba(0, 0, 0, 0.5),
+                        6px 6px 12px rgba(255, 255, 255, 0.07);
+            cursor: default;
+        }
+
+        .crypto-icon-card i {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: #d4deef;
+        }
+
+        .crypto-icon-card span {
+            display: block;
+            font-weight: 500;
+            font-size: 0.75rem;
+            color: #b9c3d4;
+        }
+
+        /* button container */
+        .action-buttons {
+            display: flex;
+            gap: 28px;
+            justify-content: center;
+            margin-top: 12px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons .btn-neo {
+            flex: 1;
+            min-width: 180px;
+            font-size: 1.1rem;
+            padding: 16px 18px;
+        }
+
+        /* layout responsive */
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .dual-panels {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .terminal-panel, .found-panel {
+            flex: 1;
+            min-width: 240px;
+        }
+
+        /* scroll custom */
+        ::-webkit-scrollbar {
+            width: 5px;
+            background: #2a2e33;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4f5b6e;
+            border-radius: 10px;
+        }
+
+        /* responsive mobile */
+        @media (max-width: 700px) {
+            body {
+                padding: 16px 12px;
+            }
+            .stats-row {
+                gap: 12px;
+            }
+            .stat-value {
+                font-size: 1.6rem;
+            }
+            .dual-panels {
+                flex-direction: column;
+            }
+            .crypto-grid {
+                gap: 12px;
+            }
+            .crypto-icon-card i {
+                font-size: 2rem;
+            }
+            .action-buttons {
+                flex-direction: column;
+                gap: 16px;
+            }
+            .action-buttons .btn-neo {
+                width: 100%;
+            }
+            .btn-neo {
+                font-size: 1rem;
+                padding: 14px 18px;
+            }
+        }
+
+        /* subtle active highlight for grid */
+        .crypto-icon-card:active {
+            transform: scale(0.97);
+            box-shadow: -3px -3px 8px rgba(0,0,0,0.5), 3px 3px 8px rgba(255,255,255,0.05);
+        }
+        .footer-note {
+            text-align: center;
+            font-size: 0.65rem;
+            margin-top: 20px;
+            color: #5f6b7e;
+        }
+    </style>
 </head>
 <body>
 <div class="dashboard">
-  <div class="content">
-    <!-- Header -->
-    <div class="header">
-      <div class="cyber-title">⚡ CRYPTO WALLET SCANNER</div>
-      <div class="title-badge"># TERMINAL_SCAN_ACTIVE</div>
-    </div>
-
-    <!-- Terminal Console -->
-    <div class="terminal">
-      <div class="term-header">
-        <div class="term-led"></div>
-        <span>>_ WALLET_SURVEILLANCE_STREAM</span>
-        <div style="flex:1"></div>
-        <i class="fas fa-code-branch" style="color:#2eff9e; font-size:9px;"></i>
-      </div>
-      <div class="console-window" id="consoleWindow">
-        <!-- dynamic lines injected via js, initial lines will appear -->
-        <div class="console-line">> Wallet Check: energy target ten</div>
-        <div class="console-line">> Wallet Check: panther click lumber</div>
-        <div class="console-line">> Wallet Check: glory witness put</div>
-        <div class="console-line">> Wallet Check: trap trick erode</div>
-        <div class="console-line">> Wallet Check: strong liberty laundry</div>
-        <div class="terminal-prompt-line">
-          <i class="fas fa-circle" style="font-size: 6px; color:#2eff9e;"></i> 
-          <span>listening for entropy</span>
-          <span class="blinking-cursor"></span>
+    <!-- STATS HEADER (neumorph outer) -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-label"><i class="fas fa-microchip"></i> ATTEMPTS</div>
+            <div class="stat-value" id="attemptsCount">0</div>
         </div>
-      </div>
+        <div class="stat-card">
+            <div class="stat-label"><i class="fas fa-key"></i> FOUND WALLETS</div>
+            <div class="stat-value" id="foundCount">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label"><i class="fas fa-tachometer-alt"></i> SPEED (h/s)</div>
+            <div class="stat-value" id="speedValue">0</div>
+        </div>
     </div>
 
-    <!-- Found Counter -->
-    <div class="counter-section">
-      <div class="found-panel">
-        <span class="label">FOUND:</span>
-        <span class="number" id="foundCounter">0</span>
-      </div>
-      <div class="scan-icon"><i class="fas fa-microchip"></i> 0x7F</div>
+    <!-- TERMINAL + FOUND (inset carved fields) -->
+    <div class="dual-panels">
+        <!-- TERMINAL AREA -->
+        <div class="terminal-panel inset-panel">
+            <div class="panel-title">
+                <i class="fas fa-terminal"></i> BRUTE FORCE CONSOLE
+            </div>
+            <div class="terminal-log" id="terminalLog">
+                <div class="log-line">[✓] NEO·CRACK v1.0 ready</div>
+                <div class="log-line">[✓] Neumorphic engine active</div>
+                <div class="log-line">[>] Awaiting start signal ...</div>
+            </div>
+        </div>
+
+        <!-- DEDICATED FOUND RESULTS BOX -->
+        <div class="found-panel inset-panel">
+            <div class="panel-title">
+                <i class="fas fa-treasure-chest"></i> FOUND WALLETS / SEEDS
+            </div>
+            <div class="found-list" id="foundList">
+                <div style="text-align: center; opacity: 0.6; font-size:0.75rem; padding:20px;">No wallets discovered yet.<br>Start brute-force simulation</div>
+            </div>
+        </div>
     </div>
 
-    <!-- Result Box (Found Wallets Appear Here) -->
-    <div class="result-box" id="resultBox">
-      <h4><i class="fas fa-database"></i> FOUND WALLETS APPEAR HERE</h4>
-      <div id="walletsList" class="wallets-container">
-        <div class="empty-placeholder">⟡ idle — no wallets discovered ⟡</div>
-      </div>
+    <!-- 3x3 CRYPTO ICONS GRID (neumorph outer) -->
+    <div class="crypto-grid">
+        <div class="crypto-icon-card"><i class="fab fa-bitcoin"></i><span>Bitcoin</span></div>
+        <div class="crypto-icon-card"><i class="fab fa-ethereum"></i><span>Ethereum</span></div>
+        <div class="crypto-icon-card"><i class="fab fa-litecoin-sign"></i><span>Litecoin</span></div>
+        <div class="crypto-icon-card"><i class="fab fa-dogecoin"></i><span>Dogecoin</span></div>
+        <div class="crypto-icon-card"><i class="fab fa-cardano"></i><span>Cardano</span></div>
+        <div class="crypto-icon-card"><i class="fas fa-globe"></i><span>Polkadot</span></div>
+        <div class="crypto-icon-card"><i class="fas fa-bolt"></i><span>Solana</span></div>
+        <div class="crypto-icon-card"><i class="fas fa-waveform"></i><span>Ripple</span></div>
+        <div class="crypto-icon-card"><i class="fab fa-btc"></i><span>BNB Chain</span></div>
     </div>
 
-    <!-- 3x3 Coin Grid (circular + green check) -->
-    <div class="coin-grid" id="coinGrid"></div>
-
-    <!-- Start Scan Button -->
-    <div class="btn-container">
-      <button class="start-scan" id="startScanBtn">
-        <i class="fas fa-radar"></i> START SCAN
-        <i class="fas fa-skull"></i>
-      </button>
+    <!-- TWO LARGE CONTROL BUTTONS -->
+    <div class="action-buttons">
+        <button class="btn-neo" id="startBtn"><i class="fas fa-play"></i> START ATTACK</button>
+        <button class="btn-neo" id="stopClearBtn"><i class="fas fa-skull-crossbones"></i> STOP / PURGE</button>
     </div>
-  </div>
+    <div class="footer-note">
+        ⚡ simulated brute-force audit | neumorphic security dashboard
+    </div>
 </div>
 
 <script>
-  // --------------------------------------------------------------
-  // COIN DATA: official colors + icons for 3x3 grid
-  // --------------------------------------------------------------
-  const COINS_DATA = [
-    { name: "Bitcoin", color: "#f7931a", icon: '<i class="fab fa-bitcoin"></i>' },
-    { name: "Ethereum", color: "#627eea", icon: '<i class="fab fa-ethereum"></i>' },
-    { name: "Litecoin", color: "#bfbbbb", icon: '<span style="font-weight:bold; font-size:1.7rem;">Ł</span>' },
-    { name: "BNB", color: "#f3ba2f", icon: '<span style="font-weight:800; font-size:1.3rem;">BNB</span>' },
-    { name: "Solana", color: "#14F195", icon: '<i class="fas fa-sun" style="color:#0f121e;"></i>' },
-    { name: "Tether", color: "#26A17B", icon: '<i class="fas fa-dollar-sign"></i>' },
-    { name: "Bitcoin Cash", color: "#f7a81b", icon: '<span style="font-weight:bold; font-size:1rem;">BCH</span>' },
-    { name: "Dogecoin", color: "#c2a633", icon: '<i class="fab fa-dog"></i>' },
-    { name: "TRON", color: "#ff0015", icon: '<i class="fas fa-bolt"></i>' }
-  ];
+    // ------------------- SIMULATION STATE -------------------
+    let isRunning = false;
+    let intervalId = null;
+    
+    // core stats
+    let totalAttempts = 0;
+    let totalFound = 0;
+    let lastAttemptsSnapshot = 0;    // to calculate speed per second
+    let currentSpeed = 0;
 
-  // Helper: generate realistic wallet address based on coin
-  function generateMockAddress(coinName) {
-    const prefixMap = {
-      "Bitcoin": "bc1q", "Ethereum": "0x", "Litecoin": "ltc1", "BNB": "bnb1",
-      "Solana": "Sol", "Tether": "0x", "Bitcoin Cash": "bitcoincash:", "Dogecoin": "D", "TRON": "T"
-    };
-    let prefix = prefixMap[coinName] || "addr";
-    let chars = "0123456789abcdef";
-    let len = (coinName === "Ethereum" || coinName === "Tether") ? 40 : 28;
-    let addr = "";
-    for (let i = 0; i < len; i++) addr += chars[Math.floor(Math.random() * chars.length)];
-    if (coinName === "Bitcoin") return `${prefix}${addr.slice(0, 28)}`;
-    if (coinName === "Dogecoin") return `${prefix}${addr.slice(0, 26)}`;
-    return `${prefix}${addr}`;
-  }
+    // DOM elements
+    const attemptsSpan = document.getElementById('attemptsCount');
+    const foundSpan = document.getElementById('foundCount');
+    const speedSpan = document.getElementById('speedValue');
+    const terminalContainer = document.getElementById('terminalLog');
+    const foundListContainer = document.getElementById('foundList');
 
-  // Build Coin Grid with circular icons + green checkmark under each
-  function buildCoinGrid() {
-    const gridContainer = document.getElementById("coinGrid");
-    gridContainer.innerHTML = "";
-    COINS_DATA.forEach(coin => {
-      const coinDiv = document.createElement("div");
-      coinDiv.className = "coin-item";
-      
-      const circle = document.createElement("div");
-      circle.className = "coin-circle";
-      circle.style.background = `radial-gradient(circle at 30% 28%, ${coin.color}, ${coin.color}dd)`;
-      circle.innerHTML = coin.icon;
-      
-      const checkDiv = document.createElement("div");
-      checkDiv.className = "check-mark";
-      checkDiv.innerHTML = '<i class="fas fa-check-circle"></i>';
-      
-      coinDiv.appendChild(circle);
-      coinDiv.appendChild(checkDiv);
-      gridContainer.appendChild(coinDiv);
+    // helper: update stat displays
+    function updateStatsUI() {
+        attemptsSpan.innerText = totalAttempts.toLocaleString();
+        foundSpan.innerText = totalFound;
+        speedSpan.innerText = currentSpeed;
+    }
+
+    // add log line to terminal (auto scroll)
+    function addLog(message, isError = false) {
+        const logDiv = document.createElement('div');
+        logDiv.className = 'log-line';
+        logDiv.style.color = isError ? '#ff9f7c' : '#bdd4ff';
+        const timestamp = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute:'2-digit', second:'2-digit' });
+        logDiv.innerHTML = `<span style="color:#6c86a3;">[${timestamp}]</span> ${message}`;
+        terminalContainer.appendChild(logDiv);
+        logDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        // limit lines (keep last 180)
+        while (terminalContainer.children.length > 220) {
+            terminalContainer.removeChild(terminalContainer.firstChild);
+        }
+    }
+
+    // add found wallet entry in dedicated Found box
+    function addFoundEntry(currencyName, address, passphraseOrKey) {
+        // remove placeholder if exists (first child might be empty message)
+        if (foundListContainer.children.length === 1 && foundListContainer.children[0].innerText.includes("No wallets discovered")) {
+            foundListContainer.innerHTML = '';
+        }
+        const entry = document.createElement('div');
+        entry.className = 'found-item';
+        entry.innerHTML = `
+            <div class="found-wallet">
+                <i class="fas fa-unlock-alt" style="color:#2ecc71;"></i> 
+                <strong>${currencyName}</strong> 
+                <span style="font-size:0.65rem; background:#252a30; padding:2px 8px; border-radius:40px;">WALLET</span>
+            </div>
+            <div class="found-wallet" style="font-family:monospace; font-size:0.7rem; margin-top:6px;">
+                📍 ${address.substring(0, 28)}...
+            </div>
+            <div class="found-pass">
+                🔑 passphrase: ${passphraseOrKey}
+            </div>
+        `;
+        foundListContainer.prepend(entry);   // show newest first
+        // limit to 70 entries for performance
+        while (foundListContainer.children.length > 75) {
+            foundListContainer.removeChild(foundListContainer.lastChild);
+        }
+    }
+
+    // generate random crypto wallet mock data (realistic demo)
+    const cryptoList = [
+        "Bitcoin", "Ethereum", "Litecoin", "Dogecoin", "Cardano", 
+        "Polkadot", "Solana", "Ripple (XRP)", "BNB Chain"
+    ];
+    function randomCryptoName() {
+        return cryptoList[Math.floor(Math.random() * cryptoList.length)];
+    }
+
+    function generateMockAddressAndSeed(currency) {
+        let prefix = "";
+        if (currency === "Bitcoin") prefix = "bc1q";
+        else if (currency === "Ethereum") prefix = "0x";
+        else if (currency === "Litecoin") prefix = "ltc1";
+        else if (currency === "Dogecoin") prefix = "D";
+        else prefix = "addr_";
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let addr = prefix;
+        for (let i = 0; i < 28; i++) addr += chars.charAt(Math.floor(Math.random() * chars.length));
+        // passphrase: random word + numbers
+        const seeds = ["crystal", "velvet", "phantom", "nebula", "pulse", "shadow", "quantum", "lattice", "morph"];
+        const seedWord = seeds[Math.floor(Math.random() * seeds.length)];
+        const num = Math.floor(Math.random() * 9999);
+        const passphrase = `${seedWord}${num}${Math.random().toString(36).substring(2,6)}`;
+        return { address: addr, passphrase };
+    }
+
+    // main simulation tick (called every 1 second)
+    function simulationTick() {
+        if (!isRunning) return;
+
+        // dynamic attempts per second (between 6 and 24)
+        const attemptsThisSecond = Math.floor(Math.random() * 22) + 6;   // 6-28 range
+        totalAttempts += attemptsThisSecond;
+        
+        // compute speed = attempts per second (real time)
+        currentSpeed = attemptsThisSecond;
+        // update stats UI
+        updateStatsUI();
+        
+        // add log about attempts
+        addLog(`⚡ ${attemptsThisSecond} hash/s · total attempts: ${totalAttempts.toLocaleString()} · scanning entropy...`);
+        
+        // chance to find a wallet (15-30% per tick)
+        const foundChance = Math.random();
+        if (foundChance < 0.27) {   // 27% realistic demo
+            totalFound++;
+            // generate random crypto from list (relates to grid)
+            const cryptoType = randomCryptoName();
+            const { address, passphrase } = generateMockAddressAndSeed(cryptoType);
+            // add found entry
+            addFoundEntry(cryptoType, address, passphrase);
+            // also write in terminal
+            addLog(`🎯 [FOUND] ${cryptoType} wallet recovered! (${address.substring(0,12)}...) | seed: ${passphrase.substring(0,12)}***`);
+            // update found stat UI
+            updateStatsUI();
+        } else {
+            // small chance to display brute-force progress variety
+            if (Math.random() < 0.4) {
+                addLog(`🔍 iterating keypairs ... deriving nonces [${Math.floor(Math.random()*10000)}]`);
+            }
+        }
+        
+        // update last attempts snapshot for speed consistency
+        lastAttemptsSnapshot = totalAttempts;
+    }
+
+    // ---------- RESET / FULL PURGE (stop + clear all data) ----------
+    function fullResetAndStop() {
+        if (isRunning) {
+            clearInterval(intervalId);
+            isRunning = false;
+            intervalId = null;
+        }
+        // reset core counters
+        totalAttempts = 0;
+        totalFound = 0;
+        currentSpeed = 0;
+        lastAttemptsSnapshot = 0;
+        updateStatsUI();
+        
+        // clear terminal logs but keep a clean welcome header
+        terminalContainer.innerHTML = '';
+        addLog("🛡️ session reset · system purged");
+        addLog("⚙️ neomorphic interface ready");
+        addLog("💀 waiting for START ATTACK");
+        
+        // clear Found box completely
+        foundListContainer.innerHTML = '';
+        const emptyMsg = document.createElement('div');
+        emptyMsg.style.textAlign = "center";
+        emptyMsg.style.opacity = "0.6";
+        emptyMsg.style.fontSize = "0.75rem";
+        emptyMsg.style.padding = "20px";
+        emptyMsg.innerText = "No wallets discovered yet.\nStart brute-force simulation";
+        foundListContainer.appendChild(emptyMsg);
+        
+        // enable start button style / disable any "running" constraints (button state handled separately)
+        const startBtn = document.getElementById('startBtn');
+        startBtn.disabled = false;
+        startBtn.style.opacity = '1';
+        startBtn.style.cursor = 'pointer';
+    }
+    
+    // start simulation (only if not already running)
+    function startSimulation() {
+        if (isRunning) {
+            addLog("⚠️ brute force already active! Stop before restart.", true);
+            return;
+        }
+        // if there's any previous interval, clear
+        if (intervalId) clearInterval(intervalId);
+        
+        // extra: if stats are zero and found box might have placeholder? but we keep state clean. If there is leftover entries? we keep previous data? 
+        // Usually start from current data (maybe after stop+clear we have zero state, but if we start after partial stop, data persists.
+        // However we want consistent behavior: but per spec, "Stop/Purge" clears everything, so start fresh will have zero.
+        // But start just begins from current stats, which might be >0 if user didn't purge, but anyway, we enforce logical flow.
+        // But we prevent starting while running.
+        isRunning = true;
+        intervalId = setInterval(() => {
+            simulationTick();
+        }, 1000);
+        addLog("🚀 BRUTE-FORCE ENGAGED · scanning blockchain entropy pools ...");
+        addLog("🔐 targeting wallets (simulated audit) · neumorphic shield active");
+        
+        const startBtn = document.getElementById('startBtn');
+        startBtn.disabled = true;
+        startBtn.style.opacity = '0.6';
+        startBtn.style.cursor = 'default';
+    }
+    
+    // stop + full purge (both stop and clear all logs/found/reset stats)
+    function stopAndPurge() {
+        if (isRunning) {
+            clearInterval(intervalId);
+            isRunning = false;
+            intervalId = null;
+            addLog("⛔ brute force interrupted by user command.");
+        }
+        fullResetAndStop();  // also resets numbers, terminal, found box
+        // re-enable start button visually (already done inside reset)
+        const startBtn = document.getElementById('startBtn');
+        startBtn.disabled = false;
+        startBtn.style.opacity = '1';
+        startBtn.style.cursor = 'pointer';
+        addLog("🧹 all traces purged. ready for new mission.");
+    }
+    
+    // ---- button listeners ----
+    document.getElementById('startBtn').addEventListener('click', startSimulation);
+    document.getElementById('stopClearBtn').addEventListener('click', stopAndPurge);
+    
+    // small initialization to make sure placeholder is shown properly
+    window.addEventListener('load', () => {
+        // ensure found list has placeholder if empty after reset (already)
+        if (foundListContainer.children.length === 0) {
+            const emptyMsg = document.createElement('div');
+            emptyMsg.style.textAlign = "center";
+            emptyMsg.style.opacity = "0.6";
+            emptyMsg.style.fontSize = "0.75rem";
+            emptyMsg.style.padding = "20px";
+            emptyMsg.innerText = "No wallets discovered yet.\nStart brute-force simulation";
+            foundListContainer.appendChild(emptyMsg);
+        }
+        updateStatsUI();
     });
-  }
-
-  // ========== TERMINAL AUTO-SCROLL LINES (300-400ms) ==========
-  const terminalLinesPool = [
-    "Wallet Check: energy target ten",
-    "Wallet Check: panther click lumber",
-    "Wallet Check: glory witness put",
-    "Wallet Check: trap trick erode",
-    "Wallet Check: strong liberty laundry",
-    "Wallet Check: panic sand fence bull",
-    "Wallet Check: vanish drift cipher",
-    "Wallet Check: quantum nexus edge",
-    "Blockchain sync :: block 8472034",
-    "Deep scan :: memory pool 0x7E5A"
-  ];
-  
-  const consoleWindow = document.getElementById("consoleWindow");
-  let terminalInterval = null;
-  
-  function addConsoleMessage(message) {
-    // Remove the prompt line temporary, add new line, then re-add prompt
-    const promptElem = consoleWindow.querySelector('.terminal-prompt-line');
-    if (promptElem) promptElem.remove();
-    
-    const lineDiv = document.createElement("div");
-    lineDiv.className = "console-line";
-    lineDiv.innerHTML = `> ${message}`;
-    consoleWindow.appendChild(lineDiv);
-    
-    // re-add blinking cursor prompt
-    const newPrompt = document.createElement("div");
-    newPrompt.className = "terminal-prompt-line";
-    newPrompt.innerHTML = `<i class="fas fa-circle" style="font-size: 6px; color:#2eff9e;"></i> 
-                           <span>scanning live</span>
-                           <span class="blinking-cursor"></span>`;
-    consoleWindow.appendChild(newPrompt);
-    
-    // auto scroll to bottom
-    consoleWindow.scrollTop = consoleWindow.scrollHeight;
-    
-    // keep console clean: limit total lines
-    while (consoleWindow.children.length > 140) {
-      if (consoleWindow.firstChild && !consoleWindow.firstChild.classList?.contains('terminal-prompt-line'))
-        consoleWindow.removeChild(consoleWindow.firstChild);
-      else break;
-    }
-  }
-  
-  function startTerminalStream() {
-    if (terminalInterval) clearInterval(terminalInterval);
-    terminalInterval = setInterval(() => {
-      const randomMsg = terminalLinesPool[Math.floor(Math.random() * terminalLinesPool.length)];
-      addConsoleMessage(randomMsg);
-    }, Math.floor(Math.random() * 100) + 300); // 300-400ms range
-  }
-  
-  // ========== SCANNING SIMULATION ==========
-  let scanIntervalId = null;
-  let isScanningActive = false;
-  let currentFoundCount = 0;
-  const foundSpan = document.getElementById("foundCounter");
-  const walletsContainer = document.getElementById("walletsList");
-  
-  // reset found UI (empty list, counter=0)
-  function resetFoundUI() {
-    currentFoundCount = 0;
-    foundSpan.innerText = "0";
-    walletsContainer.innerHTML = `<div class="empty-placeholder">⟡ idle — no wallets discovered ⟡</div>`;
-  }
-  
-  // add a discovered wallet to result box
-  function addFoundWallet(coinName, address) {
-    // remove placeholder if exists
-    if (walletsContainer.children.length === 1 && walletsContainer.children[0].classList?.contains("empty-placeholder")) {
-      walletsContainer.innerHTML = "";
-    }
-    const walletEntry = document.createElement("div");
-    walletEntry.className = "wallet-card";
-    const badge = document.createElement("span");
-    badge.className = "coin-badge";
-    badge.innerText = coinName;
-    const addrSpan = document.createElement("span");
-    addrSpan.className = "wallet-address";
-    const shortAddr = address.length > 32 ? address.slice(0, 18) + "..." + address.slice(-12) : address;
-    addrSpan.innerText = shortAddr;
-    walletEntry.appendChild(badge);
-    walletEntry.appendChild(addrSpan);
-    walletsContainer.appendChild(walletEntry);
-    // scroll result box to bottom
-    const resultBox = document.getElementById("resultBox");
-    resultBox.scrollTop = resultBox.scrollHeight;
-    // optional terminal feedback for realism
-    addConsoleMessage(`[ALERT] ${coinName} wallet match → ${shortAddr}`);
-  }
-  
-  function incrementFound(coinName, address) {
-    currentFoundCount++;
-    foundSpan.innerText = currentFoundCount;
-    addFoundWallet(coinName, address);
-  }
-  
-  // scanning tick: generates random wallet from COINS_DATA
-  function performScanTick() {
-    if (!isScanningActive) return;
-    const randomCoin = COINS_DATA[Math.floor(Math.random() * COINS_DATA.length)];
-    const mockAddr = generateMockAddress(randomCoin.name);
-    incrementFound(randomCoin.name, mockAddr);
-    // additional console flair
-    if (Math.random() > 0.6) {
-      addConsoleMessage(`⟡ deep pattern match: ${randomCoin.name} wallet fingerprint detected`);
-    }
-  }
-  
-  function stopScanning() {
-    if (scanIntervalId) {
-      clearInterval(scanIntervalId);
-      scanIntervalId = null;
-    }
-    isScanningActive = false;
-  }
-  
-  function startScanProcess() {
-    // stop any ongoing scan and reset
-    if (scanIntervalId) {
-      stopScanning();
-    }
-    // reset UI completely
-    resetFoundUI();
-    // activate scanning
-    isScanningActive = true;
-    addConsoleMessage("🚀 [SCAN_INIT] Engaging dark wallet scanner...");
-    addConsoleMessage("🚀 scanning 9 chains | heuristic entropy active");
-    // start interval: new wallet every ~0.9-1.3 seconds
-    scanIntervalId = setInterval(() => {
-      if (isScanningActive) {
-        performScanTick();
-      } else {
-        if (scanIntervalId) clearInterval(scanIntervalId);
-      }
-    }, 1050);
-    // extra vibe
-    setTimeout(() => {
-      if (isScanningActive) addConsoleMessage("⚡ scanning mempool | 0x7F89 :: pattern match ready");
-    }, 500);
-  }
-  
-  // ========== INITIALIZE DASHBOARD ==========
-  function init() {
-    buildCoinGrid();                // circular icons + green checkmarks
-    startTerminalStream();         // console auto lines every 300-400ms
-    // ensure initial found is zero and placeholder visible
-    resetFoundUI();
-    
-    // Attach Start Scan button listener
-    const scanBtn = document.getElementById("startScanBtn");
-    scanBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      startScanProcess();
-      // subtle haptic/button feedback
-      scanBtn.style.transform = "scale(0.96)";
-      setTimeout(() => { if(scanBtn) scanBtn.style.transform = ""; }, 130);
-    });
-  }
-  
-  // Clean intervals on page unload (good practice)
-  window.addEventListener("beforeunload", () => {
-    if (terminalInterval) clearInterval(terminalInterval);
-    if (scanIntervalId) clearInterval(scanIntervalId);
-  });
-  
-  init();
 </script>
 </body>
 </html>
