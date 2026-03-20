@@ -1,149 +1,98 @@
 <!DOCTYPE html>
-<html lang="ku" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Crash Isometric - AAA Edition</title>
+    <title>Minimalist Pixel Crash</title>
     <style>
         :root {
-            --bg-base: #020617;
-            --mult-color: #fbbf24;
-            --cyber-blue: #38bdf8;
-            /* 3D Rocket Colors */
-            --r-body-front: #f8fafc;
-            --r-body-side: #cbd5e1;
-            --r-accent-front: #ef4444;
-            --r-accent-side: #b91c1c;
+            --bg: #0a0a0a;
+            --accent: #ffffff; /* سادە و سپی */
+            --danger: #ff4d4d;
+            --grid-color: rgba(255, 255, 255, 0.05);
         }
 
         body {
-            margin: 0; background: var(--bg-base);
+            margin: 0; background: var(--bg);
             display: flex; flex-direction: column; align-items: center;
             justify-content: center; height: 100vh; overflow: hidden;
-            font-family: 'Courier New', Courier, monospace;
-            image-rendering: pixelated; /* بۆ پیکسڵ ئارتێ پاقژ */
+            font-family: 'Inter', -apple-system, sans-serif;
+            color: var(--accent);
         }
 
-        /* 1. پاشبنەمایێ Isometric Grid */
+        /* 1. Minimalist Game Screen */
         #game-screen {
-            width: 380px; height: 520px;
-            background: 
-                radial-gradient(circle at center, #1e293b 0%, #020617 100%),
-                repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 20px),
-                repeating-linear-gradient(-45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 20px);
-            border: 3px solid #334155; position: relative;
-            overflow: hidden; border-radius: 12px;
-            box-shadow: 0 0 60px rgba(0,0,0,0.9);
+            width: 380px; height: 500px;
+            background-color: var(--bg);
+            background-image: radial-gradient(var(--grid-color) 1px, transparent 1px);
+            background-size: 25px 25px; /* خالێن بچووک وێنەیەکێ پرۆفیشناڵ ددەن */
+            position: relative; overflow: hidden;
+            border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
         }
 
-        .star { position: absolute; background: white; width: 2px; height: 2px; opacity: 0.5; }
-
-        /* 2. دیزاینێ موشەکێ یێ Isometric (3D) */
+        /* 2. Minimalist Rocket (Pixel Shape) */
         #rocket-container {
             position: absolute; bottom: 60px; left: 50%;
-            transform: translateX(-50%) rotateX(60deg) rotateZ(45deg); /* Isometric Rotation */
-            transform-style: preserve-3d;
-            transition: bottom 0.1s linear;
-            z-index: 5;
+            transform: translateX(-50%); transition: bottom 0.1s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         #rocket {
-            width: 40px; height: 75px;
+            width: 30px; height: 50px;
+            background: var(--accent);
             position: relative;
-            transform-style: preserve-3d;
+            clip-path: polygon(50% 0%, 100% 30%, 100% 100%, 0% 100%, 0% 30%);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
         }
 
-        /* لایێ پێشیێ (Front Face) */
-        .r-face-front {
-            position: absolute; width: 40px; height: 75px;
-            background: var(--r-body-front);
-            border: 4px solid #000;
-            box-shadow: inset 4px 0px 0px #ffffff;
-            transform: translateZ(20px);
-        }
-
-        /* لایێ لایەنی (Side Face) */
-        .r-face-side {
-            position: absolute; width: 40px; height: 75px;
-            background: var(--r-body-side);
-            border: 4px solid #000;
-            box-shadow: inset -4px 0px 0px #94a3b8;
-            transform: rotateY(-90deg) translateZ(20px);
-        }
-
-        /* سەرێ موشەکێ (Nose Cone - Isometric) */
-        .r-face-front::before {
-            content: ""; position: absolute; top: -18px; left: -4px;
-            width: 40px; height: 18px; background: var(--r-accent-front);
-            border: 4px solid #000; box-shadow: inset 4px 0px 0px #f87171;
-        }
-        .r-face-side::before {
-            content: ""; position: absolute; top: -18px; left: -4px;
-            width: 40px; height: 18px; background: var(--r-accent-side);
-            border: 4px solid #000; box-shadow: inset -4px 0px 0px #7f1d1d;
-        }
-
-        /* پەنجەرا 3D */
-        .window {
-            position: absolute; top: 20px; left: 12px;
-            width: 14px; height: 14px; background: var(--cyber-blue);
-            border: 4px solid #000; box-shadow: inset -4px -4px 0px #0ea5e9, 0 0 10px var(--cyber-blue);
-        }
-
-        /* ئاگرێ Isometric (Animated Thrust) */
+        /* ئاگرێ سادە (Minimal Flame) */
         .thrust {
-            position: absolute; bottom: -30px; left: 50%;
-            transform: translateX(-50%); width: 20px; height: 25px;
-            background: #fbbf24; display: none;
-            box-shadow: 0 8px 0 #f97316, 0 16px 0 #ef4444;
-            animation: thrust-shake 0.1s infinite;
+            position: absolute; bottom: -15px; left: 50%;
+            transform: translateX(-50%); width: 10px; height: 15px;
+            background: var(--accent); opacity: 0.6;
+            filter: blur(4px); display: none;
+            animation: pulse 0.1s infinite;
         }
 
-        @keyframes thrust-shake { 0% { height: 22px; opacity: 0.8; } 100% { height: 32px; opacity: 1; } }
+        @keyframes pulse { 0% { opacity: 0.3; } 100% { opacity: 0.8; } }
 
-        /* 3. مڵتیپلایەر و UI یێ 3D */
+        /* 3. Modern UI */
         #multiplier {
-            position: absolute; top: 40px; width: 100%; text-align: center;
-            font-size: 4.2rem; font-weight: bold; color: var(--mult-color);
-            text-shadow: 4px 4px 0px #000, 0 0 15px rgba(251, 191, 36, 0.4);
-            z-index: 20;
+            position: absolute; top: 80px; width: 100%; text-align: center;
+            font-size: 5rem; font-weight: 200; /* دەکێ باریک و پرۆفیشناڵ */
+            letter-spacing: -3px; z-index: 10;
         }
 
         .controls {
-            width: 380px; background: #0f172a; padding: 25px;
-            border: 3px solid #334155; border-top: none; box-sizing: border-box;
-            border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+            width: 380px; padding: 30px 0;
+            display: flex; flex-direction: column; align-items: center;
         }
 
         .btn {
-            width: 100%; padding: 18px; font-size: 1.4rem; color: #020617;
-            background: var(--mult-color); border: none; font-weight: bold;
-            border-radius: 8px; cursor: pointer; text-transform: uppercase;
-            box-shadow: 0 6px 0 #b45309; transition: 0.1s;
+            width: 80%; padding: 20px; font-size: 1.1rem; font-weight: 600;
+            color: #000; background: var(--accent); border: none;
+            border-radius: 50px; cursor: pointer; transition: all 0.3s ease;
+            text-transform: uppercase; letter-spacing: 2px;
         }
 
-        .btn.cashout { background: var(--cyber-blue); box-shadow: 0 6px 0 #075985; }
-        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b45309; }
+        .btn:active { transform: scale(0.95); opacity: 0.9; }
+        .btn.cashout { background: transparent; color: var(--accent); border: 2px solid var(--accent); }
 
-        #status { margin-top: 15px; text-align: center; color: #64748b; font-weight: bold; }
+        #status { margin-top: 20px; font-size: 0.8rem; color: #666; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
     <div id="game-screen">
-        <div id="multiplier">1.00x</div>
+        <div id="multiplier">1.00</div>
         <div id="rocket-container">
-            <div id="rocket">
-                <div class="r-face-front"><div class="window"></div></div>
-                <div class="r-face-side"></div>
-                <div class="thrust" id="fire"></div>
-            </div>
+            <div id="rocket"></div>
+            <div class="thrust" id="fire"></div>
         </div>
     </div>
 
     <div class="controls">
-        <button id="actionBtn" class="btn" onclick="handleAction()">BET TON</button>
-        <div id="status">READY FOR TAKE OFF...</div>
+        <button id="actionBtn" class="btn" onclick="handleAction()">Start</button>
+        <div id="status">WAITING FOR INPUT</div>
     </div>
 
     <script>
@@ -153,24 +102,10 @@
         let crashPoint;
 
         const rocketCont = document.getElementById('rocket-container');
-        const rocketDiv = document.getElementById('rocket');
         const fire = document.getElementById('fire');
         const multEl = document.getElementById('multiplier');
         const actionBtn = document.getElementById('actionBtn');
         const statusEl = document.getElementById('status');
-        const screen = document.getElementById('game-screen');
-
-        function spawnStar() {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = Math.random() * 370 + 'px'; star.style.top = '-10px';
-            screen.appendChild(star);
-            let pos = -10;
-            let move = setInterval(() => {
-                pos += 3; star.style.top = pos + 'px';
-                if (pos > 520) { clearInterval(move); star.remove(); }
-            }, 30);
-        }
 
         function handleAction() {
             if (!isRunning) startGame();
@@ -179,43 +114,41 @@
 
         function startGame() {
             isRunning = true; multiplier = 1.00;
-            crashPoint = (Math.random() * 5 + 1.1).toFixed(2);
-            actionBtn.innerText = "CASH OUT"; actionBtn.classList.add('cashout');
-            fire.style.display = 'block'; rocketDiv.style.opacity = '1';
-            statusEl.innerText = "THE ROCKET IS CLIMBING...";
-            multEl.style.color = "var(--mult-color)";
-
-            let stars = setInterval(() => { if(!isRunning) clearInterval(stars); spawnStar(); }, 120);
+            crashPoint = (Math.random() * 4 + 1.1).toFixed(2);
+            actionBtn.innerText = "Cash Out";
+            actionBtn.classList.add('cashout');
+            fire.style.display = 'block';
+            statusEl.innerText = "ASCENDING";
+            multEl.style.color = "var(--accent)";
 
             gameLoop = setInterval(() => {
-                multiplier += 0.03;
-                multEl.innerText = multiplier.toFixed(2) + "x";
-                let yPos = Math.min((multiplier - 1) * 60, 300);
+                multiplier += 0.02;
+                multEl.innerText = multiplier.toFixed(2);
+                let yPos = Math.min((multiplier - 1) * 70, 280);
                 rocketCont.style.bottom = (60 + yPos) + 'px';
-                rocketCont.style.transform = `translateX(-50%) rotateX(60deg) rotateZ(${45 + (Math.random()-0.5)*10}deg)`;
 
                 if (multiplier >= crashPoint) endGame(true);
-            }, 80);
+            }, 70);
         }
 
         function cashOut() {
             endGame(false);
-            statusEl.innerText = "WIN! COLLECTED " + multiplier.toFixed(2) + "x";
-            rocketCont.style.transition = "bottom 1.5s ease-in";
+            statusEl.innerText = "PROFIT SECURED";
+            rocketCont.style.transition = "all 1s ease-in";
             rocketCont.style.bottom = "800px";
+            rocketCont.style.opacity = "0";
         }
 
         function endGame(isCrash) {
             clearInterval(gameLoop);
             isRunning = false;
             fire.style.display = 'none';
-            actionBtn.innerText = "RETRY";
+            actionBtn.innerText = "Try Again";
             actionBtn.classList.remove('cashout');
             if (isCrash) {
-                statusEl.innerText = "💥 CRASHED! GAME OVER.";
-                multEl.style.color = "#ef4444";
-                rocketDiv.style.opacity = "0.5";
-                rocketCont.style.transform = "translateX(-50%) scale(0.7) rotate(180deg)";
+                statusEl.innerText = "CRASHED";
+                multEl.style.color = var(--danger);
+                rocketCont.style.bottom = "60px";
             }
         }
     </script>
