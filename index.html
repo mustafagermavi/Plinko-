@@ -1,126 +1,142 @@
 <!DOCTYPE html>
-<html lang="ku">
+<html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stacker - TON Edition</title>
+    <title>TON Predictor</title>
     <style>
         body {
             margin: 0;
-            background: radial-gradient(circle, #1a1a2e 0%, #16213e 100%);
+            background-color: #0b0e11;
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
+            font-family: 'Arial', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
-        canvas {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            margin-top: 20px;
+        .chart-container {
+            width: 90%;
+            height: 200px;
+            background: #161a1e;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #2b3139;
         }
-        .score-board {
-            margin-top: 20px;
-            font-size: 24px;
+        .price-display {
+            font-size: 32px;
             font-weight: bold;
-            text-shadow: 0 0 10px #00d2ff;
+            margin: 20px 0;
+            color: #f0b90b; /* ڕەنگی زەردی کریپتۆ */
         }
-        .info {
-            font-size: 14px;
-            opacity: 0.7;
-            margin-top: 5px;
+        .buttons {
+            display: flex;
+            gap: 20px;
+            width: 90%;
         }
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .up-btn { background-color: #0ecb81; color: white; }
+        .down-btn { background-color: #f6465d; color: white; }
+        .up-btn:disabled, .down-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .timer { margin-top: 15px; font-size: 14px; color: #848e9c; }
+        .result { margin-top: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="score-board">Score: <span id="score">0</span></div>
-    <div class="info">Click to drop the block!</div>
-    <canvas id="gameCanvas" width="350" height="500"></canvas>
+    <div class="price-display">$<span id="price">5.420</span></div>
+    
+    <div class="chart-container">
+        <canvas id="miniChart" width="350" height="200"></canvas>
+    </div>
+
+    <div class="timer">کات بۆ ئەنجام: <span id="countdown">5</span> چرکە</div>
+
+    <div class="buttons">
+        <button class="up-btn" onclick="makeBet('up')">بەرزبوونەوە (UP)</button>
+        <button class="down-btn" onclick="makeBet('down')">نزمبوونەوە (DOWN)</button>
+    </div>
+
+    <div id="result" class="result"></div>
 
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const scoreElement = document.getElementById('score');
+        let currentPrice = 5.420;
+        let isWaiting = false;
+        let userBet = null;
+        let startPrice = 0;
 
-        let score = 0;
-        let speed = 2;
-        let blocks = [];
-        let currentBlock = { x: 0, y: 450, w: 150, direction: 1 };
-        let baseWidth = 150;
-
-        // دەستپێکردنی یاری بە بلۆکی یەکەم
-        blocks.push({ x: 100, y: 470, w: 150 });
-
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // کێشانی بلۆکە جێگیرەکان
-            blocks.forEach((b, index) => {
-                ctx.fillStyle = `hsl(${200 + index * 10}, 70%, 50%)`;
-                ctx.fillRect(b.x, b.y, b.w, 25);
-                
-                // ستایلی مۆدێرن بۆ بلۆکەکان
-                ctx.strokeStyle = "white";
-                ctx.lineWidth = 1;
-                ctx.strokeRect(b.x, b.y, b.w, 25);
-            });
-
-            // جوڵەی بلۆکی ئێستا
-            currentBlock.x += speed * currentBlock.direction;
-            if (currentBlock.x + currentBlock.w > canvas.width || currentBlock.x < 0) {
-                currentBlock.direction *= -1;
+        function updatePrice() {
+            let change = (Math.random() - 0.5) * 0.02;
+            currentPrice = parseFloat((currentPrice + change).toFixed(3));
+            document.getElementById('price').innerText = currentPrice;
+            
+            // ئەگەر یاریزان گرەوی کردبێت، ڕەنگی نرخەکە بگۆڕە
+            if(isWaiting) {
+                document.getElementById('price').style.color = currentPrice >= startPrice ? "#0ecb81" : "#f6465d";
+            } else {
+                document.getElementById('price').style.color = "#f0b90b";
             }
-
-            // کێشانی بلۆکی جوڵاو
-            ctx.fillStyle = "#00d2ff";
-            ctx.fillRect(currentBlock.x, currentBlock.y, currentBlock.w, 25);
-            ctx.strokeRect(currentBlock.x, currentBlock.y, currentBlock.w, 25);
-
-            requestAnimationFrame(draw);
         }
 
-        canvas.addEventListener('mousedown', () => {
-            const lastBlock = blocks[blocks.length - 1];
+        setInterval(updatePrice, 1000);
+
+        function makeBet(side) {
+            if(isWaiting) return;
             
-            // دیاریکردنی جیاوازی و بڕینی زیادەکان
-            let diff = currentBlock.x - lastBlock.x;
-            
-            if (Math.abs(diff) >= currentBlock.w) {
-                alert("Game Over! Score: " + score);
-                location.reload();
-                return;
+            userBet = side;
+            startPrice = currentPrice;
+            isWaiting = true;
+            document.querySelectorAll('button').forEach(b => b.disabled = true);
+            document.getElementById('result').innerText = "چاوەڕێی ئەنجام بە...";
+
+            let timeLeft = 5;
+            let timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('countdown').innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    checkResult();
+                }
+            }, 1000);
+        }
+
+        function checkResult() {
+            let finalPrice = currentPrice;
+            let win = false;
+
+            if(userBet === 'up' && finalPrice > startPrice) win = true;
+            if(userBet === 'down' && finalPrice < startPrice) win = true;
+
+            const resultDiv = document.getElementById('result');
+            if(win) {
+                resultDiv.innerText = "پیرۆزە! تۆ بردتەوە 🎉";
+                resultDiv.style.color = "#0ecb81";
+            } else {
+                resultDiv.innerText = "بەداخەوە! دۆڕاندت ❌";
+                resultDiv.style.color = "#f6465d";
             }
 
-            // ئەگەر بە سەرکەوتوویی کەوتە سەر بلۆکەکە
-            let newWidth = currentBlock.w - Math.abs(diff);
-            let newX = diff > 0 ? currentBlock.x : lastBlock.x;
-
-            blocks.push({ x: newX, y: currentBlock.y, w: newWidth });
-            
-            // ئامادەکردنی بلۆکی داهاتوو
-            score++;
-            scoreElement.innerText = score;
-            speed += 0.2; // خێراکردنی یاری
-            
-            currentBlock = {
-                x: 0,
-                y: currentBlock.y - 25,
-                w: newWidth,
-                direction: 1
-            };
-
-            // بەرزکردنەوەی کامێرا (وەک ئەوەی یارییەکە بچێتە سەرەوە)
-            if (blocks.length > 10) {
-                blocks.forEach(b => b.y += 25);
-                currentBlock.y += 25;
-            }
-        });
-
-        draw();
+            // گەڕانەوە بۆ دۆخی ئاسایی
+            setTimeout(() => {
+                isWaiting = false;
+                userBet = null;
+                document.querySelectorAll('button').forEach(b => b.disabled = false);
+                document.getElementById('countdown').innerText = "5";
+                resultDiv.innerText = "";
+            }, 3000);
+        }
     </script>
 </body>
 </html>
