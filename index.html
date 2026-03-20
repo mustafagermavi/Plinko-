@@ -2,244 +2,241 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum Crypto Hunter v2.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Crypto Hunter Mobile</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
-            --bg: #050505;
-            --primary: #00d4ff;
+            --bg: #000000;
+            --primary: #00f2ff;
             --success: #00ff9d;
             --danger: #ff0055;
-            --glass: rgba(10, 10, 10, 0.8);
-            --border: rgba(0, 212, 255, 0.2);
+            --card-bg: rgba(20, 20, 20, 0.9);
+            --border: rgba(0, 242, 255, 0.2);
         }
 
         body {
             background-color: var(--bg);
-            background-image: 
-                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
-            background-size: 30px 30px;
             color: #fff;
             font-family: 'JetBrains Mono', monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             margin: 0;
-        }
-
-        /* Animated Glowing Border Container */
-        .outer-glow {
-            position: relative;
-            padding: 2px;
-            border-radius: 25px;
-            background: linear-gradient(45deg, var(--primary), transparent, var(--danger), transparent);
-            background-size: 400% 400%;
-            animation: gradient-border 5s ease infinite;
-        }
-
-        @keyframes gradient-border {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .dashboard {
-            width: 480px;
-            background: var(--glass);
-            backdrop-filter: blur(60px);
-            border-radius: 23px;
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Stats Row */
-        .stats-bar {
+            padding: 0;
+            height: 100vh;
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 25px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 15px;
-        }
-
-        .stat-item { text-align: center; }
-        .stat-label { font-size: 10px; color: var(--primary); letter-spacing: 2px; }
-        .stat-value { font-size: 20px; font-weight: bold; display: block; text-shadow: 0 0 10px var(--primary); }
-
-        /* Terminal Window */
-        .terminal {
-            background: rgba(0, 0, 0, 0.9);
-            border-radius: 12px;
-            padding: 15px;
-            height: 140px;
-            font-size: 11px;
-            color: var(--success);
-            border: 1px solid var(--border);
+            flex-direction: column;
             overflow: hidden;
-            margin-bottom: 25px;
-            box-shadow: inset 0 0 20px rgba(0, 255, 157, 0.1);
+            background-image: radial-gradient(circle at 50% -20%, #1a1a2e, #000);
         }
 
-        /* 8 Icons Grid */
-        .coin-grid {
+        /* Header Area */
+        .header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 242, 255, 0.1);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 10px;
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+
+        .pulse {
+            width: 6px; height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse-kf 1.5s infinite;
+        }
+
+        @keyframes pulse-kf {
+            0% { box-shadow: 0 0 0 0px rgba(0, 242, 255, 0.7); }
+            100% { box-shadow: 0 0 0 10px rgba(0, 242, 255, 0); }
+        }
+
+        /* Main Content - Stats */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stats-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            grid-template-columns: 1fr 1fr;
+            text-align: center;
         }
 
-        .coin-box {
-            background: rgba(255, 255, 255, 0.03);
+        .stat-label { font-size: 10px; color: #666; margin-bottom: 5px; }
+        .stat-value { font-size: 18px; font-weight: bold; color: var(--primary); }
+
+        /* Terminal Style Console */
+        .console {
+            background: #050505;
             border: 1px solid var(--border);
             border-radius: 15px;
-            padding: 12px;
+            padding: 15px;
+            height: 150px;
+            font-size: 11px;
+            color: var(--success);
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0, 255, 157, 0.05);
+        }
+
+        /* 8 Icons Grid - Optimized for Mobile */
+        .grid-8 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .coin-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 5px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: 0.3s;
-            cursor: pointer;
+            gap: 8px;
+            transition: 0.2s;
         }
 
-        .coin-box:hover {
-            background: rgba(0, 212, 255, 0.1);
+        .coin-btn.active {
             border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+            background: rgba(0, 242, 255, 0.1);
         }
 
-        .coin-box svg { width: 28px; height: 28px; margin-bottom: 8px; }
+        .coin-btn svg { width: 24px; height: 24px; }
 
-        .checkbox {
-            width: 14px;
-            height: 14px;
-            accent-color: var(--primary);
-        }
-
-        /* Found Notification Popup */
-        #found-alert {
-            position: absolute;
+        /* Result Popup */
+        #popup {
+            position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%) scale(0);
-            width: 80%;
+            width: 85%;
             background: #000;
             border: 2px solid var(--success);
-            border-radius: 20px;
-            padding: 20px;
+            border-radius: 25px;
+            padding: 25px;
+            z-index: 100;
             text-align: center;
-            z-index: 10;
-            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 0 50px rgba(0, 255, 157, 0.4);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #popup.show { transform: translate(-50%, -50%) scale(1); }
+
+        /* Sticky Action Button */
+        .action-area {
+            padding: 20px;
+            background: linear-gradient(to top, #000, transparent);
         }
 
-        #found-alert.show { transform: translate(-50%, -50%) scale(1); }
-
-        .btn-hunt {
+        .launch-btn {
             width: 100%;
             padding: 18px;
-            margin-top: 25px;
-            border-radius: 15px;
+            border-radius: 50px;
             border: none;
-            background: transparent;
-            color: var(--primary);
-            border: 1px solid var(--primary);
-            font-weight: bold;
-            font-family: 'JetBrains Mono';
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-
-        .btn-hunt:hover {
             background: var(--primary);
             color: #000;
-            box-shadow: 0 0 30px var(--primary);
+            font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
         }
 
+        .launch-btn:active { transform: scale(0.95); opacity: 0.8; }
     </style>
 </head>
 <body>
 
-<div class="outer-glow">
-    <div class="dashboard">
-        
-        <div id="found-alert">
-            <h2 style="color: var(--success); margin: 0;">SUCCESS!</h2>
-            <p style="font-size: 12px; color: #aaa;">Seed Phrase Extracted</p>
-            <div style="background: #111; padding: 10px; border-radius: 10px; font-size: 10px; margin: 15px 0;">
-                alpha bravo crystal delta echo frost gold hotel india joker king lemon
-            </div>
-            <button onclick="closeAlert()" style="background: var(--success); border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer;">CLAIM</button>
+    <div class="header">
+        <div class="status-pill">
+            <div class="pulse"></div>
+            QUANTUM LINK: ACTIVE
         </div>
-
-        <div class="stats-bar">
-            <div class="stat-item">
-                <span class="stat-label">CHECKED</span>
-                <span class="stat-value" id="count">0</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">FOUND</span>
-                <span class="stat-value" id="found-count" style="color: var(--danger);">0</span>
-            </div>
-        </div>
-
-        <div class="terminal" id="term">
-            > INITIALIZING...<br>
-            > STANDBY FOR SCANNING...
-        </div>
-
-        <div class="coin-grid">
-            <div class="coin-box"><svg viewBox="0 0 32 32"><path fill="#F7931A" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M23.189 14.022c.336-2.247-1.374-3.455-3.712-4.26l.758-3.04-1.85-.461-.738 2.961c-.486-.121-.984-.236-1.48-.349l.744-2.984-1.85-.461-.758 3.038c-.403-.092-.802-.181-1.189-.275l.001-.005-2.552-.637-.492 1.976s1.373.315 1.344.334c.75.187.885.684.862 1.078l-.864 3.464c.051.013.118.032.191.061l-.193-.048-1.21 4.857c-.092.23-.326.575-.85.445.02.03-1.344-.334-1.344-.334l-.918 2.116 2.408.6c.447.112.886.228 1.319.336l-.768 3.085 1.849.461.758-3.041c.504.137 1.0.264 1.489.385l-.756 3.033 1.85.461.767-3.076c3.155.597 5.531.356 6.53-2.497.804-2.296-.04-3.621-1.698-4.485 1.206-.279 2.114-1.074 2.357-2.713zm-4.215 5.923c-.572 2.298-4.439 1.056-5.694.744l1.016-4.075c1.255.313 5.27.931 4.678 3.331zm.573-5.955c-.521 2.088-3.743 1.028-4.788.769l.922-3.698c1.045.26 4.398.745 3.866 2.929z"/></svg><input type="checkbox" class="checkbox" checked></div>
-            <div class="coin-box"><svg viewBox="0 0 32 32"><path fill="#627EEA" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" fill-opacity=".602" d="M16.498 4v8.87l7.497 3.35z"/><path fill="#FFF" d="M16.498 4L9 16.22l7.498-3.35z"/><path fill="#FFF" fill-opacity=".602" d="M16.498 21.968v6.027L24 17.616z"/><path fill="#FFF" d="M16.498 27.995v-6.028L9 17.616z"/></svg><input type="checkbox" class="checkbox" checked></div>
-            <div class="coin-box"><svg viewBox="0 0 32 32"><path fill="#26A17B" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M17.922 17.383v-.002c-.017.008-.67.318-1.922.318s-1.905-.31-1.922-.318v.002c-3.535-.172-6.139-.783-6.139-1.509 0-.726 2.604-1.337 6.139-1.509V16.4c.03.015.707.337 1.922.337s1.892-.322 1.922-.337v-2.035c3.535.172 6.139.783 6.139 1.509 0 .726-2.604 1.337-6.139 1.509m0-2.314V12.72h5.056v-2.554H9.022v2.554h5.056v2.349c-3.953.2-6.896.953-6.896 1.854 0 .901 2.943 1.654 6.896 1.854v6.347h2.844v-6.347c3.953-.2 6.896-.953 6.896-1.854 0-.901-2.943-1.654-6.896-1.854"/></svg><input type="checkbox" class="checkbox" checked></div>
-            <div class="coin-box"><svg viewBox="0 0 32 32"><path fill="#F3BA2F" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M12.116 14.404L16 10.52l3.886 3.886 2.26-2.259L16 6l-6.144 6.145 2.26 2.259z"/></svg><input type="checkbox" class="checkbox" checked></div>
-            <div class="coin-box"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#000"/><path fill="#00FFA3" d="M7.525 21.056l2.366-2.4c.36-.36.85-.563 1.36-.563h13.224c.732 0 1.09.893.562 1.41l-2.366 2.4c-.36.36-.85.563-1.36.563H8.087c-.733 0-1.091-.893-.562-1.41z"/></svg><input type="checkbox" class="checkbox" checked></div>
-            <div class="coin-box"><svg viewBox="0 0 32 32"><path fill="#0088CC" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M16 23.5l-8.5-7.5h17z"/></svg><input type="checkbox" class="checkbox" checked></div>
-            <div class="coin-box"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#E44033"/><path fill="#FFF" d="M21 10h-10v2h10v-2zm0 4h-10v2h10v-2zm0 4h-10v2h10v-2z"/></svg><input type="checkbox" class="checkbox" checked></div>
-            <div class="coin-box"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#1C1C1C"/><path fill="#FFF" d="M16 8l-8 8 8 8 8-8-8-8z"/></svg><input type="checkbox" class="checkbox" checked></div>
-        </div>
-
-        <button class="btn-hunt" onclick="startHack()">START BRUTEFORCE</button>
     </div>
-</div>
 
-<script>
-    function startHack() {
-        const term = document.getElementById('term');
-        const countEl = document.getElementById('count');
-        const foundEl = document.getElementById('found-count');
-        const alert = document.getElementById('found-alert');
-        let checked = 0;
+    <div class="main-content">
+        <div class="stats-card">
+            <div>
+                <div class="stat-label">CHECKED</div>
+                <div class="stat-value" id="count">0</div>
+            </div>
+            <div style="border-left: 1px solid var(--border);">
+                <div class="stat-label">FOUND</div>
+                <div class="stat-value" id="found-num" style="color: var(--danger);">0</div>
+            </div>
+        </div>
 
-        const interval = setInterval(() => {
-            checked += Math.floor(Math.random() * 50);
-            countEl.innerText = checked.toLocaleString();
+        <div class="console" id="term">
+            > SYSTEM READY...<br>
+            > STANDBY FOR COMMAND...
+        </div>
 
-            const hex = Math.random().toString(16).slice(2, 10).toUpperCase();
-            const p = document.createElement('div');
-            p.innerHTML = `> SCANNING: 0x${hex}... <span style="color:var(--danger)">[NULL]</span>`;
-            term.appendChild(p);
-            
-            if(term.childNodes.length > 8) term.removeChild(term.firstChild);
-            term.scrollTop = term.scrollHeight;
+        <div class="grid-8">
+            <div class="coin-btn active"><svg viewBox="0 0 32 32"><path fill="#F7931A" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M23.189 14.022c.336-2.247-1.374-3.455-3.712-4.26l.758-3.04-1.85-.461-.738 2.961c-.486-.121-.984-.236-1.48-.349l.744-2.984-1.85-.461-.758 3.038c-.403-.092-.802-.181-1.189-.275l.001-.005-2.552-.637-.492 1.976s1.373.315 1.344.334c.75.187.885.684.862 1.078l-.864 3.464c.051.013.118.032.191.061l-.193-.048-1.21 4.857c-.092.23-.326.575-.85.445.02.03-1.344-.334-1.344-.334l-.918 2.116 2.408.6c.447.112.886.228 1.319.336l-.768 3.085 1.849.461.758-3.041c.504.137 1.0.264 1.489.385l-.756 3.033 1.85.461.767-3.076c3.155.597 5.531.356 6.53-2.497.804-2.296-.04-3.621-1.698-4.485 1.206-.279 2.114-1.074 2.357-2.713zm-4.215 5.923c-.572 2.298-4.439 1.056-5.694.744l1.016-4.075c1.255.313 5.27.931 4.678 3.331zm.573-5.955c-.521 2.088-3.743 1.028-4.788.769l.922-3.698c1.045.26 4.398.745 3.866 2.929z"/></svg></div>
+            <div class="coin-btn active"><svg viewBox="0 0 32 32"><path fill="#627EEA" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" fill-opacity=".602" d="M16.498 4v8.87l7.497 3.35z"/><path fill="#FFF" d="M16.498 4L9 16.22l7.498-3.35z"/></svg></div>
+            <div class="coin-btn active"><svg viewBox="0 0 32 32"><path fill="#26A17B" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M17.922 17.383v-.002c-.017.008-.67.318-1.922.318s-1.905-.31-1.922-.318"/></svg></div>
+            <div class="coin-btn active"><svg viewBox="0 0 32 32"><path fill="#F3BA2F" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M12.116 14.404L16 10.52l3.886 3.886"/></svg></div>
+            <div class="coin-btn active"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#000"/><path fill="#00FFA3" d="M7.525 21.056l2.366-2.4c.36-.36.85-.563 1.36-.563"/></svg></div>
+            <div class="coin-btn active"><svg viewBox="0 0 32 32"><path fill="#0088CC" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M16 23.5l-8.5-7.5h17z"/></svg></div>
+            <div class="coin-btn active"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#E44033"/><path fill="#FFF" d="M21 10h-10v2h10z"/></svg></div>
+            <div class="coin-btn active"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#1C1C1C"/><path fill="#FFF" d="M16 8l-8 8 8 8 8-8-8-8z"/></svg></div>
+        </div>
+    </div>
 
-            // Trigger "Found" event after some checks
-            if (checked > 5000 && Math.random() > 0.98) {
-                clearInterval(interval);
-                foundEl.innerText = "1";
-                foundEl.style.color = "var(--success)";
-                foundEl.style.textShadow = "0 0 15px var(--success)";
-                alert.classList.add('show');
-            }
-        }, 50);
-    }
+    <div id="popup">
+        <h2 style="color: var(--success); margin-bottom: 10px;">MATCH FOUND!</h2>
+        <div style="background: #111; padding: 15px; border-radius: 12px; font-size: 11px; margin-bottom: 20px; line-height: 1.6;">
+            solar energy ocean planet mountain river forest silver golden shadow crystal light
+        </div>
+        <button onclick="document.getElementById('popup').classList.remove('show')" style="background: var(--success); border: none; padding: 10px 30px; border-radius: 10px; font-weight: bold;">CLOSE</button>
+    </div>
 
-    function closeAlert() {
-        document.getElementById('found-alert').classList.remove('show');
-    }
-</script>
+    <div class="action-area">
+        <button class="launch-btn" onclick="runMobileScan()">START SCANNING</button>
+    </div>
 
+    <script>
+        function runMobileScan() {
+            const term = document.getElementById('term');
+            const countEl = document.getElementById('count');
+            const foundEl = document.getElementById('found-num');
+            const popup = document.getElementById('popup');
+            let c = 0;
+
+            const timer = setInterval(() => {
+                c += Math.floor(Math.random() * 80);
+                countEl.innerText = c.toLocaleString();
+
+                const addr = "0x" + Math.random().toString(16).slice(2, 10).toUpperCase();
+                const div = document.createElement('div');
+                div.innerHTML = `> SCAN: ${addr} <span style="color:var(--danger)">FAIL</span>`;
+                term.appendChild(div);
+
+                if(term.childNodes.length > 8) term.removeChild(term.firstChild);
+                term.scrollTop = term.scrollHeight;
+
+                if (c > 8000 && Math.random() > 0.97) {
+                    clearInterval(timer);
+                    foundEl.innerText = "1";
+                    foundEl.style.color = "var(--success)";
+                    popup.classList.add('show');
+                }
+            }, 60);
+        }
+    </script>
 </body>
 </html>
