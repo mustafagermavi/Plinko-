@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Crypto Wallet BruteForce</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Wallet Scanner</title>
 
 <style>
 
 body{
-background:#0b0e13;
+background:#0b0f16;
 font-family:monospace;
 display:flex;
 justify-content:center;
 margin:0;
-color:white;
+color:#fff;
 }
 
 .app{
@@ -24,12 +24,12 @@ padding:12px;
 .header{
 text-align:center;
 font-size:18px;
-margin-bottom:8px;
+margin-bottom:10px;
 }
 
 .console{
-background:#0f131a;
-border:1px solid #2a2f3a;
+background:#0f141c;
+border:1px solid #2a2f38;
 border-radius:8px;
 height:240px;
 overflow:auto;
@@ -38,8 +38,8 @@ font-size:12px;
 }
 
 .line{
-color:#cfcfcf;
-margin-bottom:3px;
+margin-bottom:4px;
+color:#d0d0d0;
 }
 
 .found{
@@ -49,15 +49,14 @@ font-size:13px;
 
 .seedbox{
 margin-top:8px;
-background:#0f131a;
-border:1px solid #2a2f3a;
-border-radius:8px;
 height:70px;
+background:#0f141c;
+border:1px solid #2a2f38;
+border-radius:8px;
 display:flex;
 align-items:center;
 justify-content:center;
 color:#777;
-font-size:13px;
 }
 
 .coins{
@@ -85,7 +84,7 @@ font-weight:bold;
 }
 
 .btc{background:#f7931a;}
-.eth{background:#eeeeee;color:black;}
+.eth{background:#e5e5e5;color:black;}
 .ltc{background:#345d9d;}
 .bnb{background:#f3ba2f;color:black;}
 .sol{background:#000;}
@@ -95,8 +94,8 @@ font-weight:bold;
 .trx{background:#e50914;}
 
 .check{
-color:#00ff9d;
 margin-top:6px;
+color:#00ff9d;
 font-size:16px;
 }
 
@@ -104,81 +103,45 @@ button{
 margin-top:20px;
 width:100%;
 padding:12px;
+background:#00ff9d;
 border:none;
 border-radius:8px;
-background:#00ff9d;
 font-weight:bold;
 font-size:15px;
 }
 
 </style>
-
 </head>
 
 <body>
 
 <div class="app">
 
-<div class="header">Crypto Wallet BruteForce</div>
+<div class="header">Crypto Wallet Scanner</div>
 
 <div class="console" id="console"></div>
 
 <div class="found">Found: <span id="found">0</span></div>
 
-<div class="seedbox">
-Found Seed Phrases Appear Here
-</div>
+<div class="seedbox">Found Wallets Appear Here</div>
 
 <div class="coins">
 
-<div class="coin">
-<div class="icon btc">₿</div>
-<div class="check">✓</div>
-</div>
+<div class="coin"><div class="icon btc">₿</div><div class="check">✓</div></div>
+<div class="coin"><div class="icon eth">Ξ</div><div class="check">✓</div></div>
+<div class="coin"><div class="icon ltc">Ł</div><div class="check">✓</div></div>
 
-<div class="coin">
-<div class="icon eth">Ξ</div>
-<div class="check">✓</div>
-</div>
+<div class="coin"><div class="icon bnb">B</div><div class="check">✓</div></div>
+<div class="coin"><div class="icon sol">S</div><div class="check">✓</div></div>
+<div class="coin"><div class="icon usdt">T</div><div class="check">✓</div></div>
 
-<div class="coin">
-<div class="icon ltc">Ł</div>
-<div class="check">✓</div>
-</div>
-
-<div class="coin">
-<div class="icon bnb">B</div>
-<div class="check">✓</div>
-</div>
-
-<div class="coin">
-<div class="icon sol">S</div>
-<div class="check">✓</div>
-</div>
-
-<div class="coin">
-<div class="icon usdt">T</div>
-<div class="check">✓</div>
-</div>
-
-<div class="coin">
-<div class="icon bch">₿</div>
-<div class="check">✓</div>
-</div>
-
-<div class="coin">
-<div class="icon doge">Ð</div>
-<div class="check">✓</div>
-</div>
-
-<div class="coin">
-<div class="icon trx">T</div>
-<div class="check">✓</div>
-</div>
+<div class="coin"><div class="icon bch">₿</div><div class="check">✓</div></div>
+<div class="coin"><div class="icon doge">Ð</div><div class="check">✓</div></div>
+<div class="coin"><div class="icon trx">T</div><div class="check">✓</div></div>
 
 </div>
 
-<button onclick="start()">Start Scan</button>
+<button onclick="startScan()">Start Scan</button>
 
 </div>
 
@@ -187,8 +150,8 @@ Found Seed Phrases Appear Here
 const words=[
 "panther click lumber",
 "energy target ten",
-"glory witness put",
-"trap trick erode",
+"glory witness put drop",
+"trap trick erode jelly",
 "strong liberty laundry",
 "knock craft stay icon",
 "hill feel leave fat",
@@ -200,30 +163,29 @@ const words=[
 "panic sand fence bull"
 ]
 
-function start(){
+function startScan(){
 
-let consoleBox=document.getElementById("console")
+const consoleBox=document.getElementById("console")
 
 setInterval(()=>{
 
-let text="Wallet Check: "+words[Math.floor(Math.random()*words.length)]
+let phrase=words[Math.floor(Math.random()*words.length)]
 
-let div=document.createElement("div")
+let line=document.createElement("div")
 
-div.className="line"
+line.className="line"
 
-div.textContent=text
+line.textContent="Wallet Check: "+phrase
 
-consoleBox.appendChild(div)
+consoleBox.appendChild(line)
 
 consoleBox.scrollTop=consoleBox.scrollHeight
 
-},400)
+},300)
 
 }
 
 </script>
 
 </body>
-
 </html>
