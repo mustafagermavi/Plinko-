@@ -2,198 +2,255 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TON Live Predictor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TON Predictor Pro</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg: #0b0e11;
-            --card: #1e2329;
+            --bg: #080a0c;
+            --card: #12161a;
+            --accent: #00d2ff;
             --green: #0ecb81;
             --red: #f6465d;
-            --yellow: #f0b90b;
+            --text: #ffffff;
+            --subtext: #848e9c;
         }
+
         body {
             margin: 0;
+            padding: 15px;
             background-color: var(--bg);
-            color: white;
-            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
+            gap: 15px;
+            user-select: none;
         }
-        .container {
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-        }
-        .price-display {
-            font-size: 42px;
-            font-weight: 800;
-            margin-bottom: 10px;
-            font-family: monospace;
-            color: var(--yellow);
-            transition: 0.2s;
-        }
-        /* ستایلی Bento Grid بۆ گرافەکە */
-        .chart-box {
-            background: var(--card);
-            border-radius: 20px;
-            padding: 10px;
-            border: 1px solid #2b3139;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin-bottom: 20px;
-            position: relative;
-        }
-        canvas {
-            width: 100%;
-            height: 150px;
-            display: block;
-        }
-        .controls {
+
+        /* Bento Grid Layout */
+        .bento-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-gap: 12px;
         }
+
+        .card {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* بەشی نرخ و گراف - Full Width */
+        .hero-card {
+            grid-column: span 2;
+            text-align: center;
+        }
+
+        .price-text {
+            font-size: 36px;
+            font-weight: 800;
+            font-family: monospace;
+            color: #f0b90b;
+            margin: 10px 0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 140px;
+            margin-top: 10px;
+        }
+
+        /* بەشی کۆنتڕۆڵ و کات */
+        .stat-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .timer-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        /* دوگمەکان */
+        .action-card {
+            grid-column: span 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
         button {
             padding: 18px;
             border: none;
             border-radius: 15px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: white;
             cursor: pointer;
-            transition: transform 0.1s, opacity 0.3s;
+            transition: 0.2s;
         }
-        .up { background: var(--green); box-shadow: 0 4px 15px rgba(14, 203, 129, 0.3); }
-        .down { background: var(--red); box-shadow: 0 4px 15px rgba(246, 70, 93, 0.3); }
-        button:active { transform: scale(0.95); }
-        button:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        .status-bar {
-            margin-top: 15px;
+        .btn-up { background: var(--green); box-shadow: 0 4px 15px rgba(14, 203, 129, 0.2); }
+        .btn-down { background: var(--red); box-shadow: 0 4px 15px rgba(246, 70, 93, 0.2); }
+        button:active { transform: scale(0.95); }
+        button:disabled { opacity: 0.3; }
+
+        /* Leaderboard Section */
+        .leaderboard-card {
+            grid-column: span 2;
+        }
+
+        .leader-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
             font-size: 14px;
-            color: #848e9c;
-            height: 20px;
+        }
+
+        .leader-name { color: var(--subtext); }
+        .leader-score { color: var(--accent); font-weight: bold; }
+
+        .user-tag {
+            font-size: 12px;
+            color: var(--accent);
+            background: rgba(0, 210, 255, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="price-display" id="price">5.4200</div>
-    
-    <div class="chart-box">
-        <canvas id="chart"></canvas>
+    <div style="text-align: center;">
+        <span class="user-tag" id="userName">User: Guest</span>
     </div>
 
-    <div class="controls">
-        <button class="up" id="upBtn" onclick="bet('up')">UP ▲</button>
-        <button class="down" id="downBtn" onclick="bet('down')">DOWN ▼</button>
+    <div class="bento-container">
+        <div class="card hero-card">
+            <div style="font-size: 14px; color: var(--subtext);">TON/USDT Live</div>
+            <div class="price-text" id="price">5.4200</div>
+            <canvas id="liveChart"></canvas>
+        </div>
+
+        <div class="card stat-card">
+            <div class="timer-circle" id="timer">5</div>
+            <div style="font-size: 11px; margin-top: 8px; color: var(--subtext);">چرکە بۆ دەرەنجام</div>
+        </div>
+
+        <div class="card stat-card">
+            <div style="font-size: 20px; font-weight: bold; color: #f0b90b;">1,250</div>
+            <div style="font-size: 11px; color: var(--subtext);">خاڵەکانی تۆ</div>
+        </div>
+
+        <div class="action-card">
+            <button class="btn-up" id="upBtn" onclick="startPrediction('up')">UP ▲</button>
+            <button class="btn-down" id="downBtn" onclick="startPrediction('down')">DOWN ▼</button>
+        </div>
+
+        <div class="card leaderboard-card">
+            <div style="font-size: 15px; font-weight: bold; margin-bottom: 10px;">🏆 باشترینەکانی ئەمڕۆ</div>
+            <div id="leaderboardList">
+                <div class="leader-item"><span class="leader-name">1. Mustafa (You)</span><span class="leader-score">1250 PT</span></div>
+                <div class="leader-item"><span class="leader-name">2. Ahmed</span><span class="leader-score">1120 PT</span></div>
+                <div class="leader-item"><span class="leader-name">3. Karwan</span><span class="leader-score">980 PT</span></div>
+            </div>
+        </div>
     </div>
 
-    <div id="status" class="status-bar">چاوەڕێی پێشبینی تۆین...</div>
-</div>
-
-<script>
-    const canvas = document.getElementById('chart');
-    const ctx = canvas.getContext('2d');
-    const priceEl = document.getElementById('price');
-    const statusEl = document.getElementById('status');
-    
-    let prices = Array(50).fill(5.4200);
-    let currentPrice = 5.4200;
-    let isPlaying = false;
-    let entryPrice = 0;
-
-    // ڕێکخستنی قەبارەی کانڤاس
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-
-    function updatePrice() {
-        const change = (Math.random() - 0.5) * 0.005;
-        currentPrice = parseFloat((currentPrice + change).toFixed(4));
-        prices.push(currentPrice);
-        prices.shift();
-        
-        priceEl.innerText = currentPrice.toFixed(4);
-        drawChart();
-
-        if (isPlaying) {
-            priceEl.style.color = currentPrice >= entryPrice ? "#0ecb81" : "#f6465d";
-        } else {
-            priceEl.style.color = "#f0b90b";
+    <script>
+        // Telegram WebApp Setup
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        if(tg.initDataUnsafe?.user) {
+            document.getElementById('userName').innerText = "User: " + tg.initDataUnsafe.user.first_name;
         }
-    }
 
-    function drawChart() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.beginPath();
-        ctx.strokeStyle = isPlaying ? (currentPrice >= entryPrice ? "#0ecb81" : "#f6465d") : "#f0b90b";
-        ctx.lineWidth = 3;
-        ctx.lineJoin = "round";
+        // Logic ی یارییەکە
+        const canvas = document.getElementById('liveChart');
+        const ctx = canvas.getContext('2d');
+        let prices = Array(40).fill(5.4200);
+        let currentPrice = 5.4200;
+        let isPlaying = false;
+        let entryPrice = 0;
 
-        const min = Math.min(...prices);
-        const max = Math.max(...prices);
-        const range = max - min;
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
 
-        prices.forEach((p, i) => {
-            const x = (i / (prices.length - 1)) * canvas.width;
-            const y = canvas.height - ((p - min) / range) * canvas.height;
-            if (i === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-        });
+        function updatePrice() {
+            let change = (Math.random() - 0.5) * 0.006;
+            currentPrice = parseFloat((currentPrice + change).toFixed(4));
+            prices.push(currentPrice);
+            prices.shift();
+            
+            document.getElementById('price').innerText = currentPrice.toFixed(4);
+            drawChart();
+        }
 
-        ctx.stroke();
-        
-        // دروستکردنی سێبەر (Gradient) لە ژێر هێڵەکە
-        ctx.lineTo(canvas.width, canvas.height);
-        ctx.lineTo(0, canvas.height);
-        const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        grad.addColorStop(0, ctx.strokeStyle + "33");
-        grad.addColorStop(1, "transparent");
-        ctx.fillStyle = grad;
-        ctx.fill();
-    }
+        function drawChart() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = isPlaying ? (currentPrice >= entryPrice ? "#0ecb81" : "#f6465d") : "#00d2ff";
+            
+            const min = Math.min(...prices);
+            const max = Math.max(...prices);
+            
+            prices.forEach((p, i) => {
+                let x = (i / (prices.length - 1)) * canvas.width;
+                let y = canvas.height - ((p - min) / (max - min)) * canvas.height;
+                if(i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+        }
 
-    function bet(type) {
-        if (isPlaying) return;
-        isPlaying = true;
-        entryPrice = currentPrice;
-        document.getElementById('upBtn').disabled = true;
-        document.getElementById('downBtn').disabled = true;
-        
-        let seconds = 5;
-        statusEl.innerText = `نرخی چوونە ژوورەوە: ${entryPrice} | کات: ${seconds}s`;
+        function startPrediction(type) {
+            if(isPlaying) return;
+            isPlaying = true;
+            entryPrice = currentPrice;
+            document.getElementById('upBtn').disabled = true;
+            document.getElementById('downBtn').disabled = true;
 
-        const timer = setInterval(() => {
-            seconds--;
-            statusEl.innerText = `نرخی چوونە ژوورەوە: ${entryPrice} | کات: ${seconds}s`;
-            if (seconds <= 0) {
-                clearInterval(timer);
-                finishBet(type);
-            }
-        }, 1000);
-    }
+            let count = 5;
+            let timer = setInterval(() => {
+                count--;
+                document.getElementById('timer').innerText = count;
+                if(count <= 0) {
+                    clearInterval(timer);
+                    checkResult(type);
+                }
+            }, 1000);
+        }
 
-    function finishBet(type) {
-        const win = (type === 'up' && currentPrice > entryPrice) || (type === 'down' && currentPrice < entryPrice);
-        statusEl.innerText = win ? "🎉 پیرۆزە! بردتەوە" : "❌ بەداخەوە! دۆڕاندت";
-        statusEl.style.color = win ? "#0ecb81" : "#f6465d";
+        function checkResult(type) {
+            let win = (type === 'up' && currentPrice > entryPrice) || (type === 'down' && currentPrice < entryPrice);
+            tg.HapticFeedback.notificationOccurred(win ? 'success' : 'error');
+            
+            alert(win ? "پیرۆزە! بردتەوە 🎉" : "بەداخەوە! دۆڕاندت ❌");
 
-        setTimeout(() => {
             isPlaying = false;
-            statusEl.innerText = "چاوەڕێی پێشبینی تۆین...";
-            statusEl.style.color = "#848e9c";
+            document.getElementById('timer').innerText = "5";
             document.getElementById('upBtn').disabled = false;
             document.getElementById('downBtn').disabled = false;
-        }, 3000);
-    }
+        }
 
-    setInterval(updatePrice, 100); // نوێکردنەوەی خێرا بۆ هەستی Live
-</script>
-
+        setInterval(updatePrice, 150);
+    </script>
 </body>
 </html>
