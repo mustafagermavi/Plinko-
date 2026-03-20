@@ -1,417 +1,584 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Neumorphic Terminal | Real-time Wallet Scanner</title>
-    <!-- Google Fonts: monospace + clean UI -->
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:opsz,wght@14..32,400;14..32,500&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Crypto Wallet BruteForce | Scanner</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            background: #1e2124;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Inter', sans-serif;
-            padding: 1.5rem;
-        }
+    body {
+      background: radial-gradient(circle at 20% 30%, #0b0e1a, #03050b);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Inter', 'Segoe UI', 'Courier New', monospace;
+      padding: 16px;
+    }
 
-        /* main container – subtle neumorphic wrapper */
-        .terminal-container {
-            max-width: 800px;
-            width: 100%;
-            background: #1e2124;
-            border-radius: 2rem;
-            padding: 1.5rem;
-            box-shadow: -10px -10px 20px rgba(0, 0, 0, 0.5),
-                        10px 10px 20px rgba(255, 255, 255, 0.05);
-        }
+    /* main app card */
+    .scanner-card {
+      max-width: 360px;
+      width: 100%;
+      background: rgba(12, 18, 28, 0.92);
+      backdrop-filter: blur(2px);
+      border-radius: 44px;
+      padding: 20px 18px 28px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 255, 255, 0.12), 0 0 12px rgba(0, 255, 255, 0.2);
+      transition: all 0.2s ease;
+      border: 1px solid rgba(0, 255, 255, 0.25);
+    }
 
-        /* header with label */
-        .terminal-header {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            margin-bottom: 1.25rem;
-            gap: 0.75rem;
-        }
-        .title {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            font-weight: 500;
-            color: #cbd5e6;
-            letter-spacing: 0.3px;
-        }
-        .title i {
-            font-size: 1.3rem;
-            color: #6c8eff;
-        }
-        .badge {
-            background: #2a2e33;
-            padding: 0.25rem 0.9rem;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            color: #9aa9c4;
-            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.3), inset -1px -1px 1px rgba(255,255,255,0.02);
-        }
+    /* hacker header */
+    .app-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00ffe1, #2aff9e);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 6px rgba(0, 255, 200, 0.3);
+      letter-spacing: -0.3px;
+      word-break: break-word;
+      font-family: 'Courier New', monospace;
+      margin-bottom: 6px;
+    }
 
-        /* INSET NEUMORPHIC TERMINAL BOX (carved in effect) */
-        .terminal-inset {
-            background: #1e2124;
-            border-radius: 28px;
-            box-shadow: inset 6px 6px 12px rgba(0, 0, 0, 0.6),
-                        inset -6px -6px 12px rgba(255, 255, 255, 0.04);
-            padding: 1.2rem 1rem;
-            font-family: 'Fira Code', 'Courier New', monospace;
-            font-size: 0.8rem;
-            line-height: 1.5;
-            min-height: 380px;
-            display: flex;
-            flex-direction: column;
-        }
+    .sub-glow {
+      font-size: 0.7rem;
+      color: #6c86a3;
+      letter-spacing: 1px;
+      margin-top: -4px;
+      border-left: 2px solid #2aff9e;
+      padding-left: 8px;
+    }
 
-        /* scrollable log area */
-        .terminal-log {
-            flex: 1;
-            overflow-y: auto;
-            max-height: 340px;
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-        }
+    /* counters row */
+    .counter-panel {
+      display: flex;
+      justify-content: space-between;
+      background: #00000055;
+      backdrop-filter: blur(4px);
+      border-radius: 40px;
+      padding: 10px 20px;
+      margin: 16px 0 12px 0;
+      border: 1px solid #1f3a4b;
+    }
 
-        /* each log line – monospace, subtle grey */
-        .log-line {
-            font-family: 'Fira Code', 'Courier New', monospace;
-            font-size: 0.75rem;
-            padding: 0.3rem 0.2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-            color: #b0bedb;  /* subtle grey-blue */
-            word-break: break-word;
-            white-space: pre-wrap;
-        }
+    .counter-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-        /* highlight FAIL and SUCCESS */
-        .log-line .highlight-fail {
-            color: #ff7b72;
-            font-weight: 600;
-            text-shadow: 0 0 2px rgba(255,80,80,0.2);
-            background: rgba(255,70,70,0.08);
-            padding: 0 2px;
-            border-radius: 6px;
-        }
-        .log-line .highlight-success {
-            color: #7ee787;
-            font-weight: 600;
-            text-shadow: 0 0 2px rgba(100,255,100,0.2);
-            background: rgba(70,255,70,0.05);
-            padding: 0 2px;
-            border-radius: 6px;
-        }
+    .counter-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: #8aaec0;
+      letter-spacing: 1px;
+    }
 
-        /* custom scrollbar – minimal */
-        .terminal-log::-webkit-scrollbar {
-            width: 4px;
-        }
-        .terminal-log::-webkit-scrollbar-track {
-            background: #2a2e33;
-            border-radius: 8px;
-        }
-        .terminal-log::-webkit-scrollbar-thumb {
-            background: #5c6a82;
-            border-radius: 8px;
-        }
+    .counter-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      font-family: monospace;
+      color: #00f7d0;
+      text-shadow: 0 0 5px #00ccaa;
+      line-height: 1;
+    }
 
-        /* button row – neumorphic buttons */
-        .button-group {
-            display: flex;
-            gap: 1.2rem;
-            margin-top: 1.8rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .neo-btn {
-            background: #1e2124;
-            border: none;
-            padding: 0.75rem 1.6rem;
-            border-radius: 60px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-            color: #dce5f5;
-            cursor: pointer;
-            transition: all 0.12s ease;
-            box-shadow: -5px -5px 12px rgba(0, 0, 0, 0.5),
-                        5px 5px 12px rgba(255, 255, 255, 0.05);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .neo-btn:active {
-            transform: scale(0.97);
-            box-shadow: -2px -2px 6px rgba(0, 0, 0, 0.6),
-                        2px 2px 6px rgba(255, 255, 255, 0.03);
-        }
-        .neo-btn.stop-btn {
-            color: #ffa28b;
-        }
-        .status-indicator {
-            font-size: 0.7rem;
-            background: #2a2e33;
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
-            color: #a6c1ff;
-            font-family: monospace;
-        }
-        @media (max-width: 550px) {
-            .terminal-container { padding: 1rem; }
-            .terminal-inset { padding: 0.9rem; }
-            .log-line { font-size: 0.7rem; }
-            .neo-btn { padding: 0.6rem 1.2rem; font-size: 0.75rem; }
-        }
-    </style>
-    <!-- Font Awesome for icons (optional but nice) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    /* terminal console */
+    .terminal {
+      background: #03090f;
+      border-radius: 24px;
+      padding: 12px 8px;
+      height: 210px;
+      overflow-y: auto;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 0.72rem;
+      border: 1px solid #2c4f5e;
+      box-shadow: inset 0 0 12px #00000055, 0 4px 12px rgba(0,0,0,0.3);
+      margin: 12px 0 12px 0;
+    }
+
+    .terminal-line {
+      color: #6effb0;
+      padding: 5px 6px;
+      border-left: 2px solid #0affb0;
+      margin-bottom: 4px;
+      background: #0a121c60;
+      font-weight: 500;
+      white-space: pre-wrap;
+      word-break: break-all;
+      letter-spacing: 0.3px;
+    }
+
+    .terminal::-webkit-scrollbar {
+      width: 4px;
+    }
+    .terminal::-webkit-scrollbar-track {
+      background: #07121c;
+      border-radius: 8px;
+    }
+    .terminal::-webkit-scrollbar-thumb {
+      background: #1affb2;
+      border-radius: 8px;
+    }
+
+    /* found row */
+    .found-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      background: #00000044;
+      border-radius: 32px;
+      padding: 6px 16px;
+      margin: 8px 0 12px 0;
+    }
+
+    .found-text {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #ffb347;
+      letter-spacing: 1px;
+    }
+
+    .found-number {
+      font-size: 1.8rem;
+      font-weight: 800;
+      font-family: monospace;
+      color: #ffb347;
+      text-shadow: 0 0 4px #ff8c00;
+    }
+
+    /* random result panel (gray box) */
+    .result-panel {
+      background: #1f2a2f;
+      border-radius: 28px;
+      padding: 14px 12px;
+      margin: 8px 0 20px 0;
+      text-align: center;
+      font-family: monospace;
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: #dddddd;
+      border: 1px solid #44555e;
+      box-shadow: inset 0 1px 2px #00000033, 0 4px 8px rgba(0,0,0,0.2);
+      transition: all 0.15s ease;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      word-break: break-word;
+    }
+
+    /* crypto grid 3x3 */
+    .crypto-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px 8px;
+      justify-items: center;
+      margin: 18px 0 24px;
+    }
+
+    .coin-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .coin-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 2px 3px black;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(0, 255, 255, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,240,0.2), rgba(0,0,0,0.2));
+    }
+
+    .coin-icon:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 12px cyan;
+    }
+
+    .checkmark {
+      margin-top: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #3c8eff;
+      background: #0f1a24;
+      width: 28px;
+      height: 28px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 2px cyan;
+      backdrop-filter: blur(2px);
+    }
+
+    /* button row */
+    .button-group {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 12px 0;
+      font-weight: bold;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 60px;
+      background: #1f2a2f;
+      color: white;
+      font-family: monospace;
+      font-weight: 800;
+      letter-spacing: 1px;
+      transition: 0.2s ease;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    }
+
+    .start-btn {
+      background: #0f6b3a;
+      border-bottom: 3px solid #2effa8;
+      color: #e2ffec;
+    }
+
+    .start-btn:active {
+      transform: scale(0.96);
+      background: #0a552f;
+    }
+
+    .stop-btn {
+      background: #6b2e2e;
+      border-bottom: 3px solid #ff6a6a;
+      color: #ffcfcf;
+    }
+
+    .stop-btn:active {
+      transform: scale(0.96);
+      background: #551f1f;
+    }
+
+    .action-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* extra glow and spacing */
+    .terminal-line:last-child {
+      margin-bottom: 0;
+    }
+
+    hr {
+      border-color: #2a4b55;
+      margin: 12px 0;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.8; text-shadow: 0 0 0 cyan;}
+      100% { opacity: 1; text-shadow: 0 0 2px cyan;}
+    }
+
+    .counter-value, .found-number {
+      animation: pulse 1.8s infinite;
+    }
+  </style>
 </head>
 <body>
-<div class="terminal-container">
-    <div class="terminal-header">
-        <div class="title">
-            <i class="fas fa-terminal"></i>
-            <span>REALTIME WALLET SCANNER</span>
-        </div>
-        <div class="badge">
-            <i class="fas fa-microchip"></i> BIP39 · 80-100ms
-        </div>
-    </div>
+<div class="scanner-card">
+  <div class="app-header">
+    <h1>Crypto Wallet BruteForce</h1>
+    <div class="sub-glow">// ACTIVE SCAN ENGINE v2.3</div>
+  </div>
 
-    <!-- Inset Neumorphic Terminal Box (carved effect) -->
-    <div class="terminal-inset">
-        <div class="terminal-log" id="terminalLog">
-            <!-- initial messages, will be overwritten after start -->
-            <div class="log-line">[system] terminal ready — press START</div>
-            <div class="log-line">[info] real‑time wallet entropy scan</div>
-            <div class="log-line">[ready] max 15 lines, auto‑scroll enabled</div>
-        </div>
+  <!-- Checked counter inline as card -->
+  <div class="counter-panel">
+    <div class="counter-item">
+      <span class="counter-label">WALLETS SCANNED</span>
+      <span class="counter-value" id="checkedCountDisplay">0</span>
     </div>
+    <div class="counter-item">
+      <span class="counter-label">STATUS</span>
+      <span class="counter-value" style="font-size:1rem; color:#40ffb0;">● READY</span>
+    </div>
+  </div>
 
-    <div class="button-group">
-        <button class="neo-btn" id="startBtn"><i class="fas fa-play"></i> START SCAN</button>
-        <button class="neo-btn stop-btn" id="stopBtn"><i class="fas fa-stop"></i> STOP & CLEAR</button>
-    </div>
-    <div style="text-align: center; margin-top: 0.8rem;">
-        <span class="status-indicator" id="liveStatus">⚫ INACTIVE</span>
-    </div>
+  <!-- Terminal console box -->
+  <div class="terminal" id="terminalConsole">
+    <div class="terminal-line">> system_ready [wallet_bruteforce]</div>
+    <div class="terminal-line">> waiting for scan signal...</div>
+  </div>
+
+  <!-- Found counter row -->
+  <div class="found-row">
+    <span class="found-text">🔍 FOUND WALLETS</span>
+    <span class="found-number" id="foundCountDisplay">0</span>
+  </div>
+
+  <!-- Random result panel (gray) -->
+  <div class="result-panel" id="resultPanel">
+    ⚡ idle | no balance captured
+  </div>
+
+  <!-- Crypto icon grid with blue check marks -->
+  <div class="crypto-grid">
+    <!-- Bitcoin -->
+    <div class="coin-item"><div class="coin-icon" style="background: #F7931A;">₿</div><div class="checkmark">✓</div></div>
+    <!-- Ethereum -->
+    <div class="coin-item"><div class="coin-icon" style="background: #627EEA;">Ξ</div><div class="checkmark">✓</div></div>
+    <!-- Litecoin -->
+    <div class="coin-item"><div class="coin-icon" style="background: #345D9D;">Ł</div><div class="checkmark">✓</div></div>
+    <!-- BNB -->
+    <div class="coin-item"><div class="coin-icon" style="background: #F3BA2F;">BNB</div><div class="checkmark">✓</div></div>
+    <!-- Solana -->
+    <div class="coin-item"><div class="coin-icon" style="background: #9945FF;">SOL</div><div class="checkmark">✓</div></div>
+    <!-- Tether -->
+    <div class="coin-item"><div class="coin-icon" style="background: #26A17B;">₮</div><div class="checkmark">✓</div></div>
+    <!-- Bitcoin Cash -->
+    <div class="coin-item"><div class="coin-icon" style="background: #8DC351;">BCH</div><div class="checkmark">✓</div></div>
+    <!-- Dogecoin -->
+    <div class="coin-item"><div class="coin-icon" style="background: #C2A633;">Ð</div><div class="checkmark">✓</div></div>
+    <!-- TRON -->
+    <div class="coin-item"><div class="coin-icon" style="background: #FF0010;">TRX</div><div class="checkmark">✓</div></div>
+  </div>
+
+  <!-- control buttons -->
+  <div class="button-group">
+    <button class="action-btn start-btn" id="startScanBtn">▶ START</button>
+    <button class="action-btn stop-btn" id="stopScanBtn">■ STOP</button>
+  </div>
 </div>
 
 <script>
-    // ----------------------------------------------
-    // 1. BIP39 wordlist (subset of 200 common words)
-    // ----------------------------------------------
-    const BIP39_SUBSET = [
-        "abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse",
-        "access", "accident", "account", "accuse", "achieve", "acid", "acoustic", "acquire", "across", "act",
-        "action", "actor", "actress", "actual", "adapt", "add", "addict", "address", "adjust", "admit",
-        "adult", "advance", "advice", "aerobic", "affair", "afford", "afraid", "africa", "after", "again",
-        "age", "agent", "agree", "ahead", "aim", "air", "airport", "aisle", "alarm", "album", "alcohol",
-        "alert", "alien", "all", "alley", "allow", "almost", "alone", "alpha", "already", "also",
-        "alter", "always", "amateur", "amazing", "among", "amount", "amused", "analyst", "anchor", "ancient",
-        "anger", "angle", "angry", "animal", "ankle", "announce", "annual", "another", "answer", "antenna",
-        "antique", "anxiety", "any", "apart", "apology", "appear", "apple", "approve", "april", "arch",
-        "arctic", "area", "arena", "argue", "arm", "armed", "armor", "army", "around", "arrange",
-        "arrest", "arrive", "arrow", "art", "artefact", "artist", "artwork", "ask", "aspect", "assault",
-        "asset", "assist", "assume", "asthma", "athlete", "atom", "attack", "attend", "attitude", "attract",
-        "auction", "audit", "august", "aunt", "author", "auto", "autumn", "average", "avocado", "avoid",
-        "awake", "aware", "away", "awesome", "awful", "awkward", "axis", "baby", "bachelor", "bacon",
-        "badge", "bag", "balance", "balcony", "ball", "bamboo", "banana", "banner", "bar", "barely",
-        "bargain", "barrel", "base", "basic", "basket", "battle", "beach", "bean", "beauty", "because",
-        "become", "beef", "before", "begin", "behave", "behind", "believe", "below", "belt", "bench",
-        "benefit", "best", "betray", "better", "between", "beyond", "bicycle", "bid", "bike", "bind"
-    ];  // enough to simulate randomness
+  // --------------------------
+  //  HACKER-STYLE WALLET SCANNER
+  // --------------------------
+  // Console predefined lines (exactly as required)
+  const walletLines = [
+    "Wallet Check: fluid busy gate deny",
+    "Wallet Check: pumpkin fossil radar",
+    "Wallet Check: puppy analyst category",
+    "Wallet Check: animal couch universe",
+    "Wallet Check: radar cream limit soul",
+    "Wallet Check: anxiety economy rescue",
+    "Wallet Check: retreat labor antenna"
+  ];
 
-    // helper: get N random BIP39 words (12 words for mnemonic)
-    function getRandomMnemonic(wordCount = 12) {
-        const shuffled = [...BIP39_SUBSET];
-        // Fisher-Yates not needed, just pick random indices
-        const words = [];
-        for (let i = 0; i < wordCount; i++) {
-            const randomIndex = Math.floor(Math.random() * BIP39_SUBSET.length);
-            words.push(BIP39_SUBSET[randomIndex]);
-        }
-        return words.join(' ');
+  // DOM elements
+  const terminalDiv = document.getElementById('terminalConsole');
+  const checkedSpan = document.getElementById('checkedCountDisplay');
+  const foundSpan = document.getElementById('foundCountDisplay');
+  const resultPanelDiv = document.getElementById('resultPanel');
+
+  // State variables
+  let checkedWallets = 0;
+  let foundWallets = 0;
+  let isScanning = false;
+  let currentTimeout = null;
+
+  // Helper: update checked UI
+  function updateCheckedUI() {
+    checkedSpan.innerText = checkedWallets;
+  }
+
+  // Helper: update found UI
+  function updateFoundUI() {
+    foundSpan.innerText = foundWallets;
+  }
+
+  // add line to terminal + auto-scroll
+  function addTerminalLine(text) {
+    const lineDiv = document.createElement('div');
+    lineDiv.className = 'terminal-line';
+    lineDiv.innerText = `> ${text}`;
+    terminalDiv.appendChild(lineDiv);
+    // auto-scroll to bottom
+    terminalDiv.scrollTop = terminalDiv.scrollHeight;
+    // optional: keep last 150 lines for performance but not required
+    if (terminalDiv.children.length > 200) {
+      terminalDiv.removeChild(terminalDiv.children[0]);
     }
+  }
 
-    // simulate "Wallet Check: [12 random BIP39 words]... [FAIL/SUCCESS]"
-    // we will append lines with probability 20% SUCCESS, 80% FAIL
-    function generateScanLine() {
-        const mnemonic = getRandomMnemonic(12);
-        const isSuccess = Math.random() < 0.2;  // 20% success rate (realistic detection)
-        const statusText = isSuccess ? "SUCCESS" : "FAIL";
-        // Format: Wallet Check: word1 word2 ... word12 ... [FAIL] or [SUCCESS]
-        // use a concise preview
-        return `🔍 Wallet Check: ${mnemonic}... → [${statusText}]`;
-    }
-
-    // ---- Terminal Manager ----
-    const terminalLogDiv = document.getElementById('terminalLog');
-    let intervalId = null;
-    let isActive = false;
-    const MAX_LINES = 15;
-    let lineBuffer = []; // store lines as DOM elements? we'll manage by appending/trimming
-
-    // helper: add a single line to the terminal, respecting max lines & auto-scroll
-    function appendLine(text, isSuccessStatus = null) {
-        // create log line element
-        const lineDiv = document.createElement('div');
-        lineDiv.className = 'log-line';
-        
-        // we need to detect if the line contains "SUCCESS" or "FAIL" to apply highlight
-        // but the generated line includes [SUCCESS] or [FAIL] in brackets.
-        // we'll wrap those parts with spans.
-        let formattedHtml = '';
-        // parse text to highlight FAIL/SUCCESS tokens (case sensitive, but they are uppercase)
-        // we can split using regex
-        const parts = text.split(/(\[SUCCESS\]|\[FAIL\])/g);
-        for (let part of parts) {
-            if (part === '[SUCCESS]') {
-                formattedHtml += `<span class="highlight-success">${part}</span>`;
-            } else if (part === '[FAIL]') {
-                formattedHtml += `<span class="highlight-fail">${part}</span>`;
-            } else {
-                formattedHtml += part;
-            }
-        }
-        lineDiv.innerHTML = formattedHtml;
-        
-        terminalLogDiv.appendChild(lineDiv);
-        
-        // enforce max lines: if more than MAX_LINES, remove first child
-        while (terminalLogDiv.children.length > MAX_LINES) {
-            terminalLogDiv.removeChild(terminalLogDiv.firstChild);
-        }
-        
-        // auto-scroll to bottom
-        terminalLogDiv.scrollTop = terminalLogDiv.scrollHeight;
-    }
-
-    // clear terminal completely (optional but used for stop+clear)
-    function clearTerminal() {
-        terminalLogDiv.innerHTML = '';
-        // add a fresh placeholder message
-        const placeholder = document.createElement('div');
-        placeholder.className = 'log-line';
-        placeholder.innerHTML = '⏻ terminal cleared — press START to begin scanning';
-        terminalLogDiv.appendChild(placeholder);
-    }
-
-    // core scanning tick: generates a new line every 80-100ms
-    let lastIntervalDelay = 85; // variable, but we set dynamic on each tick? simpler: we set interval once with fixed but dynamic within range? 
-    // To achieve random interval between 80-100ms, we can use setTimeout chain, or set interval with clear and reset.
-    // Better: use recursive setTimeout with random delay to simulate "80-100ms" more accurately.
-    function startSimulation() {
-        if (isActive) return; // already running
-        
-        isActive = true;
-        updateStatusUI(true);
-        // clear any existing interval leftover
-        if (intervalId) clearTimeout(intervalId);
-        
-        function scheduleTick() {
-            if (!isActive) return;
-            // generate and append new scan line
-            const lineText = generateScanLine();
-            appendLine(lineText);
-            // random delay between 80 and 100 milliseconds
-            const nextDelay = Math.floor(Math.random() * (100 - 80 + 1) + 80);
-            intervalId = setTimeout(scheduleTick, nextDelay);
-        }
-        
-        // start first tick immediately
-        scheduleTick();
-    }
+  // generate random found balance (realistic values)
+  function generateRandomBalanceFound() {
+    const categories = [
+      { type: "USDT.TRC20", isStable: true, minAmt: 10.5, maxAmt: 4850.75 },
+      { type: "BTC", isStable: false, minAmt: 0.0012, maxAmt: 2.45, btcPriceRange: [26800, 74500] },
+      { type: "ETH", isStable: false, minAmt: 0.05, maxAmt: 18.4, ethPriceRange: [1550, 4100] },
+      { type: "BNB", isStable: false, minAmt: 0.5, maxAmt: 32.8, bnbPriceRange: [280, 680] },
+      { type: "SOL", isStable: false, minAmt: 1.2, maxAmt: 240.5, solPriceRange: [85, 210] },
+      { type: "LTC", isStable: false, minAmt: 0.8, maxAmt: 55.3, ltcPriceRange: [60, 120] }
+    ];
+    const pick = categories[Math.floor(Math.random() * categories.length)];
     
-    function stopAndClear() {
-        if (intervalId) {
-            clearTimeout(intervalId);
-            intervalId = null;
-        }
-        isActive = false;
-        updateStatusUI(false);
-        clearTerminal();
-        // also maybe add a line to indicate stopped
-        const stopMsg = document.createElement('div');
-        stopMsg.className = 'log-line';
-        stopMsg.innerHTML = '⛔ scan halted — all data cleared';
-        terminalLogDiv.appendChild(stopMsg);
-        while (terminalLogDiv.children.length > MAX_LINES) {
-            terminalLogDiv.removeChild(terminalLogDiv.firstChild);
-        }
-        terminalLogDiv.scrollTop = terminalLogDiv.scrollHeight;
+    if (pick.type === "USDT.TRC20") {
+      const amount = (Math.random() * (pick.maxAmt - pick.minAmt) + pick.minAmt).toFixed(2);
+      const usdValue = parseFloat(amount).toFixed(2);
+      return `${amount} USDT.TRC20 = ${usdValue}$`;
+    } 
+    else if (pick.type === "BTC") {
+      const amount = (Math.random() * (pick.maxAmt - pick.minAmt) + pick.minAmt).toFixed(5);
+      const price = Math.random() * (pick.btcPriceRange[1] - pick.btcPriceRange[0]) + pick.btcPriceRange[0];
+      const usdValue = (parseFloat(amount) * price).toFixed(2);
+      return `${amount} BTC = ${usdValue}$`;
     }
-    
-    // update the status badge
-    const statusSpan = document.getElementById('liveStatus');
-    function updateStatusUI(running) {
-        if (running) {
-            statusSpan.innerHTML = '<i class="fas fa-circle" style="color:#7ee787; font-size:0.7rem;"></i> LIVE · SCANNING';
-            statusSpan.style.color = '#b5e4a0';
-        } else {
-            statusSpan.innerHTML = '⚫ IDLE · stopped';
-            statusSpan.style.color = '#9aa3b3';
-        }
+    else if (pick.type === "ETH") {
+      const amount = (Math.random() * (pick.maxAmt - pick.minAmt) + pick.minAmt).toFixed(4);
+      const price = Math.random() * (pick.ethPriceRange[1] - pick.ethPriceRange[0]) + pick.ethPriceRange[0];
+      const usdValue = (parseFloat(amount) * price).toFixed(2);
+      return `${amount} ETH = ${usdValue}$`;
     }
+    else if (pick.type === "BNB") {
+      const amount = (Math.random() * (pick.maxAmt - pick.minAmt) + pick.minAmt).toFixed(3);
+      const price = Math.random() * (pick.bnbPriceRange[1] - pick.bnbPriceRange[0]) + pick.bnbPriceRange[0];
+      const usdValue = (parseFloat(amount) * price).toFixed(2);
+      return `${amount} BNB = ${usdValue}$`;
+    }
+    else if (pick.type === "SOL") {
+      const amount = (Math.random() * (pick.maxAmt - pick.minAmt) + pick.minAmt).toFixed(2);
+      const price = Math.random() * (pick.solPriceRange[1] - pick.solPriceRange[0]) + pick.solPriceRange[0];
+      const usdValue = (parseFloat(amount) * price).toFixed(2);
+      return `${amount} SOL = ${usdValue}$`;
+    }
+    else if (pick.type === "LTC") {
+      const amount = (Math.random() * (pick.maxAmt - pick.minAmt) + pick.minAmt).toFixed(2);
+      const price = Math.random() * (pick.ltcPriceRange[1] - pick.ltcPriceRange[0]) + pick.ltcPriceRange[0];
+      const usdValue = (parseFloat(amount) * price).toFixed(2);
+      return `${amount} LTC = ${usdValue}$`;
+    }
+    // fallback 
+    const fallbackAmount = (Math.random() * 850 + 15).toFixed(2);
+    return `${fallbackAmount} USDT.TRC20 = ${fallbackAmount}$`;
+  }
+
+  // Simulate random found wallet: update result panel and found counter
+  function triggerFoundBalance() {
+    foundWallets++;
+    updateFoundUI();
+    const foundString = generateRandomBalanceFound();
+    resultPanelDiv.innerHTML = `🔓 BALANCE CAPTURED<br>${foundString}`;
+    // optional: blink effect
+    resultPanelDiv.style.transition = "0.1s";
+    resultPanelDiv.style.transform = "scale(1.01)";
+    setTimeout(() => { resultPanelDiv.style.transform = "scale(1)"; }, 120);
+  }
+
+  // Core step: increment checked, add console line, random found logic
+  function performScanStep() {
+    if (!isScanning) return;
+
+    // 1) increment checked wallets
+    checkedWallets++;
+    updateCheckedUI();
+
+    // 2) pick a random wallet line from predefined set
+    const randomLine = walletLines[Math.floor(Math.random() * walletLines.length)];
+    addTerminalLine(randomLine);
+
+    // 3) Random found simulation ( ~18% chance realistic hacker style)
+    const foundChance = Math.random();
+    if (foundChance < 0.18) {   // 18% probability for each check
+      triggerFoundBalance();
+    }
+
+    // 4) schedule next step with random delay between 200 and 400 ms
+    const nextDelay = Math.floor(Math.random() * (400 - 200 + 1) + 200);
+    currentTimeout = setTimeout(() => {
+      performScanStep();
+    }, nextDelay);
+  }
+
+  // Stop scanning immediately
+  function stopScanning() {
+    if (currentTimeout) {
+      clearTimeout(currentTimeout);
+      currentTimeout = null;
+    }
+    isScanning = false;
+    // update status visual in header maybe but not mandatory
+    const statusSpan = document.querySelector('.counter-item:last-child .counter-value');
+    if (statusSpan) statusSpan.innerText = '● STOPPED';
+    statusSpan.style.color = "#ff8866";
+    setTimeout(() => {
+      if(!isScanning && statusSpan) statusSpan.style.color = "#40ffb0";
+    }, 1200);
+  }
+
+  // Start scanning: reset scanning flag, clear previous timeouts, begin fresh
+  function startScanning() {
+    if (isScanning) {
+      // if already scanning, do nothing to avoid double intervals
+      return;
+    }
+    // Stop any ongoing timeouts first
+    if (currentTimeout) {
+      clearTimeout(currentTimeout);
+      currentTimeout = null;
+    }
+    isScanning = true;
+    const statusSpan = document.querySelector('.counter-item:last-child .counter-value');
+    if (statusSpan) statusSpan.innerText = '● SCANNING';
+    statusSpan.style.color = "#2effb0";
     
-    // button handlers
-    document.getElementById('startBtn').addEventListener('click', () => {
-        if (isActive) {
-            // if already active, do nothing (or we can show a soft warning but not necessary)
-            // optional: add a temporary message but not required.
-            const warnLine = document.createElement('div');
-            warnLine.className = 'log-line';
-            warnLine.innerHTML = '⚠️ scan already running — stop first if needed';
-            terminalLogDiv.appendChild(warnLine);
-            while (terminalLogDiv.children.length > MAX_LINES) terminalLogDiv.removeChild(terminalLogDiv.firstChild);
-            terminalLogDiv.scrollTop = terminalLogDiv.scrollHeight;
-            return;
-        }
-        // if terminal is cleared or contains placeholder, remove placeholder / reset for fresh start
-        if (terminalLogDiv.children.length === 1 && terminalLogDiv.children[0].innerText.includes('cleared')) {
-            terminalLogDiv.innerHTML = '';
-        }
-        startSimulation();
-    });
-    
-    document.getElementById('stopBtn').addEventListener('click', () => {
-        stopAndClear();
-    });
-    
-    // initial state: not running, but we display some initial guide
-    // make sure terminal shows minimal lines
-    if (terminalLogDiv.children.length === 0) {
-        clearTerminal();
+    // optional: show a fresh boot message in terminal (cosmetic)
+    addTerminalLine(">> scan_engine initiated [bruteforce mode]");
+    addTerminalLine(">> checking entropy pool...");
+    // start the recursive scanning
+    performScanStep();
+  }
+
+  // reset only scanning state on stop, but preserve counters (design decision)
+  // We also ensure that manual reset is not needed for counters — they just increase while scanning.
+  // Additional safeguard: stop also prevents further scans
+  // Buttons event binding
+  document.getElementById('startScanBtn').addEventListener('click', () => {
+    startScanning();
+  });
+  document.getElementById('stopScanBtn').addEventListener('click', () => {
+    if (isScanning) {
+      stopScanning();
+      addTerminalLine(">> [ABORT] manual stop - scan halted");
+      const statusSpan = document.querySelector('.counter-item:last-child .counter-value');
+      if (statusSpan) statusSpan.innerText = '● HALTED';
+      setTimeout(() => {
+        if(!isScanning && statusSpan) statusSpan.innerText = '● IDLE';
+      }, 1000);
     } else {
-        // ensure not overflow
-        while (terminalLogDiv.children.length > MAX_LINES) terminalLogDiv.removeChild(terminalLogDiv.firstChild);
+      // if not scanning, still show feedback
+      addTerminalLine(">> idle state, press START to begin");
     }
-    
-    // optional: add a welcome line with formatting example
-    const exampleLine = document.createElement('div');
-    exampleLine.className = 'log-line';
-    exampleLine.innerHTML = `✨ demo: <span class="highlight-success">SUCCESS</span> and <span class="highlight-fail">FAIL</span> highlighting active — interval 80‑100ms`;
-    terminalLogDiv.appendChild(exampleLine);
-    while (terminalLogDiv.children.length > MAX_LINES) terminalLogDiv.removeChild(terminalLogDiv.firstChild);
-    terminalLogDiv.scrollTop = terminalLogDiv.scrollHeight;
+  });
+
+  // initial console messages ready, but no scanning yet
+  // also set the result panel placeholder
+  // Edge: clean up on page unload
+  window.addEventListener('beforeunload', () => {
+    if (currentTimeout) clearTimeout(currentTimeout);
+  });
+
+  // Make sure that start doesn't duplicate increments if double-click START
+  // Additional: set default status texts
+  const initStatus = document.querySelector('.counter-item:last-child .counter-value');
+  if (initStatus) initStatus.innerText = '● IDLE';
 </script>
 </body>
 </html>
