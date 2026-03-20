@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Dino Crash - TON Game</title>
+    <title>Pixel Shalm Crash</title>
     <style>
         :root {
             --bg-space: #020617;
-            --primary-neon: #00ffa3;
-            /* Dino Colors */
-            --dino-main: #22c55e;
-            --dino-shade: #166534;
-            --dino-belly: #a3e635;
+            --primary-neon: #fbbf24;
+            --pot-color: #64748b;
+            --pot-dark: #334155;
+            --shalm-pink: #f472b6;
         }
 
         body {
@@ -22,112 +21,98 @@
             image-rendering: pixelated;
         }
 
-        /* 1. پاشبنەما (بێ دەستکاری) */
         #game-screen {
             width: 360px; height: 500px;
-            background: linear-gradient(to bottom, #020617, #0f172a);
-            border: 4px solid #334155; position: relative;
-            overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            background: linear-gradient(to bottom, #020617, #1e1b4b);
+            border: 4px solid #475569; position: relative;
+            overflow: hidden;
         }
 
-        .star { position: absolute; background: white; width: 2px; height: 2px; opacity: 0.5; }
+        .star { position: absolute; background: white; width: 2px; height: 2px; opacity: 0.4; }
 
-        /* 2. دیزاینێ دیناسۆرێ قه‌له‌و یێ پیکسڵی (CSS Only) */
-        #dino-container {
+        /* دیزاینێ مەنجەڵا شێلمێ */
+        #pot-container {
             position: absolute; bottom: 50px; left: 50%;
             transform: translateX(-50%); transition: bottom 0.1s linear;
-            z-index: 5;
         }
 
-        #dino {
-            width: 48px; height: 55px; background: var(--dino-main);
-            position: relative; border: 4px solid #000;
-            box-shadow: inset -10px -10px 0px var(--dino-shade);
+        #pot {
+            width: 50px; height: 40px; background: var(--pot-color);
+            border: 4px solid #000; position: relative;
+            box-shadow: inset -8px 0px 0px var(--pot-dark);
         }
 
-        /* سه‌ر و ده‌ڤێ دیناسۆری */
-        #dino::before {
-            content: ""; position: absolute; top: 10px; left: -10px;
-            width: 25px; height: 20px; background: var(--dino-main);
-            border: 4px solid #000; box-shadow: inset -5px -5px 0px var(--dino-shade);
+        /* دەسکێن مەنجەڵێ */
+        #pot::before, #pot::after {
+            content: ""; position: absolute; top: 10px;
+            width: 8px; height: 12px; background: var(--pot-dark); border: 3px solid #000;
+        }
+        #pot::before { left: -12px; }
+        #pot::after { right: -12px; }
+
+        /* هەڵما شێلمێ */
+        .steam {
+            position: absolute; top: -15px; left: 15px;
+            width: 6px; height: 10px; background: rgba(255,255,255,0.4);
+            animation: steamUp 0.5s infinite;
         }
 
-        /* چاڤێ دیناسۆری */
-        #dino::after {
-            content: ""; position: absolute; top: 16px; left: -2px;
-            width: 6px; height: 6px; background: #000; z-index: 10;
+        @keyframes steamUp {
+            0% { transform: translateY(0) scale(1); opacity: 0.8; }
+            100% { transform: translateY(-20px) scale(1.5); opacity: 0; }
         }
 
-        /* زكێ سپی یێ دیناسۆری (قه‌له‌وی) */
-        .belly {
-            position: absolute; bottom: 5px; left: 8px;
-            width: 28px; height: 35px; background: var(--dino-belly);
-            border: 4px solid #000;
+        /* ئاگرێ بن مەنجەڵێ */
+        .fire {
+            position: absolute; bottom: -25px; left: 12px;
+            width: 18px; height: 20px; background: #f97316;
+            box-shadow: 0 5px 0 #ef4444; display: none;
+            animation: boil 0.1s infinite;
         }
 
-        /* باڵێن سپی یێن بچووك (بۆ ئه‌وێ ب كه‌یف بیت) */
-        .wing {
-            position: absolute; top: 10px; left: 35px;
-            width: 15px; height: 10px; background: #f1f5f9;
-            border: 3px solid #000;
-            animation: flap 0.1s infinite;
+        @keyframes boil { 0% { height: 18px; } 50% { height: 25px; } 100% { height: 18px; } }
+
+        /* پارتیکڵێن شێلمێ دەمێ تەقینێ */
+        .shalm-piece {
+            position: absolute; width: 10px; height: 10px;
+            background: var(--shalm-pink); border: 2px solid #000;
         }
 
-        @keyframes flap {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-            100% { transform: translateY(0); }
-        }
-
-        /* 3. پارتیکڵێن تەقینێ و هێكا شكه‌ستی */
-        .particle { position: absolute; width: 6px; height: 6px; pointer-events: none; z-index: 10; }
-        #egg-shell {
-            width: 30px; height: 40px; background: #f1f5f9;
-            border: 4px solid #000; position: absolute;
-            display: none; z-index: 4;
-            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 30% 60%, 70% 60%);
-        }
-
-        /* 4. UI و پانێلا کەنترۆلێ */
         #multiplier {
             position: absolute; top: 40px; width: 100%; text-align: center;
-            font-size: 3.8rem; font-weight: bold; color: var(--primary-neon);
-            text-shadow: 5px 5px 0px #000; z-index: 20;
+            font-size: 3.5rem; font-weight: bold; color: #fbbf24;
+            text-shadow: 4px 4px 0px #000;
         }
 
         .controls {
-            width: 360px; background: #111827; padding: 25px;
-            border: 4px solid #334155; border-top: none; box-sizing: border-box;
+            width: 360px; background: #1e293b; padding: 25px;
+            border: 4px solid #475569; border-top: none; box-sizing: border-box;
         }
 
         .btn {
-            width: 100%; padding: 18px; font-size: 1.5rem; color: white;
-            background: #16a34a; border: none; border-bottom: 8px solid #14532d;
-            font-family: 'Courier New', Courier, monospace; font-weight: bold; cursor: pointer;
+            width: 100%; padding: 18px; font-size: 1.4rem; color: white;
+            background: #e11d48; border: none; border-bottom: 8px solid #9f1239;
+            font-weight: bold; cursor: pointer;
         }
 
-        .btn.cashout { background: #ca8a04; border-bottom-color: #713f12; }
-        .btn:active { transform: translateY(4px); border-bottom-width: 4px; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        #status { margin-top: 15px; text-align: center; font-size: 0.9rem; color: #94a3b8; }
+        .btn.cashout { background: #16a34a; border-bottom-color: #14532d; }
     </style>
 </head>
 <body>
 
     <div id="game-screen">
         <div id="multiplier">1.00x</div>
-        <div id="dino-container">
-            <div id="dino">
-                <div class="belly"></div>
-                <div class="wing"></div>
+        <div id="pot-container">
+            <div id="pot">
+                <div class="steam" style="left: 10px;"></div>
+                <div class="steam" style="left: 25px; animation-delay: 0.2s;"></div>
+                <div class="fire" id="pot-fire"></div>
             </div>
-            <div id="egg-shell"></div> </div>
+        </div>
     </div>
 
     <div class="controls">
-        <button id="actionBtn" class="btn" onclick="handleAction()">BET TON</button>
-        <div id="status">ئامادەیە بۆ فڕینێ...</div>
+        <button id="actionBtn" class="btn" onclick="handleAction()">دەستپێبکە (شێلم)</button>
     </div>
 
     <script>
@@ -136,15 +121,12 @@
         let gameLoop;
         let crashPoint;
 
-        const dinoCont = document.getElementById('dino-container');
-        const dinoBody = document.getElementById('dino');
-        const eggShell = document.getElementById('egg-shell');
+        const potCont = document.getElementById('pot-container');
+        const potFire = document.getElementById('pot-fire');
         const multEl = document.getElementById('multiplier');
         const actionBtn = document.getElementById('actionBtn');
-        const statusEl = document.getElementById('status');
         const screen = document.getElementById('game-screen');
 
-        // دروستکرنا ستارەیان
         function spawnStar() {
             const star = document.createElement('div');
             star.className = 'star';
@@ -159,30 +141,26 @@
             }, 30);
         }
 
-        // سیستمێ تەقینا پیکسڵی و هێكا شكه‌ستی
-        function explode(x, y) {
-            const colors = ['#ef4444', '#f59e0b', '#f1f5f9', '#22c55e', '#a3e635'];
-            for (let i = 0; i < 25; i++) {
+        function explodeShalm(x, y) {
+            for (let i = 0; i < 20; i++) {
                 const p = document.createElement('div');
-                p.className = 'particle';
-                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                p.className = 'shalm-piece';
                 p.style.left = x + 'px';
                 p.style.top = y + 'px';
+                p.style.backgroundColor = Math.random() > 0.5 ? '#f472b6' : '#fb923c'; // شێلم یان گێزر
                 screen.appendChild(p);
 
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 6 + 2;
+                const speed = Math.random() * 10 + 2;
                 let vx = Math.cos(angle) * speed;
                 let vy = Math.sin(angle) * speed;
 
                 let pMove = setInterval(() => {
-                    let px = parseFloat(p.style.left);
-                    let py = parseFloat(p.style.top);
-                    p.style.left = (px + vx) + 'px';
-                    p.style.top = (py + vy) + 'px';
-                    vy += 0.2; // Gravity
-                    if (py > 500) { clearInterval(pMove); p.remove(); }
-                }, 20);
+                    p.style.left = (parseFloat(p.style.left) + vx) + 'px';
+                    p.style.top = (parseFloat(p.style.top) + vy) + 'px';
+                    vy += 0.3;
+                    if (parseFloat(p.style.top) > 500) { clearInterval(pMove); p.remove(); }
+                }, 25);
             }
         }
 
@@ -194,24 +172,20 @@
         function startGame() {
             isRunning = true;
             multiplier = 1.00;
-            crashPoint = (Math.random() * 5 + 1.2).toFixed(2);
-            
+            crashPoint = (Math.random() * 4 + 1.2).toFixed(2);
             actionBtn.innerText = "CASH OUT";
             actionBtn.classList.add('cashout');
-            dinoBody.style.display = 'block';
-            eggShell.style.display = 'none';
-            statusEl.innerText = "دیناسۆرێ قه‌له‌و یێ بلند دبیت!";
-            multEl.style.color = "var(--primary-neon)";
+            potFire.style.display = 'block';
+            potCont.style.display = 'block';
 
-            let starInterval = setInterval(() => { if(!isRunning) clearInterval(starInterval); spawnStar(); }, 80);
+            let starInterval = setInterval(() => { if(!isRunning) clearInterval(starInterval); spawnStar(); }, 100);
 
             gameLoop = setInterval(() => {
-                multiplier += 0.04;
+                multiplier += 0.05;
                 multEl.innerText = multiplier.toFixed(2) + "x";
-
-                let yPos = Math.min((multiplier - 1) * 55, 270);
-                dinoCont.style.bottom = (50 + yPos) + 'px';
-                dinoCont.style.transform = `translateX(-50%) rotate(${(Math.random()-0.5)*7}deg)`;
+                let yPos = Math.min((multiplier - 1) * 60, 280);
+                potCont.style.bottom = (50 + yPos) + 'px';
+                potCont.style.transform = `translateX(-50%) rotate(${(Math.random()-0.5)*10}deg)`;
 
                 if (multiplier >= crashPoint) endGame(true);
             }, 100);
@@ -219,27 +193,21 @@
 
         function cashOut() {
             endGame(false);
-            statusEl.innerText = `✅ دیناسۆری پارە بردی! مڵتیپلایەر: ${multiplier.toFixed(2)}x`;
-            multEl.style.color = "#38bdf8";
-            dinoCont.style.transition = "bottom 1.5s ease-in";
-            dinoCont.style.bottom = "800px";
+            potCont.style.transition = "bottom 1s ease-in";
+            potCont.style.bottom = "800px";
         }
 
         function endGame(isCrash) {
             clearInterval(gameLoop);
             isRunning = false;
+            potFire.style.display = 'none';
             actionBtn.innerText = "دووبارە هەوڵبدە";
             actionBtn.classList.remove('cashout');
 
             if (isCrash) {
-                const rect = dinoCont.getBoundingClientRect();
-                const screenRect = screen.getBoundingClientRect();
-                explode(rect.left - screenRect.left + 25, rect.top - screenRect.top + 30);
-                
-                statusEl.innerText = "💥 شكه‌ست! هێكا دیناسۆری شكه‌ست.";
-                multEl.style.color = "#ef4444";
-                dinoBody.style.display = 'none';
-                eggShell.style.display = 'block'; // نیشاندانا هێكا شكه‌ستی
+                const rect = potCont.getBoundingClientRect();
+                explodeShalm(rect.left - screen.getBoundingClientRect().left + 20, rect.top - screen.getBoundingClientRect().top + 20);
+                potCont.style.display = 'none';
             }
         }
     </script>
