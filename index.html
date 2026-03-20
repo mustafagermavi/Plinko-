@@ -3,130 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meme Rocket - The Flying Lamb</title>
+    <title>Pixel Legend - Cyber Sheep</title>
     <style>
         :root {
-            --bg-dark: #020617;
-            --mult-color: #f59e0b; /* Golden Yellow */
-            /* Lamb Colors */
-            --lamb-white: #ffffff;
-            --lamb-wool-shade: #f1f5f9;
-            --lamb-face: #f8fafc;
-            --lamb-dizzy-eye: #000;
-            /* Jetpack Colors */
-            --jp-metal: #475569;
-            --jp-fire-blue: #38bdf8;
+            --bg: #020617;
+            --accent: #38bdf8;
+            --gold: #fbbf24;
+            /* Lamb Colors (Advanced Palette) */
+            --wool-pure: #ffffff;
+            --wool-mid: #e2e8f0;
+            --wool-dark: #94a3b8;
+            --face-skin: #fecaca;
         }
 
         body {
-            margin: 0; background-color: var(--bg-dark);
-            color: white; font-family: 'Courier New', Courier, monospace;
+            margin: 0; background: var(--bg);
             display: flex; flex-direction: column; align-items: center;
             justify-content: center; height: 100vh; overflow: hidden;
+            font-family: 'Segoe UI', sans-serif;
             image-rendering: pixelated;
         }
 
-        /* 1. پاشبنەما (پرۆفیشناڵ) */
+        /* 1. پاشبنەمایێ فەزایێ (High-End Space) */
         #game-screen {
-            width: 360px; height: 500px;
-            background: linear-gradient(to bottom, #020617, #0f172a);
-            border: 4px solid #334155; position: relative;
-            overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            width: 380px; height: 520px;
+            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+            border: 3px solid #334155; position: relative;
+            overflow: hidden; border-radius: 12px;
+            box-shadow: 0 0 60px rgba(0,0,0,0.9);
         }
 
-        .star { position: absolute; background: white; width: 2px; height: 2px; opacity: 0.5; }
+        .star { position: absolute; background: white; border-radius: 50%; }
 
-        /* 2. دیزاینێ بەرخێ جێت-پات یێ کۆمیدی و پرۆفیشناڵ */
-        #rocket-container {
-            position: absolute; bottom: 50px; left: 50%;
+        /* 2. دیزاینا بەرخێ ئەفسانەیی (Legendary Pixel Art) */
+        #lamb-container {
+            position: absolute; bottom: 60px; left: 50%;
             transform: translateX(-50%); transition: bottom 0.1s linear;
-            z-index: 5;
         }
 
-        #rocket {
-            width: 50px; height: 45px; background: var(--lamb-white);
-            position: relative; border: 4px solid #000;
-            box-shadow: inset -8px -8px 0px var(--lamb-wool-shade);
+        #lamb {
+            width: 54px; height: 48px; position: relative;
+            background: var(--wool-pure);
+            border: 4px solid #000;
+            /* Shading Advanced */
+            box-shadow: 
+                inset -12px -10px 0px var(--wool-mid),
+                inset -20px -18px 0px var(--wool-dark);
         }
 
-        /* سه‌رێ بەرخی و چاڤێن ب کەیف */
-        #rocket::before {
-            content: ""; position: absolute; top: 10px; left: 10px;
-            width: 25px; height: 20px; background: var(--lamb-face);
-            border: 4px solid #000; box-shadow: inset -5px -5px 0px var(--lamb-wool-shade);
+        /* سەرێ بەرخی */
+        #lamb::before {
+            content: ""; position: absolute; top: 8px; left: -12px;
+            width: 24px; height: 22px; background: var(--face-skin);
+            border: 4px solid #000;
+            box-shadow: inset -4px -4px 0px #fca5a5;
         }
 
-        /* چاڤێن "x_x" یێن Dizzy */
+        /* چاڤێن پرۆفیشناڵ (Dizzy but High-end) */
         .eye {
-            position: absolute; top: 18px; left: 18px;
-            width: 6px; height: 6px; background: var(--lamb-dizzy-eye);
-            border: 2px solid #000; border-radius: 50%;
-        }
-        .eye::after {
-            content: "x"; position: absolute; top: -5px; left: 0px;
-            font-size: 10px; color: white;
+            position: absolute; top: 16px; left: -4px;
+            width: 6px; height: 6px; background: #000;
+            box-shadow: 10px 0 0 #000; /* چاوی دووەم */
         }
 
-        /* جێت-پات و ئاگرێ شین */
+        /* جێت-پاتێ لوکس (Cyber Jetpack) */
         .jetpack {
-            position: absolute; top: 8px; right: -12px;
-            width: 15px; height: 30px; background: var(--jp-metal);
-            border: 3px solid #000; box-shadow: inset -5px -5px 0px #1e293b;
+            position: absolute; top: 4px; right: -14px;
+            width: 18px; height: 32px; background: #475569;
+            border: 4px solid #000;
+            box-shadow: inset -6px 0px 0px #1e293b, 0 0 15px rgba(56, 189, 248, 0.4);
         }
 
-        .thrust {
-            position: absolute; bottom: -22px; right: -9px;
-            width: 10px; height: 20px; background: var(--jp-fire-blue);
-            box-shadow: 0 0 15px var(--jp-fire-blue);
-            display: none; animation: jitter 0.1s infinite;
+        .flame {
+            position: absolute; bottom: -28px; right: -10px;
+            width: 12px; height: 25px; background: var(--accent);
+            box-shadow: 0 0 20px var(--accent), 0 5px 0 #0ea5e9;
+            display: none; animation: engine-shake 0.1s infinite;
         }
 
-        @keyframes jitter { 0% { opacity: 0.7; } 100% { opacity: 1; } }
+        @keyframes engine-shake {
+            0% { height: 22px; opacity: 0.8; }
+            100% { height: 32px; opacity: 1; }
+        }
 
-        /* 3. پارچێن خۆریێ دەمێ تەقینێ */
-        .wool-particle { position: absolute; width: 10px; height: 10px; background: white; border: 3px solid #000; pointer-events: none; z-index: 10; }
-
-        /* 4. UI و پانێلا کەنترۆلێ */
+        /* 3. مڵتیپلایەر و UI */
         #multiplier {
-            position: absolute; top: 40px; width: 100%; text-align: center;
-            font-size: 3.8rem; font-weight: bold; color: var(--mult-color);
-            text-shadow: 5px 5px 0px #000; z-index: 20;
+            position: absolute; top: 50px; width: 100%; text-align: center;
+            font-size: 4.2rem; font-weight: 900; color: #fff;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.6); z-index: 10;
         }
 
         .controls {
-            width: 360px; background: #111827; padding: 25px;
-            border: 4px solid #334155; border-top: none; box-sizing: border-box;
+            width: 380px; background: #0f172a; padding: 25px;
+            border: 3px solid #334155; border-top: none;
+            box-sizing: border-box; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
         }
 
         .btn {
-            width: 100%; padding: 18px; font-size: 1.5rem; color: white;
-            background: #16a34a; border: none; border-bottom: 8px solid #14532d;
-            font-family: 'Courier New', Courier, monospace; font-weight: bold; cursor: pointer;
+            width: 100%; padding: 20px; font-size: 1.4rem; font-weight: bold;
+            color: #020617; background: var(--accent); border: none;
+            border-radius: 8px; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 6px 0 #0369a1; transition: 0.1s;
         }
 
-        .btn.cashout { background: #ca8a04; border-bottom-color: #713f12; }
-        .btn:active { transform: translateY(4px); border-bottom-width: 4px; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #0369a1; }
+        .btn.cashout { background: var(--gold); box-shadow: 0 6px 0 #b45309; }
 
-        #status { margin-top: 15px; text-align: center; font-size: 0.9rem; color: #94a3b8; }
+        #status { margin-top: 15px; text-align: center; color: #64748b; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="game-screen">
         <div id="multiplier">1.00x</div>
-        <div id="rocket-container">
-            <div id="rocket">
+        <div id="lamb-container">
+            <div id="lamb">
                 <div class="eye"></div>
-                <div class="jetpack"></div>
-                <div class="thrust" id="fire"></div>
+                <div class="jetpack">
+                    <div class="flame" id="fire"></div>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="controls">
-        <button id="actionBtn" class="btn" onclick="handleAction()">Start Meme Bet</button>
-        <div id="status">ئامادەیە بۆ فڕینێ...</div>
+        <button id="actionBtn" class="btn" onclick="handleAction()">START BET</button>
+        <div id="status">READY FOR TAKE OFF</div>
     </div>
 
     <script>
@@ -135,52 +137,26 @@
         let gameLoop;
         let crashPoint;
 
-        const rocketCont = document.getElementById('rocket-container');
-        const rocketBody = document.getElementById('rocket');
+        const lambCont = document.getElementById('lamb-container');
         const fire = document.getElementById('fire');
         const multEl = document.getElementById('multiplier');
         const actionBtn = document.getElementById('actionBtn');
         const statusEl = document.getElementById('status');
         const screen = document.getElementById('game-screen');
 
-        // دروستکرنا ستارەیان
         function spawnStar() {
             const star = document.createElement('div');
             star.className = 'star';
-            star.style.left = Math.random() * 350 + 'px';
+            const size = Math.random() * 3 + 1;
+            star.style.width = size + 'px'; star.style.height = size + 'px';
+            star.style.left = Math.random() * 370 + 'px';
             star.style.top = '-10px';
             screen.appendChild(star);
             let pos = -10;
             let move = setInterval(() => {
-                pos += 4;
-                star.style.top = pos + 'px';
-                if (pos > 500) { clearInterval(move); star.remove(); }
+                pos += 3; star.style.top = pos + 'px';
+                if (pos > 520) { clearInterval(move); star.remove(); }
             }, 30);
-        }
-
-        // سیستمێ تەقینا کۆمیدی (پارچێن خۆریێ)
-        function explode(x, y) {
-            for (let i = 0; i < 20; i++) {
-                const p = document.createElement('div');
-                p.className = 'wool-particle';
-                p.style.left = x + 'px';
-                p.style.top = y + 'px';
-                screen.appendChild(p);
-
-                const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 7 + 2;
-                let vx = Math.cos(angle) * speed;
-                let vy = Math.sin(angle) * speed;
-
-                let pMove = setInterval(() => {
-                    let px = parseFloat(p.style.left);
-                    let py = parseFloat(p.style.top);
-                    p.style.left = (px + vx) + 'px';
-                    p.style.top = (py + vy) + 'px';
-                    vy += 0.2; // Gravity
-                    if (py > 500) { clearInterval(pMove); p.remove(); }
-                }, 20);
-            }
         }
 
         function handleAction() {
@@ -189,52 +165,43 @@
         }
 
         function startGame() {
-            isRunning = true;
-            multiplier = 1.00;
-            crashPoint = (Math.random() * 6 + 1.2).toFixed(2);
-            
-            actionBtn.innerText = "Cash Out";
+            isRunning = true; multiplier = 1.00;
+            crashPoint = (Math.random() * 5 + 1.1).toFixed(2);
+            actionBtn.innerText = "CASH OUT";
             actionBtn.classList.add('cashout');
             fire.style.display = 'block';
-            rocketBody.style.display = 'block';
-            statusEl.innerText = "بەرخێ جێت-پات یێ بلند دبیت!";
-            multEl.style.color = "var(--mult-color)";
-
-            let starInterval = setInterval(() => { if(!isRunning) clearInterval(starInterval); spawnStar(); }, 80);
+            statusEl.innerText = "THE SHEEP IS FLYING!";
+            
+            let stars = setInterval(() => { if(!isRunning) clearInterval(stars); spawnStar(); }, 100);
 
             gameLoop = setInterval(() => {
-                multiplier += 0.04;
+                multiplier += 0.03;
                 multEl.innerText = multiplier.toFixed(2) + "x";
-
-                let yPos = Math.min((multiplier - 1) * 55, 270);
-                rocketCont.style.bottom = (50 + yPos) + 'px';
-                rocketCont.style.transform = `translateX(-50%) rotate(${(Math.random()-0.5)*7}deg)`;
+                let yPos = Math.min((multiplier - 1) * 65, 300);
+                lambCont.style.bottom = (60 + yPos) + 'px';
+                lambCont.style.transform = `translateX(-50%) rotate(${(Math.random()-0.5)*8}deg)`;
 
                 if (multiplier >= crashPoint) endGame(true);
-            }, 100);
+            }, 80);
         }
 
         function cashOut() {
             endGame(false);
-            statusEl.innerText = `💰 پیرۆزە! تە ${multiplier.toFixed(2)}x بردی.`;
-            multEl.style.color = "#38bdf8";
-            rocketCont.style.transition = "bottom 1.5s ease-in";
-            rocketCont.style.bottom = "800px";
+            statusEl.innerText = "WINNER! COLLECTED " + multiplier.toFixed(2) + "x";
+            lambCont.style.transition = "bottom 1s ease-in";
+            lambCont.style.bottom = "800px";
         }
 
         function endGame(isCrash) {
             clearInterval(gameLoop);
             isRunning = false;
             fire.style.display = 'none';
-            actionBtn.innerText = "دووبارە هەوڵبدە";
+            actionBtn.innerText = "RETRY";
             actionBtn.classList.remove('cashout');
-
             if (isCrash) {
-                const rect = rocketCont.getBoundingClientRect();
-                explode(rect.left - screen.getBoundingClientRect().left + 25, rect.top - screen.getBoundingClientRect().top + 30);
-                statusEl.innerText = "💥 شکەست! بەرخ تەقیا.";
+                statusEl.innerText = "CRASHED! BETTER LUCK NEXT TIME";
                 multEl.style.color = "#ef4444";
-                rocketBody.style.display = 'none';
+                lambCont.style.transform = "translateX(-50%) scale(0.5) rotate(180deg)";
             }
         }
     </script>
