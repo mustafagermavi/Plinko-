@@ -3,79 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TON Predictor - Pro Trader</title>
+    <title>Pixel TON Trade</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #080a0c;
-            --card: #12161a;
-            --green: #0ecb81;
-            --red: #f6465d;
-            --yellow: #f0b90b;
-            --accent: #00d2ff;
+            --bg: #1a1a2e;
+            --pixel-green: #00ff41;
+            --pixel-red: #ff3e3e;
+            --pixel-yellow: #ffff00;
+            --pixel-blue: #00d2ff;
         }
         body {
             margin: 0; padding: 15px;
             background-color: var(--bg);
             color: white;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Press Start 2P', cursive; /* فۆنتی پیکسڵ */
             display: flex; flex-direction: column; align-items: center;
+            line-height: 1.6;
         }
         .container { width: 100%; max-width: 400px; }
         
-        .card { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); text-align: center; margin-bottom: 10px; }
+        /* Bento Pixel Card */
+        .card { 
+            background: #16213e; 
+            border: 4px solid #0f3460; 
+            box-shadow: 6px 6px 0px #000;
+            padding: 15px; text-align: center; margin-bottom: 20px;
+        }
         
-        .price-text { font-size: 42px; font-weight: 800; color: var(--yellow); font-family: monospace; }
-        canvas { width: 100%; height: 130px; }
+        .price-text { font-size: 18px; color: var(--pixel-yellow); margin-bottom: 10px; }
+        canvas { 
+            width: 100%; height: 140px; 
+            background: #0f172a; border: 2px solid #533483;
+            image-rendering: pixelated; /* گرنگ بۆ ستایلی پیکسڵ */
+        }
 
-        .bet-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         input {
-            grid-column: span 2; background: #1c2127; border: 1px solid #2b3139;
-            border-radius: 12px; padding: 15px; color: white; font-size: 20px; text-align: center; margin-bottom: 5px;
+            grid-column: span 2; background: #000; border: 3px solid #533483;
+            padding: 12px; color: var(--pixel-green); font-family: 'Press Start 2P';
+            font-size: 14px; text-align: center; margin-bottom: 10px; outline: none;
         }
 
-        .btn { padding: 18px; border-radius: 15px; border: none; font-size: 18px; font-weight: bold; color: white; cursor: pointer; transition: 0.2s; }
-        .up { background: var(--green); box-shadow: 0 4px 15px rgba(14, 203, 129, 0.2); }
-        .down { background: var(--red); box-shadow: 0 4px 15px rgba(246, 70, 93, 0.2); }
-        .btn:active { transform: scale(0.95); }
-        .btn:disabled { opacity: 0.3; }
+        .btn { 
+            padding: 15px 5px; border: 4px solid; font-size: 10px; 
+            font-family: 'Press Start 2P'; font-weight: bold; color: white; 
+            cursor: pointer; position: relative;
+        }
+        /* ستایلی دوگمەی پیکسڵ */
+        .up { background: #008000; border-color: #00ff00 #004d00 #004d00 #00ff00; }
+        .down { background: #800000; border-color: #ff0000 #4d0000 #4d0000 #ff0000; }
+        .btn:active { top: 3px; box-shadow: none; }
 
-        /* ستایلی بەشی مێژوو */
-        .history-box { margin-top: 15px; text-align: right; }
+        .balance-info { font-size: 10px; color: var(--pixel-blue); margin-bottom: 15px; }
+        
+        /* مێژووی پیکسڵ */
         .history-item {
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255,255,255,0.03); padding: 10px 15px;
-            border-radius: 12px; margin-bottom: 8px; font-size: 13px;
-            border-right: 4px solid #ccc;
+            font-size: 8px; background: #0f3460; padding: 8px;
+            margin-top: 8px; border: 2px solid #533483;
+            display: flex; justify-content: space-between;
         }
-        .win { border-right-color: var(--green); color: var(--green); }
-        .loss { border-right-color: var(--red); color: var(--red); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 10px; padding: 0 5px;">
-        <span style="color: #848e9c;">باڵانسی تۆ:</span>
-        <span style="color: var(--accent); font-weight: bold;"><span id="balance">1000</span> Pts</span>
-    </div>
+    <div class="balance-info">CREDITS: <span id="balance">1000</span></div>
 
     <div class="card">
-        <div id="price" class="price-text">5.4200</div>
-        <canvas id="chart"></canvas>
+        <div class="price-text">$<span id="price">5.420</span></div>
+        <canvas id="pixelChart"></canvas>
     </div>
 
-    <div class="bet-controls">
-        <input type="number" id="betAmount" value="100" step="10">
-        <button class="btn up" id="upBtn" onclick="placeBet('up')">UP ▲</button>
-        <button class="btn down" id="downBtn" onclick="placeBet('down')">DOWN ▼</button>
+    <div class="controls">
+        <input type="number" id="betAmount" value="50">
+        <button class="btn up" id="upBtn" onclick="bet('up')">BUY ▲</button>
+        <button class="btn down" id="downBtn" onclick="bet('down')">SELL ▼</button>
     </div>
 
-    <div class="history-box">
-        <div style="font-size: 14px; color: #848e9c; margin-bottom: 10px;">📜 مێژووی گرەوەکان</div>
-        <div id="historyList">
-            </div>
+    <div id="history" style="margin-top: 20px; width: 100%;">
+        <div style="font-size: 10px; color: #848e9c;">LAST LOGS:</div>
     </div>
 </div>
 
@@ -85,94 +93,81 @@
     tg.expand();
 
     let balance = 1000;
-    let currentPrice = 5.4200;
-    let prices = Array(40).fill(5.4200);
-    let isPlaying = false;
-    let entryPrice = 0;
+    let currentPrice = 5.420;
+    let prices = Array(30).fill(5.420);
+    let isWaiting = false;
 
-    const canvas = document.getElementById('chart');
+    const canvas = document.getElementById('pixelChart');
     const ctx = canvas.getContext('2d');
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
+    canvas.width = 300; canvas.height = 150;
 
-    function updatePrice() {
-        let change = (Math.random() - 0.5) * 0.008;
-        currentPrice = parseFloat((currentPrice + change).toFixed(4));
+    function update() {
+        let diff = (Math.random() - 0.5) * 0.015;
+        currentPrice = parseFloat((currentPrice + diff).toFixed(3));
         prices.push(currentPrice);
         prices.shift();
-        document.getElementById('price').innerText = currentPrice.toFixed(4);
-        drawChart();
+        document.getElementById('price').innerText = currentPrice.toFixed(3);
+        draw();
     }
 
-    function drawChart() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function draw() {
+        ctx.fillStyle = "#0f172a";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // کێشانی هێڵی پیکسڵ
+        ctx.strokeStyle = isWaiting ? "#ffff00" : "#00ff41";
+        ctx.lineWidth = 4;
         ctx.beginPath();
-        ctx.strokeStyle = isPlaying ? (currentPrice >= entryPrice ? "#0ecb81" : "#f6465d") : "#00d2ff";
-        ctx.lineWidth = 3;
-        const min = Math.min(...prices);
-        const max = Math.max(...prices);
+        
+        const min = Math.min(...prices) - 0.01;
+        const max = Math.max(...prices) + 0.01;
+
         prices.forEach((p, i) => {
             let x = (i / (prices.length - 1)) * canvas.width;
             let y = canvas.height - ((p - min) / (max - min)) * canvas.height;
             if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         });
         ctx.stroke();
+
+        // کێشانی کارەکتەری پیکسڵ لە کۆتایی هێڵەکە
+        let lastY = canvas.height - ((currentPrice - min) / (max - min)) * canvas.height;
+        ctx.fillStyle = "#ffff00";
+        ctx.fillRect(canvas.width - 10, lastY - 5, 8, 8); // کارەکتەرەکە وەک بلۆکێکی زەرد
     }
 
-    function addHistory(type, amount, win, entry, exit) {
-        const list = document.getElementById('historyList');
-        const item = document.createElement('div');
-        item.className = `history-item ${win ? 'win' : 'loss'}`;
-        
-        const resultText = win ? `+${Math.floor(amount * 1.9)}` : `-${amount}`;
-        const typeIcon = type === 'up' ? '▲' : '▼';
-        
-        item.innerHTML = `
-            <div><b>${typeIcon} ${amount} Pts</b> <br> <small>Entry: ${entry}</small></div>
-            <div style="text-align: left;"><b>${resultText}</b> <br> <small>Exit: ${exit}</small></div>
-        `;
-        
-        list.prepend(item);
-        if(list.children.length > 5) list.lastChild.remove(); // تەنها ٥ مێژووی کۆتایی نیشان بدە
-    }
+    function bet(type) {
+        let amt = parseInt(document.getElementById('betAmount').value);
+        if(amt > balance || isWaiting) return;
 
-    function placeBet(type) {
-        let amount = parseInt(document.getElementById('betAmount').value);
-        if (amount > balance || amount <= 0) {
-            tg.showAlert("باڵانست بەش ناکات یان بڕەکە هەڵەیە!");
-            return;
-        }
-
-        isPlaying = true;
-        balance -= amount;
+        isWaiting = true;
+        balance -= amt;
         document.getElementById('balance').innerText = balance;
-        entryPrice = currentPrice;
+        let startP = currentPrice;
         
-        document.querySelectorAll('.btn').forEach(b => b.disabled = true);
-        tg.HapticFeedback.impactOccurred('medium');
+        tg.HapticFeedback.impactOccurred('rigid');
 
         setTimeout(() => {
-            let exitPrice = currentPrice;
-            let win = (type === 'up' && exitPrice > entryPrice) || (type === 'down' && exitPrice < entryPrice);
-            
-            if (win) {
-                let profit = Math.floor(amount * 1.9);
-                balance += profit;
-                document.getElementById('balance').innerText = balance;
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.7 } });
+            let win = (type === 'up' && currentPrice > startP) || (type === 'down' && currentPrice < startP);
+            if(win) {
+                balance += Math.floor(amt * 1.9);
                 tg.HapticFeedback.notificationOccurred('success');
             } else {
                 tg.HapticFeedback.notificationOccurred('error');
             }
+            
+            // زیادکردن بۆ مێژوو
+            const log = document.createElement('div');
+            log.className = "history-item";
+            log.style.color = win ? "var(--pixel-green)" : "var(--pixel-red)";
+            log.innerHTML = `<span>${type.toUpperCase()} ${amt}</span> <span>${win ? 'WIN' : 'LOSE'}</span>`;
+            document.getElementById('history').prepend(log);
 
-            addHistory(type, amount, win, entryPrice.toFixed(4), exitPrice.toFixed(4));
-
-            isPlaying = false;
-            document.querySelectorAll('.btn').forEach(b => b.disabled = false);
-        }, 5000); 
+            document.getElementById('balance').innerText = balance;
+            isWaiting = false;
+        }, 4000);
     }
 
-    setInterval(updatePrice, 150);
+    setInterval(update, 200);
 </script>
 
 </body>
