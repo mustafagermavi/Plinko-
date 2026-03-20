@@ -1,247 +1,222 @@
 <!DOCTYPE html>
-<html lang="ku" dir="rtl">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Quantum Bento Hunter Pro</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Wallet Dashboard</title>
 
-        :root {
-            --bg: #010204;
-            --accent: #00f2ff;
-            --card: rgba(15, 20, 30, 0.8);
-            --border: rgba(255, 255, 255, 0.08);
-            --success: #00ffa3;
-            --danger: #ff0055;
-        }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-        body {
-            background-color: var(--bg);
-            background-image: radial-gradient(circle at 50% 0%, #0d1117 0%, #010204 100%);
-            color: #ffffff;
-            font-family: 'Space Grotesk', sans-serif;
-            margin: 0;
-            padding: 12px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+<style>
 
-        /* Bento Grid System */
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-auto-rows: minmax(80px, auto);
-            gap: 10px;
-            max-width: 450px;
-            margin: 0 auto;
-            flex: 1;
-        }
+body{
+background:#0f1117;
+font-family:monospace;
+margin:0;
+color:white;
+display:flex;
+justify-content:center;
+}
 
-        .card {
-            background: var(--card);
-            backdrop-filter: blur(25px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 16px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
+.container{
+width:360px;
+padding:15px;
+}
 
-        .span-2 { grid-column: span 2; }
-        .tall { grid-row: span 2; }
+.title{
+font-size:18px;
+margin-bottom:10px;
+text-align:center;
+}
 
-        /* Header Styling */
-        .header-card { text-align: center; border-color: rgba(0, 242, 255, 0.2); }
-        .header-card h1 { margin: 0; font-size: 16px; letter-spacing: 3px; color: var(--accent); }
+.console{
+background:#0a0c12;
+border:1px solid #222;
+height:220px;
+overflow:auto;
+padding:10px;
+border-radius:8px;
+font-size:12px;
+}
 
-        /* Stats Styling */
-        .stat-val { font-family: 'JetBrains Mono'; font-size: 20px; font-weight: bold; }
-        .stat-label { font-size: 10px; color: #64748b; text-transform: uppercase; margin-top: 4px; }
+.found{
+margin-top:10px;
+font-size:14px;
+}
 
-        /* Console/Terminal */
-        .console {
-            height: 140px;
-            font-family: 'JetBrains Mono';
-            font-size: 11px;
-            color: var(--success);
-            overflow: hidden;
-            background: rgba(0,0,0,0.4);
-            border-radius: 18px;
-            padding: 12px;
-        }
+.seed-box{
+margin-top:10px;
+height:80px;
+background:#0a0c12;
+border:1px solid #222;
+border-radius:8px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#777;
+font-size:13px;
+}
 
-        /* 8 Professional Icons */
-        .icon-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            background: rgba(255,255,255,0.02);
-            padding: 12px;
-            border-radius: 20px;
-        }
+.coins{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:18px;
+margin-top:20px;
+}
 
-        .coin {
-            aspect-ratio: 1;
-            background: rgba(255,255,255,0.03);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid transparent;
-            transition: 0.3s;
-        }
+.coin{
+display:flex;
+flex-direction:column;
+align-items:center;
+}
 
-        .coin.active {
-            border-color: var(--glow);
-            box-shadow: 0 0 15px -5px var(--glow);
-            background: rgba(255,255,255,0.06);
-        }
+.circle{
+width:55px;
+height:55px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:24px;
+color:white;
+}
 
-        .coin svg { width: 26px; height: 26px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+.btc{background:#f7931a;}
+.eth{background:#3c3c3d;}
+.ltc{background:#345d9d;}
+.bnb{background:#f3ba2f;}
+.sol{background:#000;}
+.usdt{background:#26a17b;}
+.doge{background:#c2a633;}
+.trx{background:#e50914;}
 
-        /* Bottom Sheet Result */
-        #result-sheet {
-            position: fixed;
-            bottom: -100%; left: 0;
-            width: 100%; height: 50%;
-            background: #050505;
-            border-top: 2px solid var(--success);
-            border-radius: 30px 30px 0 0;
-            z-index: 100;
-            padding: 25px;
-            transition: 0.6s cubic-bezier(0.2, 1, 0.3, 1);
-            text-align: center;
-            box-shadow: 0 -20px 40px rgba(0,0,0,0.8);
-        }
+.check{
+margin-top:6px;
+color:#00ff95;
+}
 
-        #result-sheet.open { bottom: 0; }
+button{
+margin-top:20px;
+width:100%;
+padding:12px;
+background:#00ff95;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+}
 
-        .key-box {
-            background: #111;
-            padding: 15px;
-            border-radius: 15px;
-            font-family: 'JetBrains Mono';
-            font-size: 13px;
-            color: var(--success);
-            margin: 20px 0;
-            border: 1px dashed #333;
-        }
-
-        /* Main Button */
-        .btn-main {
-            width: 100%;
-            background: #ffffff;
-            color: #000000;
-            border: none;
-            padding: 20px;
-            border-radius: 22px;
-            font-weight: 700;
-            font-size: 15px;
-            margin-top: 10px;
-            box-shadow: 0 10px 20px rgba(255,255,255,0.1);
-        }
-
-        .btn-main:active { transform: scale(0.97); }
-
-        .scan-anim {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: var(--accent);
-            box-shadow: 0 0 15px var(--accent);
-            animation: scan 2.5s linear infinite;
-            display: none;
-        }
-
-        @keyframes scan { 0% {top:0} 100% {top:100%} }
-    </style>
+</style>
 </head>
+
 <body>
 
-<div class="bento-grid">
-    <div class="card span-2 header-card">
-        <h1>WHALE LENS <span style="opacity: 0.5; font-weight: 300;">PRO</span></h1>
-    </div>
+<div class="container">
 
-    <div class="card">
-        <span class="stat-val" id="checked-val">0</span>
-        <span class="stat-label">Total Scans</span>
-    </div>
-    <div class="card">
-        <span class="stat-val" id="found-val" style="color: var(--danger);">0</span>
-        <span class="stat-label">Matches</span>
-    </div>
+<div class="title">Crypto Wallet Checker</div>
 
-    <div class="card span-2 tall">
-        <div class="scan-anim" id="scanner"></div>
-        <div class="console" id="log-screen">
-            > Neural connection established...<br>
-            > Waiting for command...
-        </div>
-    </div>
+<div class="console" id="console"></div>
 
-    <div class="span-2 icon-grid">
-        <div class="coin active" style="--glow: #f7931a;"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#f7931a"/><path d="M22 13c0-2-1.5-3-4-3.5V7h-2v2.5h-1.5V7h-2v2.5H10v2h1.5v9H10v2h2.5V25h2v-2.5h1.5V25h2v-2.5c4 0 6-2 6-4.5 0-1.5-1-2.5-2.5-3 1.5-0.5 2.5-1.5 2.5-2.5zm-4.5 7.5h-4v-3h4c1.5 0 2 1 2 1.5s-0.5 1.5-2 1.5zm0-5h-4v-3h4c1.5 0 2 0.5 2 1.5s-0.5 1.5-2 1.5z" fill="white"/></svg></div>
-        <div class="coin active" style="--glow: #627eea;"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#627eea"/><path d="M16 4l-0.2 0.7v16.1l0.2 0.2 7.5-4.4L16 4z" fill="white" opacity="0.8"/><path d="M16 4L8.5 16.6 16 21V13.1z" fill="white"/></svg></div>
-        <div class="coin active" style="--glow: #0088cc;"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#0088cc"/><path d="M16 23.5l-8.5-7.5h17z" fill="white"/></svg></div>
-        <div class="coin active" style="--glow: #14f195;"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#14f195"/><path d="M22 21l-2-2-9 9 2 2zM22 11l-2-2-9 9 2 2zM22 2l-2-2-9 9 2 2z" fill="white"/></svg></div>
-        <div class="coin active" style="--glow: #f3ba2f;"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#f3ba2f"/><path d="M12 14l4-4 4 4 2-2-6-6-6 6z" fill="white"/></svg></div>
-        <div class="coin active" style="--glow: #26a17b;"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#26a17b"/><path d="M18 17v-4h5v-2h-10v2h5v4c-4 0-7 1-7 2s3 2 7 2 7-1 7-2-3-2-7-2z" fill="white"/></svg></div>
-        <div class="coin active" style="--glow: #e44033;"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#e44033"/><rect x="10" y="10" width="12" height="2" fill="white"/><rect x="10" y="14" width="12" height="2" fill="white"/><rect x="10" y="18" width="12" height="2" fill="white"/></svg></div>
-        <div class="coin active" style="--glow: #1c1c1c;"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#333"/><path d="M16 8l-8 8 8 8 8-8z" fill="white"/></svg></div>
-    </div>
+<div class="found">Found: <span id="found">0</span></div>
 
-    <div class="span-2">
-        <button class="btn-main" onclick="executeScan()">RUN SECURITY PROTOCOL</button>
-    </div>
+<div class="seed-box">
+Found Seed Phrases Appear Here
 </div>
 
-<div id="result-sheet">
-    <div style="width: 40px; height: 4px; background: #333; border-radius: 10px; margin: 0 auto 20px;"></div>
-    <h2 style="color: var(--success); margin: 0;">SUCCESS</h2>
-    <p style="color: #666; font-size: 12px;">Seed Phrase Recovered Successfully</p>
-    <div class="key-box">
-        alpha desert crystal flame ocean mountain silver golden shadow forest river light
-    </div>
-    <button onclick="location.reload()" style="background: var(--success); border: none; padding: 16px; border-radius: 15px; width: 100%; font-weight: bold;">DISMISS</button>
+<div class="coins">
+
+<div class="coin">
+<div class="circle btc"><i class="fab fa-bitcoin"></i></div>
+<div class="check">✔</div>
+</div>
+
+<div class="coin">
+<div class="circle eth"><i class="fab fa-ethereum"></i></div>
+<div class="check">✔</div>
+</div>
+
+<div class="coin">
+<div class="circle ltc">Ł</div>
+<div class="check">✔</div>
+</div>
+
+<div class="coin">
+<div class="circle bnb">B</div>
+<div class="check">✔</div>
+</div>
+
+<div class="coin">
+<div class="circle sol">S</div>
+<div class="check">✔</div>
+</div>
+
+<div class="coin">
+<div class="circle usdt">T</div>
+<div class="check">✔</div>
+</div>
+
+<div class="coin">
+<div class="circle btc"><i class="fab fa-bitcoin"></i></div>
+<div class="check">✔</div>
+</div>
+
+<div class="coin">
+<div class="circle doge">Ð</div>
+<div class="check">✔</div>
+</div>
+
+<div class="coin">
+<div class="circle trx">T</div>
+<div class="check">✔</div>
+</div>
+
+</div>
+
+<button onclick="start()">Start Scan</button>
+
 </div>
 
 <script>
-    function executeScan() {
-        const log = document.getElementById('log-screen');
-        const count = document.getElementById('checked-val');
-        const found = document.getElementById('found-val');
-        const scanner = document.getElementById('scanner');
-        const sheet = document.getElementById('result-sheet');
-        let c = 0;
 
-        scanner.style.display = 'block';
-        log.innerHTML = "> Accessing TON network...<br>";
+const words = [
+"panther click lumber",
+"energy target ten",
+"glory witness put",
+"trap trick erode",
+"strong liberty laundry",
+"knock craft stay",
+"hill feel leave",
+"enforce claim wonder",
+"pass spoon during",
+"blanket fringe circle",
+"castle cabbage exotic",
+"birth blossom lunch"
+];
 
-        const run = setInterval(() => {
-            c += Math.floor(Math.random() * 150);
-            count.innerText = c.toLocaleString();
+function start(){
 
-            const hex = Array.from({length:10}, () => Math.floor(Math.random()*16).toString(16)).join('').toUpperCase();
-            const div = document.createElement('div');
-            div.innerHTML = `> ADDR: 0x${hex}... <span style="color:var(--danger)">[0]</span>`;
-            log.appendChild(div);
+let consoleBox = document.getElementById("console")
 
-            if(log.childNodes.length > 7) log.removeChild(log.firstChild);
+let i=0
 
-            if(c > 15000 && Math.random() > 0.98) {
-                clearInterval(run);
-                found.innerText = "1";
-                found.style.color = "var(--success)";
-                sheet.classList.add('open');
-            }
-        }, 50);
-    }
+setInterval(()=>{
+
+let line = "Wallet Check: " + words[Math.floor(Math.random()*words.length)]
+
+let div = document.createElement("div")
+
+div.textContent=line
+
+consoleBox.appendChild(div)
+
+consoleBox.scrollTop=consoleBox.scrollHeight
+
+i++
+
+},700)
+
+}
+
 </script>
 
 </body>
