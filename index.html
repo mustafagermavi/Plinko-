@@ -1,165 +1,200 @@
 <!DOCTYPE html>
-<html lang="ku">
+<html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Neon Climber - Tap to Jump</title>
+    <title>Whale Pump - Luxury Edition</title>
     <style>
-        :root { --primary: #00f2ff; --bg: #050a14; }
-        body { margin: 0; background-color: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; touch-action: none; }
-        #game-container { position: relative; width: 100%; max-width: 400px; height: 90vh; background: radial-gradient(circle at top, #1a2a44 0%, #050a14 100%); border-radius: 24px; overflow: hidden; border: 1px solid rgba(0,242,255,0.2); }
-        canvas { display: block; }
-        .hud { position: absolute; top: 20px; left: 20px; pointer-events: none; z-index: 10; }
-        .score-box { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
-        .score-val { font-size: 24px; font-weight: 800; color: var(--primary); }
-        #start-screen { position: absolute; inset: 0; background: rgba(5, 10, 20, 0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20; }
-        .btn-play { background: var(--primary); color: #000; border: none; padding: 15px 40px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 0 20px var(--primary); }
+        :root {
+            --primary: #00d2ff;
+            --accent: #3a7bd5;
+            --bg: #020617;
+            --surface: rgba(15, 23, 42, 0.6);
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(0, 210, 255, 0.2);
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header - Bento Style */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo { font-weight: 800; letter-spacing: 1px; color: var(--primary); }
+        .balance { background: rgba(0, 210, 255, 0.1); padding: 5px 15px; border-radius: 20px; border: 1px solid var(--border); }
+
+        /* Main Game Area */
+        .game-area {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+        }
+
+        .multiplier {
+            font-size: 80px;
+            font-weight: 900;
+            z-index: 5;
+            text-shadow: 0 0 30px rgba(0, 210, 255, 0.5);
+        }
+
+        /* Whale Animation */
+        .whale-icon {
+            position: absolute;
+            bottom: 20%;
+            left: 10%;
+            font-size: 50px;
+            filter: drop-shadow(0 0 15px var(--primary));
+            transition: all 0.1s linear;
+        }
+
+        /* Live Bets - Bento Grid Sidebar */
+        .sidebar {
+            position: absolute;
+            left: 10px;
+            top: 80px;
+            bottom: 120px;
+            width: 120px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 11px;
+            z-index: 10;
+        }
+
+        .bet-item {
+            background: rgba(255,255,255,0.05);
+            padding: 5px;
+            border-radius: 8px;
+            border-right: 3px solid var(--primary);
+        }
+
+        /* Control Panel */
+        .controls {
+            padding: 20px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .input-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .btn-bet {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+            transition: 0.3s;
+        }
+
+        .btn-bet:active { transform: scale(0.95); }
+
+        /* Background Grid */
+        .grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(0, 210, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 210, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
 
-    <div id="game-container">
-        <div class="hud">
-            <div class="score-box">
-                <span id="score" class="score-val">0</span>
-            </div>
-        </div>
+    <div class="header">
+        <div class="logo">WHALELENS PUMP</div>
+        <div class="balance">💰 <span id="user-balance">1,250.00</span></div>
+    </div>
 
-        <div id="start-screen">
-            <h1 style="color: var(--primary);">NEON JUMP</h1>
-            <p style="color: #666; margin-bottom: 30px;">Tap anywhere to Jump!</p>
-            <button class="btn-play" onclick="startGame()">START GAME</button>
+    <div class="game-area">
+        <div class="grid-bg"></div>
+        <div class="sidebar">
+            <div style="color: var(--primary); font-weight: bold;">LIVE WHALES</div>
+            <div class="bet-item">Mustafa: 500</div>
+            <div class="bet-item">Ahmed: 120</div>
+            <div class="bet-item">Bot_01: 1000</div>
         </div>
+        
+        <div class="multiplier" id="mult">1.00x</div>
+        <div class="whale-icon" id="whale">🐋</div>
+    </div>
 
-        <canvas id="gameCanvas"></canvas>
+    <div class="controls">
+        <div class="input-box">
+            <div style="font-size: 10px; color: #aaa;">BET AMOUNT</div>
+            <div style="font-size: 20px; font-weight: bold;">100.00</div>
+        </div>
+        <button class="btn-bet" onclick="startPump()">PUMP IT</button>
     </div>
 
 <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const scoreVal = document.getElementById('score');
-    const startScreen = document.getElementById('start-screen');
+    let mult = 1.00;
+    let isPumping = false;
+    const multElement = document.getElementById('mult');
+    const whale = document.getElementById('whale');
 
-    let gameActive = false;
-    let score = 0;
-    let cameraY = 0;
-
-    function resize() {
-        canvas.width = document.getElementById('game-container').clientWidth;
-        canvas.height = document.getElementById('game-container').clientHeight;
-    }
-    resize();
-
-    const player = {
-        x: canvas.width / 2,
-        y: canvas.height - 100,
-        r: 12,
-        dy: 0,
-        jump: -10, // هێزا بازدانێ
-        grav: 0.4, // کێشانا عەردی (Gravity)
-        color: '#00f2ff'
-    };
-
-    let platforms = [];
-    function initPlatforms() {
-        platforms = [];
-        platforms.push({x: 0, y: canvas.height - 20, w: canvas.width, h: 20}); // عەرد
-        for(let i=0; i<6; i++) {
-            addPlatform(canvas.height - (i * 150) - 200);
-        }
-    }
-
-    function addPlatform(y) {
-        const w = 80 + Math.random() * 40;
-        platforms.push({ x: Math.random() * (canvas.width - w), y: y, w: w, h: 12 });
-    }
-
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.save();
-        ctx.translate(0, cameraY);
-
-        platforms.forEach(p => {
-            ctx.fillStyle = '#334155';
-            ctx.beginPath();
-            ctx.roundRect(p.x, p.y, p.w, p.h, 6);
-            ctx.fill();
-        });
-
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = player.color;
-        ctx.fillStyle = player.color;
-        ctx.beginPath();
-        ctx.arc(player.x, player.y, player.r, 0, Math.PI*2);
-        ctx.fill();
-        ctx.restore();
-    }
-
-    function update() {
-        if(!gameActive) return;
-
-        player.dy += player.grav;
-        player.y += player.dy;
-
-        // Collision (مانەوە ل سەر پاترمێ)
-        if(player.dy > 0) {
-            platforms.forEach(p => {
-                if(player.x > p.x && player.x < p.x + p.w && 
-                   player.y + player.r > p.y && player.y + player.r < p.y + p.h + player.dy) {
-                    player.dy = 0;
-                    player.y = p.y - player.r;
-                }
-            });
-        }
-
-        // Camera move
-        if(player.y < canvas.height/2 + cameraY) {
-            cameraY = canvas.height/2 - player.y;
-            score++;
-            scoreVal.innerText = Math.floor(score/10);
-        }
-
-        // Game Over
-        if(player.y > cameraY + canvas.height + 100) {
-            gameActive = false;
-            startScreen.style.display = 'flex';
-        }
-
-        // Infinite Platforms
-        if(platforms[0].y > cameraY + canvas.height + 100) {
-            platforms.shift();
-            addPlatform(platforms[platforms.length-1].y - 150);
-        }
-    }
-
-    function loop() {
-        update(); draw();
-        requestAnimationFrame(loop);
-    }
-
-    function handleInput(e) {
-        if(!gameActive) return;
-        player.dy = player.jump; // بازدان ب هەر کلیکەکێ
+    function startPump() {
+        if(isPumping) return;
+        isPumping = true;
+        mult = 1.00;
         
-        // لڤینا چەپ و ڕاست ب کلیک یان تاتش
-        let clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        let rect = canvas.getBoundingClientRect();
-        player.x = clientX - rect.left;
+        let interval = setInterval(() => {
+            if(Math.random() > 0.98 && mult > 2) { // Crash Logic
+                clearInterval(interval);
+                multElement.style.color = "#ff4757";
+                multElement.innerText = "CRASHED!";
+                setTimeout(() => {
+                    multElement.style.color = "white";
+                    isPumping = false;
+                }, 2000);
+                return;
+            }
+
+            mult += 0.01;
+            multElement.innerText = mult.toFixed(2) + "x";
+            
+            // Whale Animation
+            whale.style.left = (10 + (mult * 2)) + "%";
+            whale.style.bottom = (20 + (mult * 5)) + "%";
+        }, 50);
     }
-
-    window.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e); });
-    window.addEventListener('mousedown', (e) => { handleInput(e); });
-
-    function startGame() {
-        score = 0; cameraY = 0; scoreVal.innerText = "0";
-        player.x = canvas.width / 2; player.y = canvas.height - 100; player.dy = 0;
-        initPlatforms();
-        gameActive = true;
-        startScreen.style.display = 'none';
-    }
-
-    initPlatforms();
-    loop();
 </script>
 </body>
 </html>
