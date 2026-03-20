@@ -2,617 +2,416 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>NEO·CRACK | Crypto Wallet Auditor</title>
-    <!-- Font Awesome 6 (free icons) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Fonts: modern, clean -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Neumorphic Terminal | Real-time Wallet Scanner</title>
+    <!-- Google Fonts: monospace + clean UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:opsz,wght@14..32,400;14..32,500&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background-color: #1e2124;
-            padding: 24px 20px;
+            background: #1e2124;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            font-family: 'Inter', sans-serif;
+            padding: 1.5rem;
         }
 
-        /* main dashboard container */
-        .dashboard {
-            max-width: 1280px;
+        /* main container – subtle neumorphic wrapper */
+        .terminal-container {
+            max-width: 800px;
             width: 100%;
-            margin: 0 auto;
+            background: #1e2124;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            box-shadow: -10px -10px 20px rgba(0, 0, 0, 0.5),
+                        10px 10px 20px rgba(255, 255, 255, 0.05);
         }
 
-        /* ========= NEUMORPHISM CORE ========= */
-        /* popping out elements (outer shadow) */
-        .neumorph-card {
-            background: #1e2124;
-            border-radius: 32px;
-            box-shadow: -8px -8px 16px rgba(0, 0, 0, 0.5),
-                        8px 8px 16px rgba(255, 255, 255, 0.08);
-            transition: all 0.2s ease;
+        /* header with label */
+        .terminal-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 1.25rem;
+            gap: 0.75rem;
         }
-
-        /* inset "carved in" fields */
-        .neumorph-inset {
-            background: #1e2124;
-            border-radius: 28px;
-            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.55),
-                        inset -4px -4px 8px rgba(255, 255, 255, 0.06);
-        }
-
-        /* buttons with popping + active press effect */
-        .btn-neo {
-            background: #1e2124;
-            border: none;
-            padding: 16px 24px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            border-radius: 60px;
-            color: #e0e4e9;
-            cursor: pointer;
-            transition: all 0.12s linear;
-            box-shadow: -6px -6px 12px rgba(0, 0, 0, 0.5),
-                        6px 6px 12px rgba(255, 255, 255, 0.07);
-            letter-spacing: 0.5px;
-            display: inline-flex;
+        .title {
+            display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-
-        .btn-neo:active {
-            transform: scale(0.97);
-            box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.6),
-                        2px 2px 5px rgba(255, 255, 255, 0.05);
-        }
-
-        /* stat cards style */
-        .stat-card {
-            background: #1e2124;
-            border-radius: 28px;
-            padding: 20px 12px;
-            text-align: center;
-            flex: 1;
-            box-shadow: -6px -6px 12px rgba(0, 0, 0, 0.5),
-                        6px 6px 12px rgba(255, 255, 255, 0.07);
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            gap: 0.6rem;
             font-weight: 500;
-            color: #9aa3b3;
-            margin-bottom: 8px;
+            color: #cbd5e6;
+            letter-spacing: 0.3px;
+        }
+        .title i {
+            font-size: 1.3rem;
+            color: #6c8eff;
+        }
+        .badge {
+            background: #2a2e33;
+            padding: 0.25rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #9aa9c4;
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.3), inset -1px -1px 1px rgba(255,255,255,0.02);
         }
 
-        .stat-value {
-            font-size: 2.3rem;
-            font-weight: 700;
-            color: #e9f0ff;
-            line-height: 1;
-        }
-
-        /* terminal & found box (inset carved look) */
-        .inset-panel {
+        /* INSET NEUMORPHIC TERMINAL BOX (carved in effect) */
+        .terminal-inset {
             background: #1e2124;
             border-radius: 28px;
-            padding: 18px 16px;
-            height: 100%;
+            box-shadow: inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+                        inset -6px -6px 12px rgba(255, 255, 255, 0.04);
+            padding: 1.2rem 1rem;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            min-height: 380px;
             display: flex;
             flex-direction: column;
-            box-shadow: inset 4px 4px 12px rgba(0, 0, 0, 0.6),
-                        inset -4px -4px 10px rgba(255, 255, 255, 0.04);
         }
 
-        .panel-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: #bbc4d4;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-left: 3px solid #3f8eff;
-            padding-left: 12px;
-        }
-
+        /* scrollable log area */
         .terminal-log {
             flex: 1;
-            min-height: 220px;
-            max-height: 280px;
             overflow-y: auto;
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            font-size: 0.8rem;
-            color: #cbd5e6;
-            background: transparent;
+            max-height: 340px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 0.35rem;
         }
 
+        /* each log line – monospace, subtle grey */
         .log-line {
-            font-family: monospace;
+            font-family: 'Fira Code', 'Courier New', monospace;
             font-size: 0.75rem;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
-            padding: 4px 0;
+            padding: 0.3rem 0.2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            color: #b0bedb;  /* subtle grey-blue */
             word-break: break-word;
+            white-space: pre-wrap;
         }
 
-        .found-list {
-            flex: 1;
-            min-height: 220px;
-            max-height: 280px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .found-item {
-            background: rgba(30,33,36,0.7);
-            border-radius: 20px;
-            padding: 12px 14px;
-            box-shadow: inset 0px 1px 2px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.02);
-            border-left: 3px solid #2ecc71;
-            font-size: 0.75rem;
-            transition: 0.1s;
-        }
-
-        .found-wallet {
+        /* highlight FAIL and SUCCESS */
+        .log-line .highlight-fail {
+            color: #ff7b72;
             font-weight: 600;
-            color: #d9f0ff;
+            text-shadow: 0 0 2px rgba(255,80,80,0.2);
+            background: rgba(255,70,70,0.08);
+            padding: 0 2px;
+            border-radius: 6px;
+        }
+        .log-line .highlight-success {
+            color: #7ee787;
+            font-weight: 600;
+            text-shadow: 0 0 2px rgba(100,255,100,0.2);
+            background: rgba(70,255,70,0.05);
+            padding: 0 2px;
+            border-radius: 6px;
+        }
+
+        /* custom scrollbar – minimal */
+        .terminal-log::-webkit-scrollbar {
+            width: 4px;
+        }
+        .terminal-log::-webkit-scrollbar-track {
+            background: #2a2e33;
+            border-radius: 8px;
+        }
+        .terminal-log::-webkit-scrollbar-thumb {
+            background: #5c6a82;
+            border-radius: 8px;
+        }
+
+        /* button row – neumorphic buttons */
+        .button-group {
             display: flex;
+            gap: 1.2rem;
+            margin-top: 1.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .neo-btn {
+            background: #1e2124;
+            border: none;
+            padding: 0.75rem 1.6rem;
+            border-radius: 60px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            color: #dce5f5;
+            cursor: pointer;
+            transition: all 0.12s ease;
+            box-shadow: -5px -5px 12px rgba(0, 0, 0, 0.5),
+                        5px 5px 12px rgba(255, 255, 255, 0.05);
+            display: inline-flex;
             align-items: center;
             gap: 8px;
-            flex-wrap: wrap;
         }
-
-        .found-pass {
-            font-family: monospace;
-            color: #98b0d4;
-            font-size: 0.7rem;
-            margin-top: 5px;
-            word-break: break-all;
-        }
-
-        /* 3x3 crypto grid */
-        .crypto-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 18px;
-            margin: 20px 0 28px;
-        }
-
-        .crypto-icon-card {
-            background: #1e2124;
-            border-radius: 28px;
-            padding: 18px 8px;
-            text-align: center;
-            transition: all 0.2s;
-            box-shadow: -6px -6px 12px rgba(0, 0, 0, 0.5),
-                        6px 6px 12px rgba(255, 255, 255, 0.07);
-            cursor: default;
-        }
-
-        .crypto-icon-card i {
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            color: #d4deef;
-        }
-
-        .crypto-icon-card span {
-            display: block;
-            font-weight: 500;
-            font-size: 0.75rem;
-            color: #b9c3d4;
-        }
-
-        /* button container */
-        .action-buttons {
-            display: flex;
-            gap: 28px;
-            justify-content: center;
-            margin-top: 12px;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
-        }
-
-        .action-buttons .btn-neo {
-            flex: 1;
-            min-width: 180px;
-            font-size: 1.1rem;
-            padding: 16px 18px;
-        }
-
-        /* layout responsive */
-        .stats-row {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 32px;
-            flex-wrap: wrap;
-        }
-
-        .dual-panels {
-            display: flex;
-            gap: 24px;
-            margin-bottom: 28px;
-            flex-wrap: wrap;
-        }
-
-        .terminal-panel, .found-panel {
-            flex: 1;
-            min-width: 240px;
-        }
-
-        /* scroll custom */
-        ::-webkit-scrollbar {
-            width: 5px;
-            background: #2a2e33;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #4f5b6e;
-            border-radius: 10px;
-        }
-
-        /* responsive mobile */
-        @media (max-width: 700px) {
-            body {
-                padding: 16px 12px;
-            }
-            .stats-row {
-                gap: 12px;
-            }
-            .stat-value {
-                font-size: 1.6rem;
-            }
-            .dual-panels {
-                flex-direction: column;
-            }
-            .crypto-grid {
-                gap: 12px;
-            }
-            .crypto-icon-card i {
-                font-size: 2rem;
-            }
-            .action-buttons {
-                flex-direction: column;
-                gap: 16px;
-            }
-            .action-buttons .btn-neo {
-                width: 100%;
-            }
-            .btn-neo {
-                font-size: 1rem;
-                padding: 14px 18px;
-            }
-        }
-
-        /* subtle active highlight for grid */
-        .crypto-icon-card:active {
+        .neo-btn:active {
             transform: scale(0.97);
-            box-shadow: -3px -3px 8px rgba(0,0,0,0.5), 3px 3px 8px rgba(255,255,255,0.05);
+            box-shadow: -2px -2px 6px rgba(0, 0, 0, 0.6),
+                        2px 2px 6px rgba(255, 255, 255, 0.03);
         }
-        .footer-note {
-            text-align: center;
-            font-size: 0.65rem;
-            margin-top: 20px;
-            color: #5f6b7e;
+        .neo-btn.stop-btn {
+            color: #ffa28b;
+        }
+        .status-indicator {
+            font-size: 0.7rem;
+            background: #2a2e33;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            color: #a6c1ff;
+            font-family: monospace;
+        }
+        @media (max-width: 550px) {
+            .terminal-container { padding: 1rem; }
+            .terminal-inset { padding: 0.9rem; }
+            .log-line { font-size: 0.7rem; }
+            .neo-btn { padding: 0.6rem 1.2rem; font-size: 0.75rem; }
         }
     </style>
+    <!-- Font Awesome for icons (optional but nice) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-<div class="dashboard">
-    <!-- STATS HEADER (neumorph outer) -->
-    <div class="stats-row">
-        <div class="stat-card">
-            <div class="stat-label"><i class="fas fa-microchip"></i> ATTEMPTS</div>
-            <div class="stat-value" id="attemptsCount">0</div>
+<div class="terminal-container">
+    <div class="terminal-header">
+        <div class="title">
+            <i class="fas fa-terminal"></i>
+            <span>REALTIME WALLET SCANNER</span>
         </div>
-        <div class="stat-card">
-            <div class="stat-label"><i class="fas fa-key"></i> FOUND WALLETS</div>
-            <div class="stat-value" id="foundCount">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label"><i class="fas fa-tachometer-alt"></i> SPEED (h/s)</div>
-            <div class="stat-value" id="speedValue">0</div>
+        <div class="badge">
+            <i class="fas fa-microchip"></i> BIP39 · 80-100ms
         </div>
     </div>
 
-    <!-- TERMINAL + FOUND (inset carved fields) -->
-    <div class="dual-panels">
-        <!-- TERMINAL AREA -->
-        <div class="terminal-panel inset-panel">
-            <div class="panel-title">
-                <i class="fas fa-terminal"></i> BRUTE FORCE CONSOLE
-            </div>
-            <div class="terminal-log" id="terminalLog">
-                <div class="log-line">[✓] NEO·CRACK v1.0 ready</div>
-                <div class="log-line">[✓] Neumorphic engine active</div>
-                <div class="log-line">[>] Awaiting start signal ...</div>
-            </div>
-        </div>
-
-        <!-- DEDICATED FOUND RESULTS BOX -->
-        <div class="found-panel inset-panel">
-            <div class="panel-title">
-                <i class="fas fa-treasure-chest"></i> FOUND WALLETS / SEEDS
-            </div>
-            <div class="found-list" id="foundList">
-                <div style="text-align: center; opacity: 0.6; font-size:0.75rem; padding:20px;">No wallets discovered yet.<br>Start brute-force simulation</div>
-            </div>
+    <!-- Inset Neumorphic Terminal Box (carved effect) -->
+    <div class="terminal-inset">
+        <div class="terminal-log" id="terminalLog">
+            <!-- initial messages, will be overwritten after start -->
+            <div class="log-line">[system] terminal ready — press START</div>
+            <div class="log-line">[info] real‑time wallet entropy scan</div>
+            <div class="log-line">[ready] max 15 lines, auto‑scroll enabled</div>
         </div>
     </div>
 
-    <!-- 3x3 CRYPTO ICONS GRID (neumorph outer) -->
-    <div class="crypto-grid">
-        <div class="crypto-icon-card"><i class="fab fa-bitcoin"></i><span>Bitcoin</span></div>
-        <div class="crypto-icon-card"><i class="fab fa-ethereum"></i><span>Ethereum</span></div>
-        <div class="crypto-icon-card"><i class="fab fa-litecoin-sign"></i><span>Litecoin</span></div>
-        <div class="crypto-icon-card"><i class="fab fa-dogecoin"></i><span>Dogecoin</span></div>
-        <div class="crypto-icon-card"><i class="fab fa-cardano"></i><span>Cardano</span></div>
-        <div class="crypto-icon-card"><i class="fas fa-globe"></i><span>Polkadot</span></div>
-        <div class="crypto-icon-card"><i class="fas fa-bolt"></i><span>Solana</span></div>
-        <div class="crypto-icon-card"><i class="fas fa-waveform"></i><span>Ripple</span></div>
-        <div class="crypto-icon-card"><i class="fab fa-btc"></i><span>BNB Chain</span></div>
+    <div class="button-group">
+        <button class="neo-btn" id="startBtn"><i class="fas fa-play"></i> START SCAN</button>
+        <button class="neo-btn stop-btn" id="stopBtn"><i class="fas fa-stop"></i> STOP & CLEAR</button>
     </div>
-
-    <!-- TWO LARGE CONTROL BUTTONS -->
-    <div class="action-buttons">
-        <button class="btn-neo" id="startBtn"><i class="fas fa-play"></i> START ATTACK</button>
-        <button class="btn-neo" id="stopClearBtn"><i class="fas fa-skull-crossbones"></i> STOP / PURGE</button>
-    </div>
-    <div class="footer-note">
-        ⚡ simulated brute-force audit | neumorphic security dashboard
+    <div style="text-align: center; margin-top: 0.8rem;">
+        <span class="status-indicator" id="liveStatus">⚫ INACTIVE</span>
     </div>
 </div>
 
 <script>
-    // ------------------- SIMULATION STATE -------------------
-    let isRunning = false;
+    // ----------------------------------------------
+    // 1. BIP39 wordlist (subset of 200 common words)
+    // ----------------------------------------------
+    const BIP39_SUBSET = [
+        "abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse",
+        "access", "accident", "account", "accuse", "achieve", "acid", "acoustic", "acquire", "across", "act",
+        "action", "actor", "actress", "actual", "adapt", "add", "addict", "address", "adjust", "admit",
+        "adult", "advance", "advice", "aerobic", "affair", "afford", "afraid", "africa", "after", "again",
+        "age", "agent", "agree", "ahead", "aim", "air", "airport", "aisle", "alarm", "album", "alcohol",
+        "alert", "alien", "all", "alley", "allow", "almost", "alone", "alpha", "already", "also",
+        "alter", "always", "amateur", "amazing", "among", "amount", "amused", "analyst", "anchor", "ancient",
+        "anger", "angle", "angry", "animal", "ankle", "announce", "annual", "another", "answer", "antenna",
+        "antique", "anxiety", "any", "apart", "apology", "appear", "apple", "approve", "april", "arch",
+        "arctic", "area", "arena", "argue", "arm", "armed", "armor", "army", "around", "arrange",
+        "arrest", "arrive", "arrow", "art", "artefact", "artist", "artwork", "ask", "aspect", "assault",
+        "asset", "assist", "assume", "asthma", "athlete", "atom", "attack", "attend", "attitude", "attract",
+        "auction", "audit", "august", "aunt", "author", "auto", "autumn", "average", "avocado", "avoid",
+        "awake", "aware", "away", "awesome", "awful", "awkward", "axis", "baby", "bachelor", "bacon",
+        "badge", "bag", "balance", "balcony", "ball", "bamboo", "banana", "banner", "bar", "barely",
+        "bargain", "barrel", "base", "basic", "basket", "battle", "beach", "bean", "beauty", "because",
+        "become", "beef", "before", "begin", "behave", "behind", "believe", "below", "belt", "bench",
+        "benefit", "best", "betray", "better", "between", "beyond", "bicycle", "bid", "bike", "bind"
+    ];  // enough to simulate randomness
+
+    // helper: get N random BIP39 words (12 words for mnemonic)
+    function getRandomMnemonic(wordCount = 12) {
+        const shuffled = [...BIP39_SUBSET];
+        // Fisher-Yates not needed, just pick random indices
+        const words = [];
+        for (let i = 0; i < wordCount; i++) {
+            const randomIndex = Math.floor(Math.random() * BIP39_SUBSET.length);
+            words.push(BIP39_SUBSET[randomIndex]);
+        }
+        return words.join(' ');
+    }
+
+    // simulate "Wallet Check: [12 random BIP39 words]... [FAIL/SUCCESS]"
+    // we will append lines with probability 20% SUCCESS, 80% FAIL
+    function generateScanLine() {
+        const mnemonic = getRandomMnemonic(12);
+        const isSuccess = Math.random() < 0.2;  // 20% success rate (realistic detection)
+        const statusText = isSuccess ? "SUCCESS" : "FAIL";
+        // Format: Wallet Check: word1 word2 ... word12 ... [FAIL] or [SUCCESS]
+        // use a concise preview
+        return `🔍 Wallet Check: ${mnemonic}... → [${statusText}]`;
+    }
+
+    // ---- Terminal Manager ----
+    const terminalLogDiv = document.getElementById('terminalLog');
     let intervalId = null;
-    
-    // core stats
-    let totalAttempts = 0;
-    let totalFound = 0;
-    let lastAttemptsSnapshot = 0;    // to calculate speed per second
-    let currentSpeed = 0;
+    let isActive = false;
+    const MAX_LINES = 15;
+    let lineBuffer = []; // store lines as DOM elements? we'll manage by appending/trimming
 
-    // DOM elements
-    const attemptsSpan = document.getElementById('attemptsCount');
-    const foundSpan = document.getElementById('foundCount');
-    const speedSpan = document.getElementById('speedValue');
-    const terminalContainer = document.getElementById('terminalLog');
-    const foundListContainer = document.getElementById('foundList');
-
-    // helper: update stat displays
-    function updateStatsUI() {
-        attemptsSpan.innerText = totalAttempts.toLocaleString();
-        foundSpan.innerText = totalFound;
-        speedSpan.innerText = currentSpeed;
-    }
-
-    // add log line to terminal (auto scroll)
-    function addLog(message, isError = false) {
-        const logDiv = document.createElement('div');
-        logDiv.className = 'log-line';
-        logDiv.style.color = isError ? '#ff9f7c' : '#bdd4ff';
-        const timestamp = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute:'2-digit', second:'2-digit' });
-        logDiv.innerHTML = `<span style="color:#6c86a3;">[${timestamp}]</span> ${message}`;
-        terminalContainer.appendChild(logDiv);
-        logDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        // limit lines (keep last 180)
-        while (terminalContainer.children.length > 220) {
-            terminalContainer.removeChild(terminalContainer.firstChild);
-        }
-    }
-
-    // add found wallet entry in dedicated Found box
-    function addFoundEntry(currencyName, address, passphraseOrKey) {
-        // remove placeholder if exists (first child might be empty message)
-        if (foundListContainer.children.length === 1 && foundListContainer.children[0].innerText.includes("No wallets discovered")) {
-            foundListContainer.innerHTML = '';
-        }
-        const entry = document.createElement('div');
-        entry.className = 'found-item';
-        entry.innerHTML = `
-            <div class="found-wallet">
-                <i class="fas fa-unlock-alt" style="color:#2ecc71;"></i> 
-                <strong>${currencyName}</strong> 
-                <span style="font-size:0.65rem; background:#252a30; padding:2px 8px; border-radius:40px;">WALLET</span>
-            </div>
-            <div class="found-wallet" style="font-family:monospace; font-size:0.7rem; margin-top:6px;">
-                📍 ${address.substring(0, 28)}...
-            </div>
-            <div class="found-pass">
-                🔑 passphrase: ${passphraseOrKey}
-            </div>
-        `;
-        foundListContainer.prepend(entry);   // show newest first
-        // limit to 70 entries for performance
-        while (foundListContainer.children.length > 75) {
-            foundListContainer.removeChild(foundListContainer.lastChild);
-        }
-    }
-
-    // generate random crypto wallet mock data (realistic demo)
-    const cryptoList = [
-        "Bitcoin", "Ethereum", "Litecoin", "Dogecoin", "Cardano", 
-        "Polkadot", "Solana", "Ripple (XRP)", "BNB Chain"
-    ];
-    function randomCryptoName() {
-        return cryptoList[Math.floor(Math.random() * cryptoList.length)];
-    }
-
-    function generateMockAddressAndSeed(currency) {
-        let prefix = "";
-        if (currency === "Bitcoin") prefix = "bc1q";
-        else if (currency === "Ethereum") prefix = "0x";
-        else if (currency === "Litecoin") prefix = "ltc1";
-        else if (currency === "Dogecoin") prefix = "D";
-        else prefix = "addr_";
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        let addr = prefix;
-        for (let i = 0; i < 28; i++) addr += chars.charAt(Math.floor(Math.random() * chars.length));
-        // passphrase: random word + numbers
-        const seeds = ["crystal", "velvet", "phantom", "nebula", "pulse", "shadow", "quantum", "lattice", "morph"];
-        const seedWord = seeds[Math.floor(Math.random() * seeds.length)];
-        const num = Math.floor(Math.random() * 9999);
-        const passphrase = `${seedWord}${num}${Math.random().toString(36).substring(2,6)}`;
-        return { address: addr, passphrase };
-    }
-
-    // main simulation tick (called every 1 second)
-    function simulationTick() {
-        if (!isRunning) return;
-
-        // dynamic attempts per second (between 6 and 24)
-        const attemptsThisSecond = Math.floor(Math.random() * 22) + 6;   // 6-28 range
-        totalAttempts += attemptsThisSecond;
+    // helper: add a single line to the terminal, respecting max lines & auto-scroll
+    function appendLine(text, isSuccessStatus = null) {
+        // create log line element
+        const lineDiv = document.createElement('div');
+        lineDiv.className = 'log-line';
         
-        // compute speed = attempts per second (real time)
-        currentSpeed = attemptsThisSecond;
-        // update stats UI
-        updateStatsUI();
-        
-        // add log about attempts
-        addLog(`⚡ ${attemptsThisSecond} hash/s · total attempts: ${totalAttempts.toLocaleString()} · scanning entropy...`);
-        
-        // chance to find a wallet (15-30% per tick)
-        const foundChance = Math.random();
-        if (foundChance < 0.27) {   // 27% realistic demo
-            totalFound++;
-            // generate random crypto from list (relates to grid)
-            const cryptoType = randomCryptoName();
-            const { address, passphrase } = generateMockAddressAndSeed(cryptoType);
-            // add found entry
-            addFoundEntry(cryptoType, address, passphrase);
-            // also write in terminal
-            addLog(`🎯 [FOUND] ${cryptoType} wallet recovered! (${address.substring(0,12)}...) | seed: ${passphrase.substring(0,12)}***`);
-            // update found stat UI
-            updateStatsUI();
-        } else {
-            // small chance to display brute-force progress variety
-            if (Math.random() < 0.4) {
-                addLog(`🔍 iterating keypairs ... deriving nonces [${Math.floor(Math.random()*10000)}]`);
+        // we need to detect if the line contains "SUCCESS" or "FAIL" to apply highlight
+        // but the generated line includes [SUCCESS] or [FAIL] in brackets.
+        // we'll wrap those parts with spans.
+        let formattedHtml = '';
+        // parse text to highlight FAIL/SUCCESS tokens (case sensitive, but they are uppercase)
+        // we can split using regex
+        const parts = text.split(/(\[SUCCESS\]|\[FAIL\])/g);
+        for (let part of parts) {
+            if (part === '[SUCCESS]') {
+                formattedHtml += `<span class="highlight-success">${part}</span>`;
+            } else if (part === '[FAIL]') {
+                formattedHtml += `<span class="highlight-fail">${part}</span>`;
+            } else {
+                formattedHtml += part;
             }
         }
+        lineDiv.innerHTML = formattedHtml;
         
-        // update last attempts snapshot for speed consistency
-        lastAttemptsSnapshot = totalAttempts;
+        terminalLogDiv.appendChild(lineDiv);
+        
+        // enforce max lines: if more than MAX_LINES, remove first child
+        while (terminalLogDiv.children.length > MAX_LINES) {
+            terminalLogDiv.removeChild(terminalLogDiv.firstChild);
+        }
+        
+        // auto-scroll to bottom
+        terminalLogDiv.scrollTop = terminalLogDiv.scrollHeight;
     }
 
-    // ---------- RESET / FULL PURGE (stop + clear all data) ----------
-    function fullResetAndStop() {
-        if (isRunning) {
-            clearInterval(intervalId);
-            isRunning = false;
-            intervalId = null;
+    // clear terminal completely (optional but used for stop+clear)
+    function clearTerminal() {
+        terminalLogDiv.innerHTML = '';
+        // add a fresh placeholder message
+        const placeholder = document.createElement('div');
+        placeholder.className = 'log-line';
+        placeholder.innerHTML = '⏻ terminal cleared — press START to begin scanning';
+        terminalLogDiv.appendChild(placeholder);
+    }
+
+    // core scanning tick: generates a new line every 80-100ms
+    let lastIntervalDelay = 85; // variable, but we set dynamic on each tick? simpler: we set interval once with fixed but dynamic within range? 
+    // To achieve random interval between 80-100ms, we can use setTimeout chain, or set interval with clear and reset.
+    // Better: use recursive setTimeout with random delay to simulate "80-100ms" more accurately.
+    function startSimulation() {
+        if (isActive) return; // already running
+        
+        isActive = true;
+        updateStatusUI(true);
+        // clear any existing interval leftover
+        if (intervalId) clearTimeout(intervalId);
+        
+        function scheduleTick() {
+            if (!isActive) return;
+            // generate and append new scan line
+            const lineText = generateScanLine();
+            appendLine(lineText);
+            // random delay between 80 and 100 milliseconds
+            const nextDelay = Math.floor(Math.random() * (100 - 80 + 1) + 80);
+            intervalId = setTimeout(scheduleTick, nextDelay);
         }
-        // reset core counters
-        totalAttempts = 0;
-        totalFound = 0;
-        currentSpeed = 0;
-        lastAttemptsSnapshot = 0;
-        updateStatsUI();
         
-        // clear terminal logs but keep a clean welcome header
-        terminalContainer.innerHTML = '';
-        addLog("🛡️ session reset · system purged");
-        addLog("⚙️ neomorphic interface ready");
-        addLog("💀 waiting for START ATTACK");
-        
-        // clear Found box completely
-        foundListContainer.innerHTML = '';
-        const emptyMsg = document.createElement('div');
-        emptyMsg.style.textAlign = "center";
-        emptyMsg.style.opacity = "0.6";
-        emptyMsg.style.fontSize = "0.75rem";
-        emptyMsg.style.padding = "20px";
-        emptyMsg.innerText = "No wallets discovered yet.\nStart brute-force simulation";
-        foundListContainer.appendChild(emptyMsg);
-        
-        // enable start button style / disable any "running" constraints (button state handled separately)
-        const startBtn = document.getElementById('startBtn');
-        startBtn.disabled = false;
-        startBtn.style.opacity = '1';
-        startBtn.style.cursor = 'pointer';
+        // start first tick immediately
+        scheduleTick();
     }
     
-    // start simulation (only if not already running)
-    function startSimulation() {
-        if (isRunning) {
-            addLog("⚠️ brute force already active! Stop before restart.", true);
+    function stopAndClear() {
+        if (intervalId) {
+            clearTimeout(intervalId);
+            intervalId = null;
+        }
+        isActive = false;
+        updateStatusUI(false);
+        clearTerminal();
+        // also maybe add a line to indicate stopped
+        const stopMsg = document.createElement('div');
+        stopMsg.className = 'log-line';
+        stopMsg.innerHTML = '⛔ scan halted — all data cleared';
+        terminalLogDiv.appendChild(stopMsg);
+        while (terminalLogDiv.children.length > MAX_LINES) {
+            terminalLogDiv.removeChild(terminalLogDiv.firstChild);
+        }
+        terminalLogDiv.scrollTop = terminalLogDiv.scrollHeight;
+    }
+    
+    // update the status badge
+    const statusSpan = document.getElementById('liveStatus');
+    function updateStatusUI(running) {
+        if (running) {
+            statusSpan.innerHTML = '<i class="fas fa-circle" style="color:#7ee787; font-size:0.7rem;"></i> LIVE · SCANNING';
+            statusSpan.style.color = '#b5e4a0';
+        } else {
+            statusSpan.innerHTML = '⚫ IDLE · stopped';
+            statusSpan.style.color = '#9aa3b3';
+        }
+    }
+    
+    // button handlers
+    document.getElementById('startBtn').addEventListener('click', () => {
+        if (isActive) {
+            // if already active, do nothing (or we can show a soft warning but not necessary)
+            // optional: add a temporary message but not required.
+            const warnLine = document.createElement('div');
+            warnLine.className = 'log-line';
+            warnLine.innerHTML = '⚠️ scan already running — stop first if needed';
+            terminalLogDiv.appendChild(warnLine);
+            while (terminalLogDiv.children.length > MAX_LINES) terminalLogDiv.removeChild(terminalLogDiv.firstChild);
+            terminalLogDiv.scrollTop = terminalLogDiv.scrollHeight;
             return;
         }
-        // if there's any previous interval, clear
-        if (intervalId) clearInterval(intervalId);
-        
-        // extra: if stats are zero and found box might have placeholder? but we keep state clean. If there is leftover entries? we keep previous data? 
-        // Usually start from current data (maybe after stop+clear we have zero state, but if we start after partial stop, data persists.
-        // However we want consistent behavior: but per spec, "Stop/Purge" clears everything, so start fresh will have zero.
-        // But start just begins from current stats, which might be >0 if user didn't purge, but anyway, we enforce logical flow.
-        // But we prevent starting while running.
-        isRunning = true;
-        intervalId = setInterval(() => {
-            simulationTick();
-        }, 1000);
-        addLog("🚀 BRUTE-FORCE ENGAGED · scanning blockchain entropy pools ...");
-        addLog("🔐 targeting wallets (simulated audit) · neumorphic shield active");
-        
-        const startBtn = document.getElementById('startBtn');
-        startBtn.disabled = true;
-        startBtn.style.opacity = '0.6';
-        startBtn.style.cursor = 'default';
-    }
-    
-    // stop + full purge (both stop and clear all logs/found/reset stats)
-    function stopAndPurge() {
-        if (isRunning) {
-            clearInterval(intervalId);
-            isRunning = false;
-            intervalId = null;
-            addLog("⛔ brute force interrupted by user command.");
+        // if terminal is cleared or contains placeholder, remove placeholder / reset for fresh start
+        if (terminalLogDiv.children.length === 1 && terminalLogDiv.children[0].innerText.includes('cleared')) {
+            terminalLogDiv.innerHTML = '';
         }
-        fullResetAndStop();  // also resets numbers, terminal, found box
-        // re-enable start button visually (already done inside reset)
-        const startBtn = document.getElementById('startBtn');
-        startBtn.disabled = false;
-        startBtn.style.opacity = '1';
-        startBtn.style.cursor = 'pointer';
-        addLog("🧹 all traces purged. ready for new mission.");
-    }
-    
-    // ---- button listeners ----
-    document.getElementById('startBtn').addEventListener('click', startSimulation);
-    document.getElementById('stopClearBtn').addEventListener('click', stopAndPurge);
-    
-    // small initialization to make sure placeholder is shown properly
-    window.addEventListener('load', () => {
-        // ensure found list has placeholder if empty after reset (already)
-        if (foundListContainer.children.length === 0) {
-            const emptyMsg = document.createElement('div');
-            emptyMsg.style.textAlign = "center";
-            emptyMsg.style.opacity = "0.6";
-            emptyMsg.style.fontSize = "0.75rem";
-            emptyMsg.style.padding = "20px";
-            emptyMsg.innerText = "No wallets discovered yet.\nStart brute-force simulation";
-            foundListContainer.appendChild(emptyMsg);
-        }
-        updateStatsUI();
+        startSimulation();
     });
+    
+    document.getElementById('stopBtn').addEventListener('click', () => {
+        stopAndClear();
+    });
+    
+    // initial state: not running, but we display some initial guide
+    // make sure terminal shows minimal lines
+    if (terminalLogDiv.children.length === 0) {
+        clearTerminal();
+    } else {
+        // ensure not overflow
+        while (terminalLogDiv.children.length > MAX_LINES) terminalLogDiv.removeChild(terminalLogDiv.firstChild);
+    }
+    
+    // optional: add a welcome line with formatting example
+    const exampleLine = document.createElement('div');
+    exampleLine.className = 'log-line';
+    exampleLine.innerHTML = `✨ demo: <span class="highlight-success">SUCCESS</span> and <span class="highlight-fail">FAIL</span> highlighting active — interval 80‑100ms`;
+    terminalLogDiv.appendChild(exampleLine);
+    while (terminalLogDiv.children.length > MAX_LINES) terminalLogDiv.removeChild(terminalLogDiv.firstChild);
+    terminalLogDiv.scrollTop = terminalLogDiv.scrollHeight;
 </script>
 </body>
 </html>
