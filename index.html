@@ -3,145 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Crypto Climber Mini-App</title>
+    <title>Neon Climber Pro</title>
     <style>
+        :root {
+            --primary: #00f2ff;
+            --bg: #050a14;
+            --surface: rgba(255, 255, 255, 0.05);
+        }
+
         body {
             margin: 0;
-            padding: 0;
-            background-color: #0f172a; /* Dark Blue */
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: none;
         }
 
-        #gameCanvas {
-            background: linear-gradient(to bottom, #1e293b, #0f172a);
-            border: 2px solid #38bdf8;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 90vh;
+            background: radial-gradient(circle at top, #1a2a44 0%, #050a14 100%);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 100px rgba(0,242,255,0.05);
+            border: 1px solid rgba(0,242,255,0.2);
         }
 
-        .ui-overlay {
+        canvas {
+            display: block;
+        }
+
+        .hud {
             position: absolute;
             top: 20px;
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
+            left: 0;
+            right: 0;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
             pointer-events: none;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 10;
         }
+
+        .score-box {
+            background: var(--surface);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .score-label { font-size: 12px; color: #aaa; text-transform: uppercase; }
+        .score-val { font-size: 24px; font-weight: 800; color: var(--primary); display: block; }
+
+        #start-screen {
+            position: absolute;
+            inset: 0;
+            background: rgba(5, 10, 20, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-play {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--primary);
+            transition: 0.3s;
+        }
+
+        .btn-play:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
 
-    <div class="ui-overlay">Score: <span id="score">0</span></div>
-    <canvas id="gameCanvas"></canvas>
+    <div id="game-container">
+        <div class="hud">
+            <div class="score-box">
+                <span class="score-label">SCORE</span>
+                <span id="score" class="score-val">0</span>
+            </div>
+        </div>
+
+        <div id="start-screen">
+            <h1 style="color: var(--primary); letter-spacing: 2px;">NEON CLIMBER</h1>
+            <p style="color: #666; margin-bottom: 30px;">Tap to Jump & Climb!</p>
+            <button class="btn-play" onclick="startGame()">START GAME</button>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+    </div>
 
 <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    const scoreElement = document.getElementById('score');
+    const scoreVal = document.getElementById('score');
+    const startScreen = document.getElementById('start-screen');
 
-    // تنظیمات قەبارێ کانڤاس
-    canvas.width = window.innerWidth > 400 ? 350 : window.innerWidth - 40;
-    canvas.height = 500;
-
+    let gameActive = false;
     let score = 0;
-    let gameActive = true;
+    let cameraY = 0;
 
-    // لۆجیکێ یاریزان (Pixel-style)
+    // تنظیم قەبارە
+    function resize() {
+        canvas.width = document.getElementById('game-container').clientWidth;
+        canvas.height = document.getElementById('game-container').clientHeight;
+    }
+    resize();
+
     const player = {
-        x: canvas.width / 2 - 15,
-        y: canvas.height - 50,
-        width: 30,
-        height: 30,
-        color: '#38bdf8',
+        x: canvas.width / 2,
+        y: canvas.height - 100,
+        r: 12,
         dy: 0,
-        jumpForce: -10,
-        gravity: 0.5,
-        grounded: true
+        jump: -12,
+        grav: 0.6,
+        color: '#00f2ff'
     };
 
-    // پاترم (Platforms)
-    const platforms = [
-        { x: 0, y: canvas.height - 20, width: canvas.width, height: 20 } // عەرد
-    ];
-
-    function createPlatform() {
-        const lastPlatform = platforms[platforms.length - 1];
-        const newY = lastPlatform.y - 100;
-        const newWidth = Math.random() * (100 - 60) + 60;
-        const newX = Math.random() * (canvas.width - newWidth);
-        
-        platforms.push({ x: newX, y: newY, width: newWidth, height: 15 });
+    let platforms = [];
+    function initPlatforms() {
+        platforms = [];
+        platforms.push({x: 0, y: canvas.height - 20, w: canvas.width, h: 20, color: '#1e293b'});
+        for(let i=0; i<8; i++) {
+            addPlatform(canvas.height - (i * 120) - 150);
+        }
     }
 
-    // ئامادەکرنا دەستپێکێ
-    for(let i=0; i<5; i++) createPlatform();
-
-    function update() {
-        if (!gameActive) return;
-
-        // Gravity
-        player.dy += player.gravity;
-        player.y += player.dy;
-
-        // Collision Detection (پێکدادان)
-        player.grounded = false;
-        platforms.forEach(plat => {
-            if (player.x < plat.x + plat.width &&
-                player.x + player.width > plat.x &&
-                player.y + player.height > plat.y &&
-                player.y + player.height < plat.y + plat.height + player.dy) {
-                
-                player.dy = 0;
-                player.y = plat.y - player.height;
-                player.grounded = true;
-            }
+    function addPlatform(y) {
+        const w = 70 + Math.random() * 50;
+        platforms.push({
+            x: Math.random() * (canvas.width - w),
+            y: y,
+            w: w,
+            h: 12,
+            color: '#334155'
         });
-
-        // بزڤرینە خارێ دەما یاریزان بلند دبیت (Camera Follow)
-        if (player.y < canvas.height / 2) {
-            let diff = canvas.height / 2 - player.y;
-            player.y = canvas.height / 2;
-            platforms.forEach(plat => {
-                plat.y += diff;
-            });
-
-            if (platforms[0].y > canvas.height) {
-                platforms.shift();
-                score++;
-                scoreElement.innerText = score;
-                createPlatform();
-            }
-        }
-
-        // Game Over
-        if (player.y > canvas.height) {
-            gameActive = false;
-            alert("یاری ب دووماهی هات! Score: " + score);
-            location.reload();
-        }
     }
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // کیشانا یاریزانی
-        ctx.fillStyle = player.color;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = player.color;
-        ctx.fillRect(player.x, player.y, player.width, player.height);
-        ctx.shadowBlur = 0;
+        
+        ctx.save();
+        ctx.translate(0, cameraY);
 
         // کیشانا پاترمان
-        ctx.fillStyle = '#94a3b8';
-        platforms.forEach(plat => {
-            ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
+        platforms.forEach(p => {
+            ctx.fillStyle = p.color;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = p.y < player.y ? 'rgba(0,242,255,0.1)' : 'transparent';
+            ctx.beginPath();
+            ctx.roundRect(p.x, p.y, p.w, p.h, 6);
+            ctx.fill();
         });
+
+        // کیشانا یاریزانی
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = player.color;
+        ctx.fillStyle = player.color;
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, player.r, 0, Math.PI*2);
+        ctx.fill();
+        
+        ctx.restore();
+    }
+
+    function update() {
+        if(!gameActive) return;
+
+        player.dy += player.grav;
+        player.y += player.dy;
+
+        // Collision Logic
+        if(player.dy > 0) {
+            platforms.forEach(p => {
+                if(player.x > p.x && player.x < p.x + p.w && 
+                   player.y + player.r > p.y && player.y + player.r < p.y + p.h + player.dy) {
+                    player.dy = player.jump;
+                    if(p.y < canvas.height - 20) score++;
+                }
+            });
+        }
+
+        // Camera Follow
+        if(player.y < canvas.height/2 + cameraY) {
+            cameraY = canvas.height/2 - player.y;
+        }
+
+        // Score update
+        scoreVal.innerText = Math.floor(score/5); // کێمەک سادەکرن بۆ سکۆری
+
+        // Game Over
+        if(player.y > cameraY + canvas.height + 100) {
+            gameActive = false;
+            startScreen.style.display = 'flex';
+        }
+
+        // Clean & Add platforms
+        if(platforms[0].y > cameraY + canvas.height + 100) {
+            platforms.shift();
+            addPlatform(platforms[platforms.length-1].y - 120);
+        }
     }
 
     function loop() {
@@ -150,19 +228,32 @@
         requestAnimationFrame(loop);
     }
 
-    // کۆنترۆل (ل سەر شاشێ یان کایبۆردێ)
-    window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space' && player.grounded) {
-            player.dy = player.jumpForce;
-        }
+    function startGame() {
+        score = 0;
+        cameraY = 0;
+        player.x = canvas.width / 2;
+        player.y = canvas.height - 100;
+        player.dy = 0;
+        initPlatforms();
+        gameActive = true;
+        startScreen.style.display = 'none';
+    }
+
+    // کۆنترۆل ب مۆبایلێ (Accelerometer یان Touch)
+    window.addEventListener('touchmove', (e) => {
+        if(!gameActive) return;
+        let touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+        player.x = touchX;
     });
 
-    canvas.addEventListener('touchstart', () => {
-        if (player.grounded) {
-            player.dy = player.jumpForce;
-        }
+    // بۆ کومپیوتەرێ (Mouse)
+    window.addEventListener('mousemove', (e) => {
+        if(!gameActive) return;
+        let rect = canvas.getBoundingClientRect();
+        player.x = e.clientX - rect.left;
     });
 
+    initPlatforms();
     loop();
 </script>
 </body>
