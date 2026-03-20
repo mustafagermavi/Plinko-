@@ -1,200 +1,24 @@
 <!DOCTYPE html>
-<html lang="ku" dir="rtl">
+<html lang="ku">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Whale Pump - Luxury Edition</title>
-    <style>
-        :root {
-            --primary: #00d2ff;
-            --accent: #3a7bd5;
-            --bg: #020617;
-            --surface: rgba(15, 23, 42, 0.6);
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(0, 210, 255, 0.2);
-        }
-
-        body {
-            margin: 0;
-            background-color: var(--bg);
-            color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        /* Header - Bento Style */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .logo { font-weight: 800; letter-spacing: 1px; color: var(--primary); }
-        .balance { background: rgba(0, 210, 255, 0.1); padding: 5px 15px; border-radius: 20px; border: 1px solid var(--border); }
-
-        /* Main Game Area */
-        .game-area {
-            flex-grow: 1;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
-        }
-
-        .multiplier {
-            font-size: 80px;
-            font-weight: 900;
-            z-index: 5;
-            text-shadow: 0 0 30px rgba(0, 210, 255, 0.5);
-        }
-
-        /* Whale Animation */
-        .whale-icon {
-            position: absolute;
-            bottom: 20%;
-            left: 10%;
-            font-size: 50px;
-            filter: drop-shadow(0 0 15px var(--primary));
-            transition: all 0.1s linear;
-        }
-
-        /* Live Bets - Bento Grid Sidebar */
-        .sidebar {
-            position: absolute;
-            left: 10px;
-            top: 80px;
-            bottom: 120px;
-            width: 120px;
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
-            border: 1px solid var(--border);
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            font-size: 11px;
-            z-index: 10;
-        }
-
-        .bet-item {
-            background: rgba(255,255,255,0.05);
-            padding: 5px;
-            border-radius: 8px;
-            border-right: 3px solid var(--primary);
-        }
-
-        /* Control Panel */
-        .controls {
-            padding: 20px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .input-box {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .btn-bet {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
-            transition: 0.3s;
-        }
-
-        .btn-bet:active { transform: scale(0.95); }
-
-        /* Background Grid */
-        .grid-bg {
-            position: absolute;
-            inset: 0;
-            background-image: linear-gradient(rgba(0, 210, 255, 0.05) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(0, 210, 255, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            pointer-events: none;
-        }
-    </style>
+    <title>Whale Pump Pixel</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="header">
-        <div class="logo">WHALELENS PUMP</div>
-        <div class="balance">💰 <span id="user-balance">1,250.00</span></div>
-    </div>
-
-    <div class="game-area">
-        <div class="grid-bg"></div>
-        <div class="sidebar">
-            <div style="color: var(--primary); font-weight: bold;">LIVE WHALES</div>
-            <div class="bet-item">Mustafa: 500</div>
-            <div class="bet-item">Ahmed: 120</div>
-            <div class="bet-item">Bot_01: 1000</div>
-        </div>
-        
+    <div id="game-container">
         <div class="multiplier" id="mult">1.00x</div>
-        <div class="whale-icon" id="whale">🐋</div>
-    </div>
-
-    <div class="controls">
-        <div class="input-box">
-            <div style="font-size: 10px; color: #aaa;">BET AMOUNT</div>
-            <div style="font-size: 20px; font-weight: bold;">100.00</div>
-        </div>
-        <button class="btn-bet" onclick="startPump()">PUMP IT</button>
-    </div>
-
-<script>
-    let mult = 1.00;
-    let isPumping = false;
-    const multElement = document.getElementById('mult');
-    const whale = document.getElementById('whale');
-
-    function startPump() {
-        if(isPumping) return;
-        isPumping = true;
-        mult = 1.00;
         
-        let interval = setInterval(() => {
-            if(Math.random() > 0.98 && mult > 2) { // Crash Logic
-                clearInterval(interval);
-                multElement.style.color = "#ff4757";
-                multElement.innerText = "CRASHED!";
-                setTimeout(() => {
-                    multElement.style.color = "white";
-                    isPumping = false;
-                }, 2000);
-                return;
-            }
+        <div class="whale" id="whale">🐋</div>
 
-            mult += 0.01;
-            multElement.innerText = mult.toFixed(2) + "x";
-            
-            // Whale Animation
-            whale.style.left = (10 + (mult * 2)) + "%";
-            whale.style.bottom = (20 + (mult * 5)) + "%";
-        }, 50);
-    }
-</script>
+        <div class="controls">
+            <button class="btn-pump" id="pumpBtn">PUMP IT!</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+    <script src="ui.js"></script>
 </body>
 </html>
