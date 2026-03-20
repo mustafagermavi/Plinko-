@@ -1,221 +1,169 @@
 <!DOCTYPE html>
-<html lang="ku" dir="rtl">
+<html lang="ku">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TON APEX X-PRO</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <title>Crypto Climber Mini-App</title>
     <style>
-        :root {
-            --neon-blue: #00f3ff;
-            --neon-green: #39ff14;
-            --neon-red: #ff0055;
-            --bg-dark: #020406;
-        }
-
         body {
-            margin: 0; background: var(--bg-dark); color: white;
-            font-family: 'Orbitron', sans-serif; overflow: hidden;
-            display: flex; flex-direction: column; align-items: center;
+            margin: 0;
+            padding: 0;
+            background-color: #0f172a; /* Dark Blue */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* شاشەی سەرەکی وەک داشبۆردی کەشتی ئاسمانی */
-        .dashboard {
-            width: 95%; max-width: 420px; margin-top: 10px;
-            background: rgba(10, 15, 25, 0.8);
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            border-radius: 20px; padding: 20px;
-            backdrop-filter: blur(15px); position: relative;
+        #gameCanvas {
+            background: linear-gradient(to bottom, #1e293b, #0f172a);
+            border: 2px solid #38bdf8;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
         }
 
-        /* نرخی گەورە و نەرم */
-        .price-container { text-align: center; margin-bottom: 20px; }
-        #price {
-            font-size: 36px; font-weight: 700; color: var(--neon-blue);
-            text-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
-        }
-
-        /* چارتێکی زۆر خێرا و پڕۆفیشناڵ */
-        #chartContainer {
-            width: 100%; height: 200px; position: relative;
-            background: linear-gradient(180deg, rgba(0, 243, 255, 0.05) 0%, transparent 100%);
-            border-radius: 10px; overflow: hidden;
-        }
-        canvas#mainChart { width: 100%; height: 100%; image-rendering: auto; }
-
-        /* دوگمە دیزاین کراوەکان (نەک ئیمۆجی) */
-        .trade-actions {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px;
-            width: 95%; max-width: 420px;
-        }
-
-        .btn-pro {
-            height: 65px; border: none; border-radius: 12px;
-            font-family: 'Orbitron', sans-serif; font-weight: 700;
-            color: white; cursor: pointer; display: flex;
-            align-items: center; justify-content: center; gap: 10px;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-transform: uppercase; letter-spacing: 2px;
-        }
-
-        .btn-up { 
-            background: linear-gradient(135deg, #064e3b 0%, #0ecb81 100%);
-            box-shadow: 0 0 15px rgba(14, 203, 129, 0.3);
-            border-bottom: 4px solid #053326;
-        }
-        .btn-down { 
-            background: linear-gradient(135deg, #7f1d1d 0%, #f6465d 100%);
-            box-shadow: 0 0 15px rgba(246, 70, 93, 0.3);
-            border-bottom: 4px solid #4a1111;
-        }
-
-        .btn-pro:active { transform: translateY(4px); box-shadow: none; }
-
-        /* ئایکۆنی پڕۆفیشناڵ دروستکراو بە CSS */
-        .icon-bull { width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 12px solid white; }
-        .icon-bear { width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 12px solid white; }
-
-        /* شریتی زانیاری ژێرەوە */
-        .info-bar {
-            width: 100%; display: flex; justify-content: space-between;
-            padding: 10px 20px; font-size: 10px; color: #555;
-            border-top: 1px solid #111; margin-top: auto;
+        .ui-overlay {
+            position: absolute;
+            top: 20px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            pointer-events: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
     </style>
 </head>
 <body>
 
-<div class="dashboard">
-    <div class="price-container">
-        <div style="font-size: 10px; color: #444; margin-bottom: 5px;">TON NETWORK / REALTIME FEED</div>
-        <div id="price">0.0000</div>
-    </div>
-
-    <div id="chartContainer">
-        <canvas id="mainChart"></canvas>
-    </div>
-
-    <div style="display: flex; justify-content: space-between; margin-top: 15px;">
-        <span style="font-size: 12px; color: #888;">BALANCE:</span>
-        <span id="balance" style="color: var(--neon-blue); font-weight: bold;">1000.00 PTS</span>
-    </div>
-</div>
-
-<div class="trade-actions">
-    <button class="btn-pro btn-up" onclick="handleTrade('up')">
-        <div class="icon-bull"></div> BUY
-    </button>
-    <button class="btn-pro btn-down" onclick="handleTrade('down')">
-        SELL <div class="icon-bear"></div>
-    </button>
-</div>
-
-<div class="info-bar">
-    <span>LATENCY: 14MS</span>
-    <span>ENGINE: APEX-X1</span>
-    <span>STATUS: SECURE</span>
-</div>
+    <div class="ui-overlay">Score: <span id="score">0</span></div>
+    <canvas id="gameCanvas"></canvas>
 
 <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready(); tg.expand();
-
-    let balance = 1000.00;
-    let prices = Array(100).fill(0);
-    let currentPrice = 0;
-    let isLive = false;
-
-    const canvas = document.getElementById('mainChart');
+    const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
+    const scoreElement = document.getElementById('score');
 
-    // سیستەمی نوێکردنەوەی نرخ (بە خێرایی و بە بێ دابڕان)
-    async function updateData() {
-        try {
-            const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=TONUSDT');
-            const data = await res.json();
-            let p = parseFloat(data.price);
-            
-            if(currentPrice === 0) prices.fill(p);
-            currentPrice = p;
-            prices.push(p);
-            prices.shift();
-            
-            document.getElementById('price').innerText = currentPrice.toFixed(4);
-        } catch(e) {}
+    // تنظیمات قەبارێ کانڤاس
+    canvas.width = window.innerWidth > 400 ? 350 : window.innerWidth - 40;
+    canvas.height = 500;
+
+    let score = 0;
+    let gameActive = true;
+
+    // لۆجیکێ یاریزان (Pixel-style)
+    const player = {
+        x: canvas.width / 2 - 15,
+        y: canvas.height - 50,
+        width: 30,
+        height: 30,
+        color: '#38bdf8',
+        dy: 0,
+        jumpForce: -10,
+        gravity: 0.5,
+        grounded: true
+    };
+
+    // پاترم (Platforms)
+    const platforms = [
+        { x: 0, y: canvas.height - 20, width: canvas.width, height: 20 } // عەرد
+    ];
+
+    function createPlatform() {
+        const lastPlatform = platforms[platforms.length - 1];
+        const newY = lastPlatform.y - 100;
+        const newWidth = Math.random() * (100 - 60) + 60;
+        const newX = Math.random() * (canvas.width - newWidth);
+        
+        platforms.push({ x: newX, y: newY, width: newWidth, height: 15 });
     }
 
-    // ئەنیمەیشنی چارت (٦٠ فریم لە چرکەیەکدا بۆ ئەوەی خاو نەبێت)
-    function animate() {
-        canvas.width = canvas.offsetWidth * 2;
-        canvas.height = canvas.offsetHeight * 2;
-        ctx.scale(2, 2);
-        
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        let min = Math.min(...prices);
-        let max = Math.max(...prices);
-        let range = max - min || 0.1;
+    // ئامادەکرنا دەستپێکێ
+    for(let i=0; i<5; i++) createPlatform();
 
-        // کێشانی سێبەری ژێر گرافەکە (Glow Area)
-        let gradient = ctx.createLinearGradient(0, 0, 0, 180);
-        gradient.addColorStop(0, 'rgba(0, 243, 255, 0.2)');
-        gradient.addColorStop(1, 'transparent');
-        
-        ctx.beginPath();
-        ctx.fillStyle = gradient;
-        prices.forEach((p, i) => {
-            let x = (i / 99) * canvas.offsetWidth;
-            let y = 180 - ((p - min) / range) * 150;
-            if(i === 0) ctx.moveTo(x, 180);
-            ctx.lineTo(x, y);
-            if(i === 99) ctx.lineTo(x, 180);
-        });
-        ctx.fill();
+    function update() {
+        if (!gameActive) return;
 
-        // کێشانی هێڵی سەرەکی
-        ctx.beginPath();
-        ctx.strokeStyle = varColor();
-        ctx.lineWidth = 3;
-        ctx.lineJoin = 'round';
-        prices.forEach((p, i) => {
-            let x = (i / 99) * canvas.offsetWidth;
-            let y = 180 - ((p - min) / range) * 150;
-            if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        });
-        ctx.stroke();
+        // Gravity
+        player.dy += player.gravity;
+        player.y += player.dy;
 
-        requestAnimationFrame(animate);
-    }
-
-    function varColor() {
-        return isLive ? (currentPrice > entryPrice ? "#39ff14" : "#ff0055") : "#00f3ff";
-    }
-
-    let entryPrice = 0;
-    function handleTrade(dir) {
-        if(isLive) return;
-        isLive = true;
-        entryPrice = currentPrice;
-        tg.HapticFeedback.impactOccurred('heavy');
-        
-        setTimeout(() => {
-            let win = (dir === 'up' && currentPrice > entryPrice) || (dir === 'down' && currentPrice < entryPrice);
-            if(win) {
-                balance += 50; 
-                tg.HapticFeedback.notificationOccurred('success');
-            } else {
-                balance -= 50;
-                tg.HapticFeedback.notificationOccurred('error');
+        // Collision Detection (پێکدادان)
+        player.grounded = false;
+        platforms.forEach(plat => {
+            if (player.x < plat.x + plat.width &&
+                player.x + player.width > plat.x &&
+                player.y + player.height > plat.y &&
+                player.y + player.height < plat.y + plat.height + player.dy) {
+                
+                player.dy = 0;
+                player.y = plat.y - player.height;
+                player.grounded = true;
             }
-            document.getElementById('balance').innerText = balance.toFixed(2) + " PTS";
-            isLive = false;
-        }, 3000);
+        });
+
+        // بزڤرینە خارێ دەما یاریزان بلند دبیت (Camera Follow)
+        if (player.y < canvas.height / 2) {
+            let diff = canvas.height / 2 - player.y;
+            player.y = canvas.height / 2;
+            platforms.forEach(plat => {
+                plat.y += diff;
+            });
+
+            if (platforms[0].y > canvas.height) {
+                platforms.shift();
+                score++;
+                scoreElement.innerText = score;
+                createPlatform();
+            }
+        }
+
+        // Game Over
+        if (player.y > canvas.height) {
+            gameActive = false;
+            alert("یاری ب دووماهی هات! Score: " + score);
+            location.reload();
+        }
     }
 
-    setInterval(updateData, 1000);
-    animate();
-</script>
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        // کیشانا یاریزانی
+        ctx.fillStyle = player.color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = player.color;
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+        ctx.shadowBlur = 0;
+
+        // کیشانا پاترمان
+        ctx.fillStyle = '#94a3b8';
+        platforms.forEach(plat => {
+            ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
+        });
+    }
+
+    function loop() {
+        update();
+        draw();
+        requestAnimationFrame(loop);
+    }
+
+    // کۆنترۆل (ل سەر شاشێ یان کایبۆردێ)
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && player.grounded) {
+            player.dy = player.jumpForce;
+        }
+    });
+
+    canvas.addEventListener('touchstart', () => {
+        if (player.grounded) {
+            player.dy = player.jumpForce;
+        }
+    });
+
+    loop();
+</script>
 </body>
 </html>
