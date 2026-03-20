@@ -1,128 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Pig Crash - Global Edition</title>
+    <title>Pixel Crash Isometric - AAA Edition</title>
     <style>
         :root {
-            --bg-color: #020617;
-            --pig-main: #ff85a2;
-            --pig-shade: #f43f5e;
-            --accent-blue: #22d3ee;
-            --gold: #fbbf24;
+            --bg-base: #020617;
+            --mult-color: #fbbf24;
+            --cyber-blue: #38bdf8;
+            /* 3D Rocket Colors */
+            --r-body-front: #f8fafc;
+            --r-body-side: #cbd5e1;
+            --r-accent-front: #ef4444;
+            --r-accent-side: #b91c1c;
         }
 
         body {
-            margin: 0; background: var(--bg-color);
+            margin: 0; background: var(--bg-base);
             display: flex; flex-direction: column; align-items: center;
             justify-content: center; height: 100vh; overflow: hidden;
-            font-family: 'Segoe UI', sans-serif;
-            image-rendering: pixelated;
+            font-family: 'Courier New', Courier, monospace;
+            image-rendering: pixelated; /* بۆ پیکسڵ ئارتێ پاقژ */
         }
 
-        /* 1. High-End Background */
+        /* 1. پاشبنەمایێ Isometric Grid */
         #game-screen {
             width: 380px; height: 520px;
-            background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%);
+            background: 
+                radial-gradient(circle at center, #1e293b 0%, #020617 100%),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 20px),
+                repeating-linear-gradient(-45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 20px);
             border: 3px solid #334155; position: relative;
-            overflow: hidden; border-radius: 16px;
-            box-shadow: 0 0 60px rgba(34, 211, 238, 0.1);
+            overflow: hidden; border-radius: 12px;
+            box-shadow: 0 0 60px rgba(0,0,0,0.9);
         }
 
-        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.3; }
+        .star { position: absolute; background: white; width: 2px; height: 2px; opacity: 0.5; }
 
-        /* 2. Legendary Cyber Pig (Global Standard) */
-        #pig-container {
+        /* 2. دیزاینێ موشەکێ یێ Isometric (3D) */
+        #rocket-container {
             position: absolute; bottom: 60px; left: 50%;
-            transform: translateX(-50%); transition: bottom 0.1s linear;
+            transform: translateX(-50%) rotateX(60deg) rotateZ(45deg); /* Isometric Rotation */
+            transform-style: preserve-3d;
+            transition: bottom 0.1s linear;
+            z-index: 5;
         }
 
-        #pig {
-            width: 60px; height: 45px; background: var(--pig-main);
-            border: 4px solid #000; position: relative;
-            box-shadow: inset -10px -8px 0px var(--pig-shade);
+        #rocket {
+            width: 40px; height: 75px;
+            position: relative;
+            transform-style: preserve-3d;
         }
 
-        /* Pig Snout (لوتی بەرازەکە) */
-        #pig::before {
-            content: ""; position: absolute; top: 15px; left: -12px;
-            width: 18px; height: 14px; background: var(--pig-main);
-            border: 4px solid #000; box-shadow: inset -4px -4px 0px var(--pig-shade);
+        /* لایێ پێشیێ (Front Face) */
+        .r-face-front {
+            position: absolute; width: 40px; height: 75px;
+            background: var(--r-body-front);
+            border: 4px solid #000;
+            box-shadow: inset 4px 0px 0px #ffffff;
+            transform: translateZ(20px);
         }
 
-        /* VR Glasses (چاویلکەی سایبەر - زۆر پرۆفیشناڵە) */
-        .glasses {
-            position: absolute; top: 8px; left: -2px;
-            width: 30px; height: 10px; background: var(--accent-blue);
-            border: 3px solid #000; box-shadow: 0 0 10px var(--accent-blue);
+        /* لایێ لایەنی (Side Face) */
+        .r-face-side {
+            position: absolute; width: 40px; height: 75px;
+            background: var(--r-body-side);
+            border: 4px solid #000;
+            box-shadow: inset -4px 0px 0px #94a3b8;
+            transform: rotateY(-90deg) translateZ(20px);
         }
 
-        /* Little Wings (بۆ ئەوەی کۆمیدی بێت) */
-        .wing {
-            position: absolute; top: -10px; left: 20px;
-            width: 15px; height: 12px; background: white;
-            border: 3px solid #000; animation: flap 0.1s infinite;
+        /* سەرێ موشەکێ (Nose Cone - Isometric) */
+        .r-face-front::before {
+            content: ""; position: absolute; top: -18px; left: -4px;
+            width: 40px; height: 18px; background: var(--r-accent-front);
+            border: 4px solid #000; box-shadow: inset 4px 0px 0px #f87171;
+        }
+        .r-face-side::before {
+            content: ""; position: absolute; top: -18px; left: -4px;
+            width: 40px; height: 18px; background: var(--r-accent-side);
+            border: 4px solid #000; box-shadow: inset -4px 0px 0px #7f1d1d;
         }
 
-        @keyframes flap { 0% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-
-        /* Cyber Thruster */
-        .thruster {
-            position: absolute; bottom: -8px; right: 5px;
-            width: 14px; height: 10px; background: #475569; border: 3px solid #000;
+        /* پەنجەرا 3D */
+        .window {
+            position: absolute; top: 20px; left: 12px;
+            width: 14px; height: 14px; background: var(--cyber-blue);
+            border: 4px solid #000; box-shadow: inset -4px -4px 0px #0ea5e9, 0 0 10px var(--cyber-blue);
         }
 
-        .flame {
-            position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%);
-            width: 10px; height: 20px; background: var(--accent-blue);
-            box-shadow: 0 0 15px var(--accent-blue); display: none;
-            animation: thrust-anim 0.1s infinite;
+        /* ئاگرێ Isometric (Animated Thrust) */
+        .thrust {
+            position: absolute; bottom: -30px; left: 50%;
+            transform: translateX(-50%); width: 20px; height: 25px;
+            background: #fbbf24; display: none;
+            box-shadow: 0 8px 0 #f97316, 0 16px 0 #ef4444;
+            animation: thrust-shake 0.1s infinite;
         }
 
-        @keyframes thrust-anim { 0% { height: 18px; } 100% { height: 28px; } }
+        @keyframes thrust-shake { 0% { height: 22px; opacity: 0.8; } 100% { height: 32px; opacity: 1; } }
 
-        /* 3. Global UI Design */
+        /* 3. مڵتیپلایەر و UI یێ 3D */
         #multiplier {
-            position: absolute; top: 50px; width: 100%; text-align: center;
-            font-size: 4.5rem; font-weight: 900; color: white;
-            text-shadow: 0 0 25px rgba(34, 211, 238, 0.5);
+            position: absolute; top: 40px; width: 100%; text-align: center;
+            font-size: 4.2rem; font-weight: bold; color: var(--mult-color);
+            text-shadow: 4px 4px 0px #000, 0 0 15px rgba(251, 191, 36, 0.4);
+            z-index: 20;
         }
 
         .controls {
             width: 380px; background: #0f172a; padding: 25px;
-            border: 3px solid #334155; border-top: none;
-            box-sizing: border-box; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;
+            border: 3px solid #334155; border-top: none; box-sizing: border-box;
+            border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
         }
 
         .btn {
-            width: 100%; padding: 20px; font-size: 1.4rem; font-weight: bold;
-            color: #020617; background: var(--accent-blue); border: none;
-            border-radius: 12px; cursor: pointer; letter-spacing: 1px;
-            box-shadow: 0 6px 0 #0891b2; transition: 0.1s;
+            width: 100%; padding: 18px; font-size: 1.4rem; color: #020617;
+            background: var(--mult-color); border: none; font-weight: bold;
+            border-radius: 8px; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 6px 0 #b45309; transition: 0.1s;
         }
 
-        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #0891b2; }
-        .btn.cashout { background: var(--gold); box-shadow: 0 6px 0 #b45309; }
+        .btn.cashout { background: var(--cyber-blue); box-shadow: 0 6px 0 #075985; }
+        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b45309; }
 
-        .coin { position: absolute; width: 8px; height: 8px; background: var(--gold); border: 2px solid #000; z-index: 100; }
+        #status { margin-top: 15px; text-align: center; color: #64748b; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="game-screen">
         <div id="multiplier">1.00x</div>
-        <div id="pig-container">
-            <div id="pig">
-                <div class="glasses"></div>
-                <div class="wing"></div>
-                <div class="thruster"><div class="flame" id="fire"></div></div>
+        <div id="rocket-container">
+            <div id="rocket">
+                <div class="r-face-front"><div class="window"></div></div>
+                <div class="r-face-side"></div>
+                <div class="thrust" id="fire"></div>
             </div>
         </div>
     </div>
 
     <div class="controls">
-        <button id="actionBtn" class="btn" onclick="handleAction()">PLACE BET</button>
+        <button id="actionBtn" class="btn" onclick="handleAction()">BET TON</button>
+        <div id="status">READY FOR TAKE OFF...</div>
     </div>
 
     <script>
@@ -131,40 +152,24 @@
         let gameLoop;
         let crashPoint;
 
-        const pigCont = document.getElementById('pig-container');
+        const rocketCont = document.getElementById('rocket-container');
+        const rocketDiv = document.getElementById('rocket');
         const fire = document.getElementById('fire');
         const multEl = document.getElementById('multiplier');
         const actionBtn = document.getElementById('actionBtn');
+        const statusEl = document.getElementById('status');
         const screen = document.getElementById('game-screen');
 
         function spawnStar() {
             const star = document.createElement('div');
             star.className = 'star';
-            star.style.width = '2px'; star.style.height = '2px';
             star.style.left = Math.random() * 370 + 'px'; star.style.top = '-10px';
             screen.appendChild(star);
             let pos = -10;
             let move = setInterval(() => {
-                pos += 4; star.style.top = pos + 'px';
+                pos += 3; star.style.top = pos + 'px';
                 if (pos > 520) { clearInterval(move); star.remove(); }
             }, 30);
-        }
-
-        function spawnCoins(x, y) {
-            for (let i = 0; i < 15; i++) {
-                const c = document.createElement('div');
-                c.className = 'coin';
-                c.style.left = x + 'px'; c.style.top = y + 'px';
-                screen.appendChild(c);
-                let vx = (Math.random() - 0.5) * 10;
-                let vy = (Math.random() - 0.5) * 10;
-                let cMove = setInterval(() => {
-                    c.style.left = (parseFloat(c.style.left) + vx) + 'px';
-                    c.style.top = (parseFloat(c.style.top) + vy) + 'px';
-                    vy += 0.4;
-                    if (parseFloat(c.style.top) > 520) { clearInterval(cMove); c.remove(); }
-                }, 20);
-            }
         }
 
         function handleAction() {
@@ -175,42 +180,42 @@
         function startGame() {
             isRunning = true; multiplier = 1.00;
             crashPoint = (Math.random() * 5 + 1.1).toFixed(2);
-            actionBtn.innerText = "CASH OUT";
-            actionBtn.classList.add('cashout');
-            fire.style.display = 'block';
-            pigCont.style.display = 'block';
-            multEl.style.color = "white";
+            actionBtn.innerText = "CASH OUT"; actionBtn.classList.add('cashout');
+            fire.style.display = 'block'; rocketDiv.style.opacity = '1';
+            statusEl.innerText = "THE ROCKET IS CLIMBING...";
+            multEl.style.color = "var(--mult-color)";
 
-            let stars = setInterval(() => { if(!isRunning) clearInterval(stars); spawnStar(); }, 100);
+            let stars = setInterval(() => { if(!isRunning) clearInterval(stars); spawnStar(); }, 120);
 
             gameLoop = setInterval(() => {
-                multiplier += 0.04;
+                multiplier += 0.03;
                 multEl.innerText = multiplier.toFixed(2) + "x";
                 let yPos = Math.min((multiplier - 1) * 60, 300);
-                pigCont.style.bottom = (60 + yPos) + 'px';
-                pigCont.style.transform = `translateX(-50%) rotate(${(Math.random()-0.5)*10}deg)`;
+                rocketCont.style.bottom = (60 + yPos) + 'px';
+                rocketCont.style.transform = `translateX(-50%) rotateX(60deg) rotateZ(${45 + (Math.random()-0.5)*10}deg)`;
 
                 if (multiplier >= crashPoint) endGame(true);
-            }, 100);
+            }, 80);
         }
 
         function cashOut() {
             endGame(false);
-            pigCont.style.transition = "bottom 1s ease-in";
-            pigCont.style.bottom = "800px";
+            statusEl.innerText = "WIN! COLLECTED " + multiplier.toFixed(2) + "x";
+            rocketCont.style.transition = "bottom 1.5s ease-in";
+            rocketCont.style.bottom = "800px";
         }
 
         function endGame(isCrash) {
             clearInterval(gameLoop);
             isRunning = false;
             fire.style.display = 'none';
-            actionBtn.innerText = "PLAY AGAIN";
+            actionBtn.innerText = "RETRY";
             actionBtn.classList.remove('cashout');
             if (isCrash) {
-                const rect = pigCont.getBoundingClientRect();
-                spawnCoins(rect.left - screen.getBoundingClientRect().left + 30, rect.top - screen.getBoundingClientRect().top + 20);
-                pigCont.style.display = 'none';
-                multEl.style.color = "#f43f5e";
+                statusEl.innerText = "💥 CRASHED! GAME OVER.";
+                multEl.style.color = "#ef4444";
+                rocketDiv.style.opacity = "0.5";
+                rocketCont.style.transform = "translateX(-50%) scale(0.7) rotate(180deg)";
             }
         }
     </script>
