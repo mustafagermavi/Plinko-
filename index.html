@@ -1,134 +1,128 @@
 <!DOCTYPE html>
-<html lang="ku" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Legend - Cyber Sheep</title>
+    <title>Cyber Pig Crash - Global Edition</title>
     <style>
         :root {
-            --bg: #020617;
-            --accent: #38bdf8;
+            --bg-color: #020617;
+            --pig-main: #ff85a2;
+            --pig-shade: #f43f5e;
+            --accent-blue: #22d3ee;
             --gold: #fbbf24;
-            /* Lamb Colors (Advanced Palette) */
-            --wool-pure: #ffffff;
-            --wool-mid: #e2e8f0;
-            --wool-dark: #94a3b8;
-            --face-skin: #fecaca;
         }
 
         body {
-            margin: 0; background: var(--bg);
+            margin: 0; background: var(--bg-color);
             display: flex; flex-direction: column; align-items: center;
             justify-content: center; height: 100vh; overflow: hidden;
             font-family: 'Segoe UI', sans-serif;
             image-rendering: pixelated;
         }
 
-        /* 1. پاشبنەمایێ فەزایێ (High-End Space) */
+        /* 1. High-End Background */
         #game-screen {
             width: 380px; height: 520px;
-            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+            background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%);
             border: 3px solid #334155; position: relative;
-            overflow: hidden; border-radius: 12px;
-            box-shadow: 0 0 60px rgba(0,0,0,0.9);
+            overflow: hidden; border-radius: 16px;
+            box-shadow: 0 0 60px rgba(34, 211, 238, 0.1);
         }
 
-        .star { position: absolute; background: white; border-radius: 50%; }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.3; }
 
-        /* 2. دیزاینا بەرخێ ئەفسانەیی (Legendary Pixel Art) */
-        #lamb-container {
+        /* 2. Legendary Cyber Pig (Global Standard) */
+        #pig-container {
             position: absolute; bottom: 60px; left: 50%;
             transform: translateX(-50%); transition: bottom 0.1s linear;
         }
 
-        #lamb {
-            width: 54px; height: 48px; position: relative;
-            background: var(--wool-pure);
-            border: 4px solid #000;
-            /* Shading Advanced */
-            box-shadow: 
-                inset -12px -10px 0px var(--wool-mid),
-                inset -20px -18px 0px var(--wool-dark);
+        #pig {
+            width: 60px; height: 45px; background: var(--pig-main);
+            border: 4px solid #000; position: relative;
+            box-shadow: inset -10px -8px 0px var(--pig-shade);
         }
 
-        /* سەرێ بەرخی */
-        #lamb::before {
-            content: ""; position: absolute; top: 8px; left: -12px;
-            width: 24px; height: 22px; background: var(--face-skin);
-            border: 4px solid #000;
-            box-shadow: inset -4px -4px 0px #fca5a5;
+        /* Pig Snout (لوتی بەرازەکە) */
+        #pig::before {
+            content: ""; position: absolute; top: 15px; left: -12px;
+            width: 18px; height: 14px; background: var(--pig-main);
+            border: 4px solid #000; box-shadow: inset -4px -4px 0px var(--pig-shade);
         }
 
-        /* چاڤێن پرۆفیشناڵ (Dizzy but High-end) */
-        .eye {
-            position: absolute; top: 16px; left: -4px;
-            width: 6px; height: 6px; background: #000;
-            box-shadow: 10px 0 0 #000; /* چاوی دووەم */
+        /* VR Glasses (چاویلکەی سایبەر - زۆر پرۆفیشناڵە) */
+        .glasses {
+            position: absolute; top: 8px; left: -2px;
+            width: 30px; height: 10px; background: var(--accent-blue);
+            border: 3px solid #000; box-shadow: 0 0 10px var(--accent-blue);
         }
 
-        /* جێت-پاتێ لوکس (Cyber Jetpack) */
-        .jetpack {
-            position: absolute; top: 4px; right: -14px;
-            width: 18px; height: 32px; background: #475569;
-            border: 4px solid #000;
-            box-shadow: inset -6px 0px 0px #1e293b, 0 0 15px rgba(56, 189, 248, 0.4);
+        /* Little Wings (بۆ ئەوەی کۆمیدی بێت) */
+        .wing {
+            position: absolute; top: -10px; left: 20px;
+            width: 15px; height: 12px; background: white;
+            border: 3px solid #000; animation: flap 0.1s infinite;
+        }
+
+        @keyframes flap { 0% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+        /* Cyber Thruster */
+        .thruster {
+            position: absolute; bottom: -8px; right: 5px;
+            width: 14px; height: 10px; background: #475569; border: 3px solid #000;
         }
 
         .flame {
-            position: absolute; bottom: -28px; right: -10px;
-            width: 12px; height: 25px; background: var(--accent);
-            box-shadow: 0 0 20px var(--accent), 0 5px 0 #0ea5e9;
-            display: none; animation: engine-shake 0.1s infinite;
+            position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%);
+            width: 10px; height: 20px; background: var(--accent-blue);
+            box-shadow: 0 0 15px var(--accent-blue); display: none;
+            animation: thrust-anim 0.1s infinite;
         }
 
-        @keyframes engine-shake {
-            0% { height: 22px; opacity: 0.8; }
-            100% { height: 32px; opacity: 1; }
-        }
+        @keyframes thrust-anim { 0% { height: 18px; } 100% { height: 28px; } }
 
-        /* 3. مڵتیپلایەر و UI */
+        /* 3. Global UI Design */
         #multiplier {
             position: absolute; top: 50px; width: 100%; text-align: center;
-            font-size: 4.2rem; font-weight: 900; color: #fff;
-            text-shadow: 0 0 20px rgba(56, 189, 248, 0.6); z-index: 10;
+            font-size: 4.5rem; font-weight: 900; color: white;
+            text-shadow: 0 0 25px rgba(34, 211, 238, 0.5);
         }
 
         .controls {
             width: 380px; background: #0f172a; padding: 25px;
             border: 3px solid #334155; border-top: none;
-            box-sizing: border-box; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+            box-sizing: border-box; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;
         }
 
         .btn {
             width: 100%; padding: 20px; font-size: 1.4rem; font-weight: bold;
-            color: #020617; background: var(--accent); border: none;
-            border-radius: 8px; cursor: pointer; text-transform: uppercase;
-            box-shadow: 0 6px 0 #0369a1; transition: 0.1s;
+            color: #020617; background: var(--accent-blue); border: none;
+            border-radius: 12px; cursor: pointer; letter-spacing: 1px;
+            box-shadow: 0 6px 0 #0891b2; transition: 0.1s;
         }
 
-        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #0369a1; }
+        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #0891b2; }
         .btn.cashout { background: var(--gold); box-shadow: 0 6px 0 #b45309; }
 
-        #status { margin-top: 15px; text-align: center; color: #64748b; font-weight: bold; }
+        .coin { position: absolute; width: 8px; height: 8px; background: var(--gold); border: 2px solid #000; z-index: 100; }
     </style>
 </head>
 <body>
 
     <div id="game-screen">
         <div id="multiplier">1.00x</div>
-        <div id="lamb-container">
-            <div id="lamb">
-                <div class="eye"></div>
-                <div class="jetpack">
-                    <div class="flame" id="fire"></div>
-                </div>
+        <div id="pig-container">
+            <div id="pig">
+                <div class="glasses"></div>
+                <div class="wing"></div>
+                <div class="thruster"><div class="flame" id="fire"></div></div>
             </div>
         </div>
     </div>
 
     <div class="controls">
-        <button id="actionBtn" class="btn" onclick="handleAction()">START BET</button>
-        <div id="status">READY FOR TAKE OFF</div>
+        <button id="actionBtn" class="btn" onclick="handleAction()">PLACE BET</button>
     </div>
 
     <script>
@@ -137,26 +131,40 @@
         let gameLoop;
         let crashPoint;
 
-        const lambCont = document.getElementById('lamb-container');
+        const pigCont = document.getElementById('pig-container');
         const fire = document.getElementById('fire');
         const multEl = document.getElementById('multiplier');
         const actionBtn = document.getElementById('actionBtn');
-        const statusEl = document.getElementById('status');
         const screen = document.getElementById('game-screen');
 
         function spawnStar() {
             const star = document.createElement('div');
             star.className = 'star';
-            const size = Math.random() * 3 + 1;
-            star.style.width = size + 'px'; star.style.height = size + 'px';
-            star.style.left = Math.random() * 370 + 'px';
-            star.style.top = '-10px';
+            star.style.width = '2px'; star.style.height = '2px';
+            star.style.left = Math.random() * 370 + 'px'; star.style.top = '-10px';
             screen.appendChild(star);
             let pos = -10;
             let move = setInterval(() => {
-                pos += 3; star.style.top = pos + 'px';
+                pos += 4; star.style.top = pos + 'px';
                 if (pos > 520) { clearInterval(move); star.remove(); }
             }, 30);
+        }
+
+        function spawnCoins(x, y) {
+            for (let i = 0; i < 15; i++) {
+                const c = document.createElement('div');
+                c.className = 'coin';
+                c.style.left = x + 'px'; c.style.top = y + 'px';
+                screen.appendChild(c);
+                let vx = (Math.random() - 0.5) * 10;
+                let vy = (Math.random() - 0.5) * 10;
+                let cMove = setInterval(() => {
+                    c.style.left = (parseFloat(c.style.left) + vx) + 'px';
+                    c.style.top = (parseFloat(c.style.top) + vy) + 'px';
+                    vy += 0.4;
+                    if (parseFloat(c.style.top) > 520) { clearInterval(cMove); c.remove(); }
+                }, 20);
+            }
         }
 
         function handleAction() {
@@ -170,38 +178,39 @@
             actionBtn.innerText = "CASH OUT";
             actionBtn.classList.add('cashout');
             fire.style.display = 'block';
-            statusEl.innerText = "THE SHEEP IS FLYING!";
-            
+            pigCont.style.display = 'block';
+            multEl.style.color = "white";
+
             let stars = setInterval(() => { if(!isRunning) clearInterval(stars); spawnStar(); }, 100);
 
             gameLoop = setInterval(() => {
-                multiplier += 0.03;
+                multiplier += 0.04;
                 multEl.innerText = multiplier.toFixed(2) + "x";
-                let yPos = Math.min((multiplier - 1) * 65, 300);
-                lambCont.style.bottom = (60 + yPos) + 'px';
-                lambCont.style.transform = `translateX(-50%) rotate(${(Math.random()-0.5)*8}deg)`;
+                let yPos = Math.min((multiplier - 1) * 60, 300);
+                pigCont.style.bottom = (60 + yPos) + 'px';
+                pigCont.style.transform = `translateX(-50%) rotate(${(Math.random()-0.5)*10}deg)`;
 
                 if (multiplier >= crashPoint) endGame(true);
-            }, 80);
+            }, 100);
         }
 
         function cashOut() {
             endGame(false);
-            statusEl.innerText = "WINNER! COLLECTED " + multiplier.toFixed(2) + "x";
-            lambCont.style.transition = "bottom 1s ease-in";
-            lambCont.style.bottom = "800px";
+            pigCont.style.transition = "bottom 1s ease-in";
+            pigCont.style.bottom = "800px";
         }
 
         function endGame(isCrash) {
             clearInterval(gameLoop);
             isRunning = false;
             fire.style.display = 'none';
-            actionBtn.innerText = "RETRY";
+            actionBtn.innerText = "PLAY AGAIN";
             actionBtn.classList.remove('cashout');
             if (isCrash) {
-                statusEl.innerText = "CRASHED! BETTER LUCK NEXT TIME";
-                multEl.style.color = "#ef4444";
-                lambCont.style.transform = "translateX(-50%) scale(0.5) rotate(180deg)";
+                const rect = pigCont.getBoundingClientRect();
+                spawnCoins(rect.left - screen.getBoundingClientRect().left + 30, rect.top - screen.getBoundingClientRect().top + 20);
+                pigCont.style.display = 'none';
+                multEl.style.color = "#f43f5e";
             }
         }
     </script>
