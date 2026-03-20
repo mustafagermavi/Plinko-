@@ -3,87 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pixel TON Trade</title>
+    <title>TON Pixel Galaxy</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #1a1a2e;
-            --pixel-green: #00ff41;
-            --pixel-red: #ff3e3e;
-            --pixel-yellow: #ffff00;
-            --pixel-blue: #00d2ff;
+            --bg: #050510;
+            --neon-green: #39ff14;
+            --neon-red: #ff3131;
+            --neon-blue: #00d2ff;
+            --neon-yellow: #fefe33;
         }
-        body {
-            margin: 0; padding: 15px;
+
+        body, html {
+            margin: 0; padding: 0;
             background-color: var(--bg);
             color: white;
-            font-family: 'Press Start 2P', cursive; /* فۆنتی پیکسڵ */
-            display: flex; flex-direction: column; align-items: center;
-            line-height: 1.6;
+            font-family: 'Press Start 2P', cursive;
+            overflow: hidden;
+            height: 100vh;
         }
-        .container { width: 100%; max-width: 400px; }
-        
-        /* Bento Pixel Card */
-        .card { 
-            background: #16213e; 
-            border: 4px solid #0f3460; 
+
+        /* پاشبنەمای ئەستێرە جوڵاوەکان */
+        #bgCanvas {
+            position: fixed; top: 0; left: 0;
+            z-index: -1; width: 100%; height: 100%;
+        }
+
+        .container {
+            position: relative; z-index: 1;
+            padding: 20px; display: flex; flex-direction: column; align-items: center;
+            height: 100vh; justify-content: space-around;
+        }
+
+        /* Bento Pixel Cards */
+        .card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 4px solid #1e293b;
             box-shadow: 6px 6px 0px #000;
-            padding: 15px; text-align: center; margin-bottom: 20px;
-        }
-        
-        .price-text { font-size: 18px; color: var(--pixel-yellow); margin-bottom: 10px; }
-        canvas { 
-            width: 100%; height: 140px; 
-            background: #0f172a; border: 2px solid #533483;
-            image-rendering: pixelated; /* گرنگ بۆ ستایلی پیکسڵ */
+            padding: 15px; width: 90%; max-width: 350px;
+            text-align: center; backdrop-filter: blur(5px);
         }
 
-        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .price-display {
+            font-size: 20px; color: var(--neon-yellow);
+            text-shadow: 2px 2px #ff00ff; margin-bottom: 10px;
+        }
+
+        #gameCanvas {
+            width: 100%; height: 150px;
+            background: #000; border: 2px solid var(--neon-blue);
+            image-rendering: pixelated;
+        }
+
+        .controls {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 350px;
+        }
+
         input {
-            grid-column: span 2; background: #000; border: 3px solid #533483;
-            padding: 12px; color: var(--pixel-green); font-family: 'Press Start 2P';
-            font-size: 14px; text-align: center; margin-bottom: 10px; outline: none;
+            grid-column: span 2; background: #000; border: 3px solid var(--neon-blue);
+            padding: 15px; color: var(--neon-green); font-family: 'Press Start 2P';
+            font-size: 14px; text-align: center; outline: none;
         }
 
-        .btn { 
-            padding: 15px 5px; border: 4px solid; font-size: 10px; 
-            font-family: 'Press Start 2P'; font-weight: bold; color: white; 
-            cursor: pointer; position: relative;
+        .btn {
+            padding: 20px 10px; border: 4px solid; font-size: 12px;
+            font-family: 'Press Start 2P'; color: white; cursor: pointer;
+            transition: 0.1s;
         }
-        /* ستایلی دوگمەی پیکسڵ */
-        .up { background: #008000; border-color: #00ff00 #004d00 #004d00 #00ff00; }
-        .down { background: #800000; border-color: #ff0000 #4d0000 #4d0000 #ff0000; }
-        .btn:active { top: 3px; box-shadow: none; }
+        .up { background: #064e3b; border-color: var(--neon-green); }
+        .down { background: #7f1d1d; border-color: var(--neon-red); }
+        .btn:active { transform: translateY(4px); box-shadow: none; }
 
-        .balance-info { font-size: 10px; color: var(--pixel-blue); margin-bottom: 15px; }
-        
-        /* مێژووی پیکسڵ */
-        .history-item {
-            font-size: 8px; background: #0f3460; padding: 8px;
-            margin-top: 8px; border: 2px solid #533483;
-            display: flex; justify-content: space-between;
+        .header-info {
+            width: 100%; display: flex; justify-content: space-between;
+            font-size: 10px; color: var(--neon-blue); padding: 0 10px;
+        }
+
+        /* Scanline Effect */
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 118, 0.06));
+            background-size: 100% 4px, 3px 100%; pointer-events: none; z-index: 10;
         }
     </style>
 </head>
 <body>
 
+<canvas id="bgCanvas"></canvas>
+<div class="scanlines"></div>
+
 <div class="container">
-    <div class="balance-info">CREDITS: <span id="balance">1000</span></div>
+    <div class="header-info">
+        <span>CREDITS: <span id="balance">1000</span></span>
+        <span>TON LIVE</span>
+    </div>
 
     <div class="card">
-        <div class="price-text">$<span id="price">5.420</span></div>
-        <canvas id="pixelChart"></canvas>
+        <div class="price-display">$<span id="price">5.4200</span></div>
+        <canvas id="gameCanvas"></canvas>
     </div>
 
     <div class="controls">
-        <input type="number" id="betAmount" value="50">
-        <button class="btn up" id="upBtn" onclick="bet('up')">BUY ▲</button>
-        <button class="btn down" id="downBtn" onclick="bet('down')">SELL ▼</button>
-    </div>
-
-    <div id="history" style="margin-top: 20px; width: 100%;">
-        <div style="font-size: 10px; color: #848e9c;">LAST LOGS:</div>
+        <input type="number" id="betAmount" value="100">
+        <button class="btn up" onclick="play('up')">UP</button>
+        <button class="btn down" onclick="play('down')">DOWN</button>
     </div>
 </div>
 
@@ -92,82 +117,94 @@
     tg.ready();
     tg.expand();
 
+    // پاشبنەمای ئەستێرەکان
+    const bgCanvas = document.getElementById('bgCanvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    let stars = [];
+
+    function initStars() {
+        bgCanvas.width = window.innerWidth;
+        bgCanvas.height = window.innerHeight;
+        stars = [];
+        for(let i=0; i<100; i++) {
+            stars.push({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                size: Math.random() * 3,
+                speed: Math.random() * 0.5 + 0.1
+            });
+        }
+    }
+
+    function drawStars() {
+        bgCtx.fillStyle = '#050510';
+        bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+        bgCtx.fillStyle = '#ffffff';
+        stars.forEach(s => {
+            bgCtx.fillRect(s.x, s.y, s.size, s.size);
+            s.y += s.speed;
+            if(s.y > bgCanvas.height) s.y = 0;
+        });
+        requestAnimationFrame(drawStars);
+    }
+
+    // لۆجیکی یاری
     let balance = 1000;
-    let currentPrice = 5.420;
-    let prices = Array(30).fill(5.420);
-    let isWaiting = false;
+    let currentPrice = 5.4200;
+    let prices = Array(40).fill(5.4200);
+    const gCanvas = document.getElementById('gameCanvas');
+    const gCtx = gCanvas.getContext('2d');
+    gCanvas.width = 300; gCanvas.height = 150;
 
-    const canvas = document.getElementById('pixelChart');
-    const ctx = canvas.getContext('2d');
-    canvas.width = 300; canvas.height = 150;
-
-    function update() {
-        let diff = (Math.random() - 0.5) * 0.015;
-        currentPrice = parseFloat((currentPrice + diff).toFixed(3));
+    function updateGame() {
+        currentPrice += (Math.random() - 0.5) * 0.01;
         prices.push(currentPrice);
         prices.shift();
-        document.getElementById('price').innerText = currentPrice.toFixed(3);
-        draw();
-    }
-
-    function draw() {
-        ctx.fillStyle = "#0f172a";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        document.getElementById('price').innerText = currentPrice.toFixed(4);
         
-        // کێشانی هێڵی پیکسڵ
-        ctx.strokeStyle = isWaiting ? "#ffff00" : "#00ff41";
-        ctx.lineWidth = 4;
-        ctx.beginPath();
+        gCtx.fillStyle = '#000';
+        gCtx.fillRect(0, 0, gCanvas.width, gCanvas.height);
+        gCtx.strokeStyle = '#00d2ff';
+        gCtx.lineWidth = 4;
+        gCtx.beginPath();
         
-        const min = Math.min(...prices) - 0.01;
-        const max = Math.max(...prices) + 0.01;
+        let min = Math.min(...prices) - 0.01;
+        let max = Math.max(...prices) + 0.01;
 
         prices.forEach((p, i) => {
-            let x = (i / (prices.length - 1)) * canvas.width;
-            let y = canvas.height - ((p - min) / (max - min)) * canvas.height;
-            if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            let x = (i / (prices.length - 1)) * gCanvas.width;
+            let y = gCanvas.height - ((p - min) / (max - min)) * gCanvas.height;
+            if(i === 0) gCtx.moveTo(x, y); else gCtx.lineTo(x, y);
         });
-        ctx.stroke();
-
-        // کێشانی کارەکتەری پیکسڵ لە کۆتایی هێڵەکە
-        let lastY = canvas.height - ((currentPrice - min) / (max - min)) * canvas.height;
-        ctx.fillStyle = "#ffff00";
-        ctx.fillRect(canvas.width - 10, lastY - 5, 8, 8); // کارەکتەرەکە وەک بلۆکێکی زەرد
+        gCtx.stroke();
     }
 
-    function bet(type) {
+    function play(type) {
         let amt = parseInt(document.getElementById('betAmount').value);
-        if(amt > balance || isWaiting) return;
-
-        isWaiting = true;
+        if(amt > balance) { tg.showAlert("No Credits!"); return; }
+        
         balance -= amt;
         document.getElementById('balance').innerText = balance;
-        let startP = currentPrice;
+        tg.HapticFeedback.impactOccurred('medium');
         
-        tg.HapticFeedback.impactOccurred('rigid');
-
+        let startP = currentPrice;
         setTimeout(() => {
             let win = (type === 'up' && currentPrice > startP) || (type === 'down' && currentPrice < startP);
             if(win) {
                 balance += Math.floor(amt * 1.9);
                 tg.HapticFeedback.notificationOccurred('success');
+                tg.showAlert("WINNER! +"+Math.floor(amt*0.9));
             } else {
                 tg.HapticFeedback.notificationOccurred('error');
             }
-            
-            // زیادکردن بۆ مێژوو
-            const log = document.createElement('div');
-            log.className = "history-item";
-            log.style.color = win ? "var(--pixel-green)" : "var(--pixel-red)";
-            log.innerHTML = `<span>${type.toUpperCase()} ${amt}</span> <span>${win ? 'WIN' : 'LOSE'}</span>`;
-            document.getElementById('history').prepend(log);
-
             document.getElementById('balance').innerText = balance;
-            isWaiting = false;
-        }, 4000);
+        }, 3000);
     }
 
-    setInterval(update, 200);
+    initStars();
+    drawStars();
+    setInterval(updateGame, 150);
+    window.onresize = initStars;
 </script>
 
 </body>
