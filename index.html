@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TON Predictor - High Risk</title>
+    <title>TON Predictor - Pro Trader</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --bg: #0b0e11;
-            --card: #1e2329;
-            --accent: #00d2ff;
+            --bg: #080a0c;
+            --card: #12161a;
             --green: #0ecb81;
             --red: #f6465d;
             --yellow: #f0b90b;
+            --accent: #00d2ff;
         }
         body {
             margin: 0; padding: 15px;
@@ -24,55 +24,58 @@
         }
         .container { width: 100%; max-width: 400px; }
         
-        /* Bento Grid */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .card { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #2b3139; text-align: center; }
+        .card { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); text-align: center; margin-bottom: 10px; }
         
-        .price-box { grid-column: span 2; }
-        .price-text { font-size: 40px; font-weight: 800; color: var(--yellow); font-family: monospace; }
-        canvas { width: 100%; height: 120px; }
+        .price-text { font-size: 42px; font-weight: 800; color: var(--yellow); font-family: monospace; }
+        canvas { width: 100%; height: 130px; }
 
-        /* بەشی گرەوکردن */
-        .bet-input-box { grid-column: span 2; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .bet-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         input {
-            width: 100%; background: #2b3139; border: 1px solid #474d57;
-            border-radius: 10px; padding: 12px; color: white; font-size: 18px; text-align: center;
+            grid-column: span 2; background: #1c2127; border: 1px solid #2b3139;
+            border-radius: 12px; padding: 15px; color: white; font-size: 20px; text-align: center; margin-bottom: 5px;
         }
 
-        .btn { padding: 20px; border-radius: 15px; border: none; font-size: 18px; font-weight: bold; color: white; cursor: pointer; transition: 0.2s; }
-        .up { background: var(--green); }
-        .down { background: var(--red); }
+        .btn { padding: 18px; border-radius: 15px; border: none; font-size: 18px; font-weight: bold; color: white; cursor: pointer; transition: 0.2s; }
+        .up { background: var(--green); box-shadow: 0 4px 15px rgba(14, 203, 129, 0.2); }
+        .down { background: var(--red); box-shadow: 0 4px 15px rgba(246, 70, 93, 0.2); }
         .btn:active { transform: scale(0.95); }
         .btn:disabled { opacity: 0.3; }
 
-        .balance-text { font-size: 18px; font-weight: bold; color: var(--accent); }
+        /* ستایلی بەشی مێژوو */
+        .history-box { margin-top: 15px; text-align: right; }
+        .history-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.03); padding: 10px 15px;
+            border-radius: 12px; margin-bottom: 8px; font-size: 13px;
+            border-right: 4px solid #ccc;
+        }
+        .win { border-right-color: var(--green); color: var(--green); }
+        .loss { border-right-color: var(--red); color: var(--red); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="grid">
-        <div class="card">
-            <div style="font-size: 12px; color: #848e9c;">باڵانسی تۆ</div>
-            <div class="balance-text"><span id="balance">1000</span> Pts</div>
-        </div>
-        <div class="card">
-            <div style="font-size: 12px; color: #848e9c;">قازانج (x1.9)</div>
-            <div style="font-size: 18px; font-weight: bold; color: var(--green);">90%</div>
-        </div>
+    <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 10px; padding: 0 5px;">
+        <span style="color: #848e9c;">باڵانسی تۆ:</span>
+        <span style="color: var(--accent); font-weight: bold;"><span id="balance">1000</span> Pts</span>
+    </div>
 
-        <div class="card price-box">
-            <div id="price" class="price-text">5.4200</div>
-            <canvas id="chart"></canvas>
-        </div>
+    <div class="card">
+        <div id="price" class="price-text">5.4200</div>
+        <canvas id="chart"></canvas>
+    </div>
 
-        <div class="card bet-input-box">
-            <span style="font-size: 14px;">بڕی گرەو:</span>
-            <input type="number" id="betAmount" value="100" min="10">
-        </div>
-
+    <div class="bet-controls">
+        <input type="number" id="betAmount" value="100" step="10">
         <button class="btn up" id="upBtn" onclick="placeBet('up')">UP ▲</button>
         <button class="btn down" id="downBtn" onclick="placeBet('down')">DOWN ▼</button>
+    </div>
+
+    <div class="history-box">
+        <div style="font-size: 14px; color: #848e9c; margin-bottom: 10px;">📜 مێژووی گرەوەکان</div>
+        <div id="historyList">
+            </div>
     </div>
 </div>
 
@@ -93,7 +96,7 @@
     canvas.height = canvas.offsetHeight;
 
     function updatePrice() {
-        let change = (Math.random() - 0.5) * 0.006;
+        let change = (Math.random() - 0.5) * 0.008;
         currentPrice = parseFloat((currentPrice + change).toFixed(4));
         prices.push(currentPrice);
         prices.shift();
@@ -116,10 +119,27 @@
         ctx.stroke();
     }
 
+    function addHistory(type, amount, win, entry, exit) {
+        const list = document.getElementById('historyList');
+        const item = document.createElement('div');
+        item.className = `history-item ${win ? 'win' : 'loss'}`;
+        
+        const resultText = win ? `+${Math.floor(amount * 1.9)}` : `-${amount}`;
+        const typeIcon = type === 'up' ? '▲' : '▼';
+        
+        item.innerHTML = `
+            <div><b>${typeIcon} ${amount} Pts</b> <br> <small>Entry: ${entry}</small></div>
+            <div style="text-align: left;"><b>${resultText}</b> <br> <small>Exit: ${exit}</small></div>
+        `;
+        
+        list.prepend(item);
+        if(list.children.length > 5) list.lastChild.remove(); // تەنها ٥ مێژووی کۆتایی نیشان بدە
+    }
+
     function placeBet(type) {
         let amount = parseInt(document.getElementById('betAmount').value);
         if (amount > balance || amount <= 0) {
-            alert("باڵانست بەش ناکات!");
+            tg.showAlert("باڵانست بەش ناکات یان بڕەکە هەڵەیە!");
             return;
         }
 
@@ -128,27 +148,28 @@
         document.getElementById('balance').innerText = balance;
         entryPrice = currentPrice;
         
-        document.getElementById('upBtn').disabled = true;
-        document.getElementById('downBtn').disabled = true;
-
+        document.querySelectorAll('.btn').forEach(b => b.disabled = true);
         tg.HapticFeedback.impactOccurred('medium');
 
         setTimeout(() => {
-            let win = (type === 'up' && currentPrice > entryPrice) || (type === 'down' && currentPrice < entryPrice);
+            let exitPrice = currentPrice;
+            let win = (type === 'up' && exitPrice > entryPrice) || (type === 'down' && exitPrice < entryPrice);
+            
             if (win) {
                 let profit = Math.floor(amount * 1.9);
                 balance += profit;
                 document.getElementById('balance').innerText = balance;
-                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.7 } });
                 tg.HapticFeedback.notificationOccurred('success');
             } else {
                 tg.HapticFeedback.notificationOccurred('error');
             }
 
+            addHistory(type, amount, win, entryPrice.toFixed(4), exitPrice.toFixed(4));
+
             isPlaying = false;
-            document.getElementById('upBtn').disabled = false;
-            document.getElementById('downBtn').disabled = false;
-        }, 5000); // ٥ چرکە بۆ چاوەڕێی ئەنجام
+            document.querySelectorAll('.btn').forEach(b => b.disabled = false);
+        }, 5000); 
     }
 
     setInterval(updatePrice, 150);
