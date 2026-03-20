@@ -2,24 +2,152 @@
 <html lang="ku">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WhaleLens Pixel Pump</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Crash - TON Game</title>
+    <style>
+        /* ستایلێ گشتی یێ شاشەیێ */
+        body {
+            margin: 0;
+            background-color: #0d1117;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* چوارچۆڤێ یاریێ ب ستایلێ Glassmorphism */
+        .game-container {
+            width: 90%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #30363d;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        /* نیشاندانا ژمارا قازانجی (Multiplier) */
+        #multiplier {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #00d2ff;
+            margin: 20px 0;
+            text-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+        }
+
+        /* وێنەیێ پیکسڵێ (موشەک) */
+        .pixel-rocket {
+            font-size: 50px;
+            transition: transform 0.1s;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        /* دوگمەیێن یاریێ */
+        .btn {
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            border: none;
+            padding: 15px 30px;
+            color: white;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+        }
+
+        .btn:disabled {
+            background: #444;
+            box-shadow: none;
+        }
+
+        #status {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #8b949e;
+        }
+    </style>
 </head>
 <body>
 
-    <div id="game-container">
-        <div class="bg-grid"></div>
-        <div class="multiplier" id="mult">x1.00</div>
+    <div class="game-container">
+        <div id="status">ئامادەیە بۆ دەستپێکرن...</div>
         
-        <div id="whale"></div>
-
-        <div class="controls">
-            <button class="btn-pump" id="pumpBtn">PUMP IT!</button>
-        </div>
+        <div id="rocket" class="pixel-rocket">🚀</div>
+        
+        <div id="multiplier">1.00x</div>
+        
+        <button id="actionBtn" class="btn" onclick="startGame()">دەستپێبکە (BET)</button>
     </div>
 
-    <script src="game.js"></script>
-    <script src="ui.js"></script>
+    <script>
+        let multiplier = 1.00;
+        let isRunning = false;
+        let gameInterval;
+        let crashPoint;
+
+        const multiplierEl = document.getElementById('multiplier');
+        const rocketEl = document.getElementById('rocket');
+        const actionBtn = document.getElementById('actionBtn');
+        const statusEl = document.getElementById('status');
+
+        function startGame() {
+            if (isRunning) {
+                // Cash Out
+                stopGame(false);
+                return;
+            }
+
+            // ئامادەکاریێن یاریێ
+            isRunning = true;
+            multiplier = 1.00;
+            multiplierEl.innerText = "1.00x";
+            multiplierEl.style.color = "#00d2ff";
+            statusEl.innerText = "یاری یا کار دکەت...";
+            actionBtn.innerText = "CASH OUT";
+            
+            // دیارکرنا خاڵا تەقینێ ب شێوەیەکێ هەرەمەکی (Random)
+            crashPoint = (Math.random() * 5 + 1.1).toFixed(2);
+
+            gameInterval = setInterval(() => {
+                multiplier += 0.02;
+                multiplierEl.innerText = multiplier.toFixed(2) + "x";
+                
+                // لێرەدا وێنەی لۆجیکێ لەرینێ (Animation) ددەینێ
+                rocketEl.style.transform = `translateY(-${(multiplier - 1) * 20}px) rotate(${(Math.random() - 0.5) * 5}deg)`;
+
+                if (multiplier >= crashPoint) {
+                    stopGame(true);
+                }
+            }, 100);
+        }
+
+        function stopGame(isCrash) {
+            clearInterval(gameInterval);
+            isRunning = false;
+
+            if (isCrash) {
+                multiplierEl.style.color = "#ff4b2b";
+                statusEl.innerText = "موشەک تەقیا! تە هەمی دۆراندن.";
+                rocketEl.innerText = "💥";
+            } else {
+                multiplierEl.style.color = "#4ca1af";
+                statusEl.innerText = `تە قازانج کر! مڵتیپلایەر: ${multiplier.toFixed(2)}x`;
+            }
+
+            actionBtn.innerText = "دووبارە هەوڵبدە";
+            
+            // زڤڕاندنا ئایبۆنێ پشتی ٢ چرکەیان
+            setTimeout(() => {
+                if (!isRunning) rocketEl.innerText = "🚀";
+            }, 2000);
+        }
+    </script>
 </body>
 </html>
