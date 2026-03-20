@@ -3,195 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Dashboard Pro</title>
+    <title>Ultimate Crypto Scanner UI</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Vazirmatn:wght@300;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
-            --primary: #6366f1;
-            --accent: #10b981;
-            --bg: #020617;
-            --glass: rgba(15, 23, 42, 0.85);
-            --border: rgba(255, 255, 255, 0.1);
+            --bg: #030712;
+            --card: rgba(17, 24, 39, 0.7);
+            --primary: #818cf8;
+            --accent: #2dd4bf;
+            --danger: #fb7185;
+            --border: rgba(255, 255, 255, 0.08);
         }
 
         body {
-            background: radial-gradient(circle at top right, #1e1b4b, #020617);
-            color: #f8fafc;
-            font-family: 'Vazirmatn', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(129, 140, 248, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(45, 212, 191, 0.1) 0px, transparent 50%);
+            color: #f3f4f6;
+            font-family: 'Space Grotesk', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            overflow: hidden;
         }
 
-        .card {
-            width: 400px;
-            background: var(--glass);
-            backdrop-filter: blur(25px);
+        /* The Main Dashboard */
+        .dashboard {
+            width: 440px;
+            background: var(--card);
+            backdrop-filter: blur(40px);
             border: 1px solid var(--border);
-            border-radius: 30px;
-            padding: 25px;
-            box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.8);
+            border-radius: 40px;
+            padding: 32px;
+            box-shadow: 0 0 100px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255,255,255,0.02);
+            position: relative;
         }
 
-        /* Stats Section */
-        .stats-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
+        /* Header Status */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
         }
 
-        .stat-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            padding: 12px;
-            border-radius: 15px;
-            text-align: center;
-        }
-
-        .stat-label { font-size: 10px; color: #94a3b8; letter-spacing: 1px; }
-        .stat-val { font-family: 'JetBrains Mono'; font-size: 18px; color: var(--primary); display: block; }
-
-        /* Terminal Style Log */
-        .log-box {
-            background: #000;
-            border-radius: 12px;
-            padding: 15px;
-            height: 160px;
-            font-family: 'JetBrains Mono';
-            font-size: 11px;
+        .badge {
+            background: rgba(45, 212, 191, 0.1);
             color: var(--accent);
-            border: 1px solid #1e293b;
-            overflow-y: hidden;
-            margin-bottom: 20px;
-            line-height: 1.5;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(45, 212, 191, 0.2);
         }
 
-        /* Coin Grid - Bento Style */
-        .coin-grid {
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse-animation 2s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% { box-shadow: 0 0 0 0px rgba(45, 212, 191, 0.7); }
+            100% { box-shadow: 0 0 0 10px rgba(45, 212, 191, 0); }
+        }
+
+        /* Terminal - CRT Style */
+        .terminal {
+            background: #000;
+            border-radius: 24px;
+            padding: 20px;
+            height: 200px;
+            border: 1px solid #1f2937;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            box-shadow: inset 0 0 30px rgba(129, 140, 248, 0.05);
+        }
+
+        .terminal::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .log-line { color: #94a3b8; margin-bottom: 6px; }
+        .log-line span { color: var(--primary); }
+
+        /* Grid Layout */
+        .bento-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 16px;
         }
 
-        .coin-box {
-            background: rgba(255, 255, 255, 0.02);
+        .coin-item {
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 15px;
+            border-radius: 24px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .coin-item:hover {
+            transform: translateY(-8px) scale(1.05);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .coin-item svg {
+            width: 36px;
+            height: 36px;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+
+        /* Fancy Toggle */
+        .toggle {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 2px solid var(--primary);
+            position: relative;
+            background: transparent;
+        }
+
+        .coin-item.active .toggle::after {
+            content: "✓";
+            color: var(--primary);
+            font-size: 14px;
+            position: absolute;
+            top: -2px; left: 2px;
+            font-weight: bold;
+        }
+
+        /* Action Button */
+        .btn-launch {
+            width: 100%;
+            padding: 20px;
+            margin-top: 32px;
+            border-radius: 20px;
+            border: none;
+            background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
             transition: 0.3s;
         }
 
-        .coin-box:hover {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
-            transform: translateY(-3px);
+        .btn-launch:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.6);
         }
 
-        /* SVG Sizing */
-        .coin-box svg {
-            width: 32px;
-            height: 32px;
-            margin-bottom: 10px;
-        }
+        .btn-launch:active { transform: translateY(1px); }
 
-        .check-ui {
-            width: 16px;
-            height: 16px;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-
-        .main-btn {
-            width: 100%;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 15px;
-            border: none;
-            background: linear-gradient(135deg, #6366f1, #4338ca);
-            color: white;
-            font-weight: bold;
-            font-size: 15px;
-            cursor: pointer;
-            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
-        }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div class="stats-container">
-        <div class="stat-item">
-            <span class="stat-label">CHECKED</span>
-            <span class="stat-val" id="checked-num">0</span>
+<div class="dashboard">
+    <div class="status-bar">
+        <div class="badge">
+            <div class="pulse"></div>
+            SYSTEM ACTIVE
         </div>
-        <div class="stat-item">
-            <span class="stat-label">FOUND</span>
-            <span class="stat-val" style="color:#ef4444">0</span>
+        <div style="text-align: right">
+            <div style="font-size: 10px; color: #64748b;">CHECKED</div>
+            <div id="count" style="font-family: 'JetBrains Mono'; font-weight: bold; color: var(--primary);">2,840,102</div>
         </div>
     </div>
 
-    <div class="log-box" id="terminal">
-        > System standby...<br>
-        > Select networks to scan.
+    <div class="terminal" id="screen">
+        <div class="log-line"><span>[SYS]</span> Initializing neural link...</div>
+        <div class="log-line"><span>[SYS]</span> Ready to analyze entropy.</div>
     </div>
 
-    <div class="coin-grid">
-        <div class="coin-box">
-            <svg viewBox="0 0 32 32"><path fill="#F7931A" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M23.189 14.022c.336-2.247-1.374-3.455-3.712-4.26l.758-3.04-1.85-.461-.738 2.961c-.486-.121-.984-.236-1.48-.349l.744-2.984-1.85-.461-.758 3.038c-.403-.092-.802-.181-1.189-.275l.001-.005-2.552-.637-.492 1.976s1.373.315 1.344.334c.75.187.885.684.862 1.078l-.864 3.464c.051.013.118.032.191.061l-.193-.048-.1.402-1.21-3.018-2.552-.637-.493 1.976s1.373.315 1.344.334c.75.187.885.684.862 1.078l-.864 3.464c.051.013.118.032.191.061l-.193-.048-1.21 4.857c-.092.23-.326.575-.85.445.02.03-1.344-.334-1.344-.334l-.918 2.116 2.408.6c.447.112.886.228 1.319.336l-.768 3.085 1.849.461.758-3.041c.504.137 1.0.264 1.489.385l-.756 3.033 1.85.461.767-3.076c3.155.597 5.531.356 6.53-2.497.804-2.296-.04-3.621-1.698-4.485 1.206-.279 2.114-1.074 2.357-2.713zm-4.215 5.923c-.572 2.298-4.439 1.056-5.694.744l1.016-4.075c1.255.313 5.27.931 4.678 3.331zm.573-5.955c-.521 2.088-3.743 1.028-4.788.769l.922-3.698c1.045.26 4.398.745 3.866 2.929z"/></svg>
-            <input type="checkbox" class="check-ui" checked>
+    <div class="bento-grid">
+        <div class="coin-item active">
+            <svg viewBox="0 0 32 32"><path fill="#F7931A" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M23.189 14.022c.336-2.247-1.374-3.455-3.712-4.26l.758-3.04-1.85-.461-.738 2.961c-.486-.121-.984-.236-1.48-.349l.744-2.984-1.85-.461-.758 3.038c-.403-.092-.802-.181-1.189-.275l.001-.005-2.552-.637-.492 1.976s1.373.315 1.344.334c.75.187.885.684.862 1.078l-.864 3.464c.051.013.118.032.191.061l-.193-.048-1.21 4.857c-.092.23-.326.575-.85.445.02.03-1.344-.334-1.344-.334l-.918 2.116 2.408.6c.447.112.886.228 1.319.336l-.768 3.085 1.849.461.758-3.041c.504.137 1.0.264 1.489.385l-.756 3.033 1.85.461.767-3.076c3.155.597 5.531.356 6.53-2.497.804-2.296-.04-3.621-1.698-4.485 1.206-.279 2.114-1.074 2.357-2.713zm-4.215 5.923c-.572 2.298-4.439 1.056-5.694.744l1.016-4.075c1.255.313 5.27.931 4.678 3.331zm.573-5.955c-.521 2.088-3.743 1.028-4.788.769l.922-3.698c1.045.26 4.398.745 3.866 2.929z"/></svg>
+            <div class="toggle"></div>
         </div>
-        <div class="coin-box">
+        <div class="coin-item active">
             <svg viewBox="0 0 32 32"><path fill="#627EEA" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" fill-opacity=".602" d="M16.498 4v8.87l7.497 3.35z"/><path fill="#FFF" d="M16.498 4L9 16.22l7.498-3.35z"/><path fill="#FFF" fill-opacity=".602" d="M16.498 21.968v6.027L24 17.616z"/><path fill="#FFF" d="M16.498 27.995v-6.028L9 17.616z"/><path fill="#FFF" fill-opacity=".2" d="M16.498 20.573l7.497-4.353-7.497-3.348z"/><path fill="#FFF" fill-opacity=".602" d="M9 16.22l7.498 4.353v-7.701z"/></svg>
-            <input type="checkbox" class="check-ui" checked>
+            <div class="toggle"></div>
         </div>
-        <div class="coin-box">
-            <svg viewBox="0 0 32 32"><path fill="#26A17B" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M17.922 17.383v-.002c-.017.008-.67.318-1.922.318s-1.905-.31-1.922-.318v.002c-3.535-.172-6.139-.783-6.139-1.509 0-.726 2.604-1.337 6.139-1.509V16.4c.03.015.707.337 1.922.337s1.892-.322 1.922-.337v-2.035c3.535.172 6.139.783 6.139 1.509 0 .726-2.604 1.337-6.139 1.509m0-2.314V12.72h5.056v-2.554H9.022v2.554h5.056v2.349c-3.953.2-6.896.953-6.896 1.854 0 .901 2.943 1.654 6.896 1.854v6.347h2.844v-6.347c3.953-.2 6.896-.953 6.896-1.854 0-.901-2.943-1.654-6.896-1.854"/></svg>
-            <input type="checkbox" class="check-ui" checked>
-        </div>
-        <div class="coin-box">
-            <svg viewBox="0 0 32 32"><path fill="#F3BA2F" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M12.116 14.404L16 10.52l3.886 3.886 2.26-2.259L16 6l-6.144 6.145 2.26 2.259zM6 16l2.26-2.258L10.518 16l-2.259 2.259L6 16zm6.116 1.596L16 21.482l3.886-3.886 2.26 2.259L16 26l-6.144-6.145 2.26-2.259zm7.366-1.596l2.258-2.258L26 16l-2.26 2.259-2.258-2.259zM16 13.911L18.089 16 16 18.089 13.911 16 16 13.911z"/></svg>
-            <input type="checkbox" class="check-ui" checked>
-        </div>
-        <div class="coin-box">
-            <svg viewBox="0 0 32 32"><path fill="#000" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="url(#sol-grad)" d="M7.525 21.056l2.366-2.4c.36-.36.85-.563 1.36-.563h13.224c.732 0 1.09.893.562 1.41l-2.366 2.4c-.36.36-.85.563-1.36.563H8.087c-.733 0-1.091-.893-.562-1.41zm16.95-10.112l-2.366 2.4c-.36.36-.85.563-1.36.563H7.525c-.733 0-1.092-.893-.563-1.41l2.366-2.4c.36-.36.85-.563 1.36-.563h13.224c.732 0 1.09.893.562 1.41zm-13.224 4.5l-2.366 2.4c-.36.36-.85.563-1.36.563h13.224c.733 0 1.092-.893.563-1.41l-2.366-2.4c-.36-.36-.85-.563-1.36-.563H11.25c-.51 0-1 .203-1.36.563z"/><defs><linearGradient id="sol-grad" x1="24.478" x2="6.281" y1="9.094" y2="22.563" gradientUnits="userSpaceOnUse"><stop stop-color="#00FFA3"/><stop offset="1" stop-color="#DC1FFF"/></linearGradient></defs></svg>
-            <input type="checkbox" class="check-ui" checked>
-        </div>
-        <div class="coin-box">
+        <div class="coin-item active">
             <svg viewBox="0 0 32 32"><path fill="#0088CC" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M16 23.5c-.2 0-.4-.1-.5-.2l-8.5-7.5c-.3-.3-.4-.7-.2-1.1s.6-.6 1-.6h16.4c.4 0 .8.2 1 .6s.1.8-.2 1.1l-8.5 7.5c-.1.1-.3.2-.5.2zM10.8 16l5.2 4.6 5.2-4.6h-10.4z"/></svg>
-            <input type="checkbox" class="check-ui" checked>
+            <div class="toggle"></div>
         </div>
     </div>
 
-    <button class="main-btn" onclick="startScan()">START PROCESS</button>
+    <button class="btn-launch" onclick="execute()">EXECUTE PROTOCOL</button>
 </div>
 
 <script>
-    function startScan() {
-        const term = document.getElementById('terminal');
-        const count = document.getElementById('checked-num');
-        let i = 0;
-
-        term.innerHTML = "> Scanning initialized...<br>";
+    function execute() {
+        const screen = document.getElementById('screen');
+        const count = document.getElementById('count');
+        let val = 2840102;
 
         setInterval(() => {
-            i += Math.floor(Math.random() * 10);
-            count.innerText = i.toLocaleString();
+            val += Math.floor(Math.random() * 20);
+            count.innerText = val.toLocaleString();
+
+            const hex = Array.from({length: 8}, () => Math.floor(Math.random()*16).toString(16)).join('').toUpperCase();
+            const div = document.createElement('div');
+            div.className = 'log-line';
+            div.innerHTML = `<span>[DATA]</span> Hash: 0x${hex}... <b style="color:#fb7185">NOT FOUND</b>`;
             
-            const randomID = Math.random().toString(16).slice(2, 12).toUpperCase();
-            const p = document.createElement('div');
-            p.innerHTML = `> <span style="color:#6366f1">Checking:</span> 0x${randomID}... <span style="color:#ef4444">[0.00]</span>`;
-            
-            term.appendChild(p);
-            if(term.childNodes.length > 15) term.removeChild(term.firstChild);
-            term.scrollTop = term.scrollHeight;
-        }, 100);
+            screen.appendChild(div);
+            if(screen.childNodes.length > 12) screen.removeChild(screen.firstChild);
+            screen.scrollTop = screen.scrollHeight;
+        }, 60);
     }
 </script>
 
