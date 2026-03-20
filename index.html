@@ -3,124 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Isometric Minimalist Crash</title>
+    <title>Isometric Parallax Crash</title>
     <style>
         :root {
-            --bg: #ffffff;
-            --main-stroke: #1a1a1a;
-            --rocket-light: #ffffff;
-            --rocket-mid: #f3f4f6;
-            --rocket-dark: #e5e7eb;
-            --accent: #1a1a1a;
+            --bg: #050505;
+            --rocket-main: #ffffff;
+            --rocket-shade: #e5e7eb;
+            --accent: #38bdf8;
         }
 
         body {
-            margin: 0; background: #f9fafb;
+            margin: 0; background: var(--bg);
             display: flex; flex-direction: column; align-items: center;
             justify-content: center; height: 100vh; overflow: hidden;
             font-family: 'Inter', sans-serif;
         }
 
-        /* 1. Isometric Minimalist Screen */
+        /* 1. Game Screen & Parallax Layers */
         #game-screen {
-            width: 380px; height: 520px;
+            width: 380px; height: 550px;
             background: var(--bg);
-            /* Isometric Dot Grid */
-            background-image: radial-gradient(#e5e7eb 1.5px, transparent 1.5px);
-            background-size: 30px 30px;
             position: relative; overflow: hidden;
-            border-radius: 32px;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+            border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* 2. The Isometric Minimalist Rocket */
+        /* Layer 1: Far Stars */
+        .parallax-bg-1 {
+            position: absolute; top: 0; left: 0; width: 100%; height: 200%;
+            background-image: radial-gradient(white 1px, transparent 1px);
+            background-size: 50px 50px; opacity: 0.2;
+        }
+
+        /* Layer 2: Near Stars/Dots */
+        .parallax-bg-2 {
+            position: absolute; top: 0; left: 0; width: 100%; height: 200%;
+            background-image: radial-gradient(white 1.5px, transparent 1.5px);
+            background-size: 30px 30px; opacity: 0.4;
+        }
+
+        /* Layer 3: Isometric Grid (Fastest) */
+        .parallax-grid {
+            position: absolute; top: 0; left: 0; width: 100%; height: 200%;
+            background-image: 
+                linear-gradient(45deg, rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(-45deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* 2. Isometric Minimalist Rocket */
         #rocket-container {
             position: absolute; bottom: 80px; left: 50%;
             transform: translateX(-50%) rotateX(60deg) rotateZ(45deg);
             transform-style: preserve-3d;
-            transition: bottom 0.1s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 10;
         }
 
-        .cube {
-            width: 35px; height: 70px;
-            position: relative;
-            transform-style: preserve-3d;
+        .rocket-3d {
+            width: 30px; height: 60px;
+            position: relative; transform-style: preserve-3d;
         }
 
-        /* Front Face */
-        .face-f {
-            position: absolute; width: 35px; height: 70px;
-            background: var(--rocket-light); border: 2px solid var(--main-stroke);
-            transform: translateZ(17.5px);
+        .face {
+            position: absolute; width: 30px; height: 60px;
+            border: 1.5px solid #000;
         }
 
-        /* Side Face */
-        .face-s {
-            position: absolute; width: 35px; height: 70px;
-            background: var(--rocket-mid); border: 2px solid var(--main-stroke);
-            transform: rotateY(-90deg) translateZ(17.5px);
-        }
-
-        /* Top Point (Minimalist Pyramid Head) */
+        .front { background: var(--rocket-main); transform: translateZ(15px); }
+        .side { background: var(--rocket-shade); transform: rotateY(-90deg) translateZ(15px); }
+        
+        /* Minimal Nose */
         .nose {
-            position: absolute; top: -20px; width: 35px; height: 20px;
-            background: var(--main-stroke);
-            clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+            position: absolute; top: -15px; width: 30px; height: 15px;
+            background: #000; clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
         }
 
-        /* Minimal Thruster Effect */
-        .thrust {
-            position: absolute; bottom: -15px; left: 50%;
-            transform: translateX(-50%); width: 8px; height: 15px;
-            background: var(--main-stroke); opacity: 0;
-            animation: pulse 0.1s infinite alternate;
-        }
-
-        @keyframes pulse { from { height: 10px; opacity: 0.2; } to { height: 20px; opacity: 0.5; } }
-
-        /* 3. Ultra-Clean UI */
+        /* 3. UI Elements */
         #multiplier {
             position: absolute; top: 60px; width: 100%; text-align: center;
-            font-size: 5.5rem; font-weight: 100; color: var(--main-stroke);
-            letter-spacing: -4px;
+            font-size: 4.5rem; font-weight: 200; color: #fff;
+            letter-spacing: -2px; z-index: 20;
         }
 
         .controls {
-            width: 380px; padding: 40px 0;
+            width: 380px; padding: 30px 0;
             display: flex; flex-direction: column; align-items: center;
         }
 
         .btn {
-            width: 70%; padding: 22px; font-size: 0.9rem; font-weight: 700;
-            color: #fff; background: var(--main-stroke); border: none;
-            border-radius: 16px; cursor: pointer;
-            letter-spacing: 3px; text-transform: uppercase;
-            transition: all 0.3s ease;
+            width: 75%; padding: 18px; font-size: 1rem; font-weight: 700;
+            color: #000; background: #fff; border: none;
+            border-radius: 12px; cursor: pointer; text-transform: uppercase;
+            letter-spacing: 2px; transition: 0.2s;
         }
 
-        .btn:active { transform: scale(0.96); }
-        .btn.cashout { background: #fff; color: #000; border: 2px solid #000; }
-
-        #status { margin-top: 20px; font-size: 0.7rem; font-weight: 600; color: #9ca3af; letter-spacing: 2px; }
+        .btn.cashout { background: var(--accent); color: #fff; }
     </style>
 </head>
 <body>
 
     <div id="game-screen">
+        <div class="parallax-bg-1" id="bg1"></div>
+        <div class="parallax-bg-2" id="bg2"></div>
+        <div class="parallax-grid" id="bgGrid"></div>
+        
         <div id="multiplier">1.00</div>
+
         <div id="rocket-container">
-            <div class="cube" id="rocket">
-                <div class="face-f"><div class="nose"></div></div>
-                <div class="face-s"><div class="nose"></div></div>
-                <div class="thrust" id="fire"></div>
+            <div class="rocket-3d">
+                <div class="face front"><div class="nose"></div></div>
+                <div class="face side"><div class="nose"></div></div>
             </div>
         </div>
     </div>
 
     <div class="controls">
-        <button id="actionBtn" class="btn" onclick="handleAction()">Start Flight</button>
-        <div id="status">SYSTEM IDLE</div>
+        <button id="actionBtn" class="btn" onclick="handleAction()">Start Bet</button>
     </div>
 
     <script>
@@ -129,11 +126,14 @@
         let gameLoop;
         let crashPoint;
 
-        const rocketCont = document.getElementById('rocket-container');
-        const fire = document.getElementById('fire');
+        const bg1 = document.getElementById('bg1');
+        const bg2 = document.getElementById('bg2');
+        const bgGrid = document.getElementById('bgGrid');
+        const rocket = document.getElementById('rocket-container');
         const multEl = document.getElementById('multiplier');
         const actionBtn = document.getElementById('actionBtn');
-        const statusEl = document.getElementById('status');
+
+        let bgPos1 = 0, bgPos2 = 0, bgGridPos = 0;
 
         function handleAction() {
             if (!isRunning) startGame();
@@ -142,40 +142,45 @@
 
         function startGame() {
             isRunning = true; multiplier = 1.00;
-            crashPoint = (Math.random() * 5 + 1.1).toFixed(2);
+            crashPoint = (Math.random() * 5 + 1.2).toFixed(2);
             actionBtn.innerText = "Cash Out";
             actionBtn.classList.add('cashout');
-            fire.style.opacity = '1';
-            statusEl.innerText = "ACTIVE ASCENSION";
-            multEl.style.color = "#000";
 
             gameLoop = setInterval(() => {
-                multiplier += 0.025;
+                multiplier += 0.03;
                 multEl.innerText = multiplier.toFixed(2);
-                let yPos = Math.min((multiplier - 1) * 65, 300);
-                rocketCont.style.bottom = (80 + yPos) + 'px';
+
+                // Parallax Effect Logic
+                bgPos1 -= 0.5; // Slow
+                bgPos2 -= 1.5; // Medium
+                bgGridPos -= 4; // Fast
+
+                bg1.style.transform = `translateY(${bgPos1 % 50}px)`;
+                bg2.style.transform = `translateY(${bgPos2 % 30}px)`;
+                bgGrid.style.transform = `translateY(${bgGridPos % 40}px)`;
+
+                // Rocket Climb
+                let yPos = Math.min((multiplier - 1) * 60, 300);
+                rocket.style.bottom = (80 + yPos) + 'px';
 
                 if (multiplier >= crashPoint) endGame(true);
-            }, 80);
+            }, 50);
         }
 
         function cashOut() {
             endGame(false);
-            statusEl.innerText = "POSITION SECURED";
-            rocketCont.style.transition = "all 1s cubic-bezier(0.4, 0, 1, 1)";
-            rocketCont.style.bottom = "900px";
+            rocket.style.transition = "all 1s ease-in";
+            rocket.style.bottom = "1000px";
         }
 
         function endGame(isCrash) {
             clearInterval(gameLoop);
             isRunning = false;
-            fire.style.opacity = '0';
-            actionBtn.innerText = "Reset";
+            actionBtn.innerText = "Try Again";
             actionBtn.classList.remove('cashout');
             if (isCrash) {
-                statusEl.innerText = "TERMINATED";
                 multEl.style.color = "#ef4444";
-                rocketCont.style.bottom = "80px";
+                rocket.style.bottom = "80px";
             }
         }
     </script>
