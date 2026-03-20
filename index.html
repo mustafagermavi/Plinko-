@@ -3,92 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Rocket - High End Edition</title>
+    <title>Meme Rocket - The Flying Lamb</title>
     <style>
         :root {
-            --gold: #f59e0b;
-            --gold-light: #fbbf24;
-            --cyber-blue: #38bdf8;
-            --bg-deep: #020617;
+            --bg-dark: #020617;
+            --mult-color: #f59e0b; /* Golden Yellow */
+            /* Lamb Colors */
+            --lamb-white: #ffffff;
+            --lamb-wool-shade: #f1f5f9;
+            --lamb-face: #f8fafc;
+            --lamb-dizzy-eye: #000;
+            /* Jetpack Colors */
+            --jp-metal: #475569;
+            --jp-fire-blue: #38bdf8;
         }
 
         body {
-            margin: 0; background-color: var(--bg-deep);
-            color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; background-color: var(--bg-dark);
+            color: white; font-family: 'Courier New', Courier, monospace;
             display: flex; flex-direction: column; align-items: center;
             justify-content: center; height: 100vh; overflow: hidden;
+            image-rendering: pixelated;
         }
 
-        /* 1. پاشبنەمایێ پرۆفیشناڵ ب سێبەرا شین */
+        /* 1. پاشبنەما (پرۆفیشناڵ) */
         #game-screen {
             width: 360px; height: 500px;
-            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
-            border: 2px solid #334155; position: relative;
-            overflow: hidden; border-radius: 20px;
-            box-shadow: 0 0 40px rgba(56, 189, 248, 0.1);
+            background: linear-gradient(to bottom, #020617, #0f172a);
+            border: 4px solid #334155; position: relative;
+            overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
 
-        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.3; }
+        .star { position: absolute; background: white; width: 2px; height: 2px; opacity: 0.5; }
 
-        /* 2. دیزاینێ موشەکا زێڕی (Vector-Pixel Style) */
+        /* 2. دیزاینێ بەرخێ جێت-پات یێ کۆمیدی و پرۆفیشناڵ */
         #rocket-container {
             position: absolute; bottom: 50px; left: 50%;
             transform: translateX(-50%); transition: bottom 0.1s linear;
+            z-index: 5;
         }
 
         #rocket {
-            width: 38px; height: 70px; background: var(--gold);
-            border: 3px solid #000; position: relative;
-            box-shadow: inset -8px 0px 0px #b45309, inset 4px 0px 0px var(--gold-light);
+            width: 50px; height: 45px; background: var(--lamb-white);
+            position: relative; border: 4px solid #000;
+            box-shadow: inset -8px -8px 0px var(--lamb-wool-shade);
         }
 
-        #rocket::before { /* سەرێ موشەکێ */
-            content: ""; position: absolute; top: -18px; left: -3px;
-            width: 38px; height: 15px; background: #1e293b;
-            border: 3px solid #000; box-shadow: inset -6px 0px 0px #0f172a;
+        /* سه‌رێ بەرخی و چاڤێن ب کەیف */
+        #rocket::before {
+            content: ""; position: absolute; top: 10px; left: 10px;
+            width: 25px; height: 20px; background: var(--lamb-face);
+            border: 4px solid #000; box-shadow: inset -5px -5px 0px var(--lamb-wool-shade);
         }
 
-        .window {
-            position: absolute; top: 15px; left: 10px;
-            width: 12px; height: 12px; background: var(--cyber-blue);
-            border: 3px solid #000; box-shadow: 0 0 10px var(--cyber-blue);
+        /* چاڤێن "x_x" یێن Dizzy */
+        .eye {
+            position: absolute; top: 18px; left: 18px;
+            width: 6px; height: 6px; background: var(--lamb-dizzy-eye);
+            border: 2px solid #000; border-radius: 50%;
+        }
+        .eye::after {
+            content: "x"; position: absolute; top: -5px; left: 0px;
+            font-size: 10px; color: white;
         }
 
-        .wing { position: absolute; bottom: 5px; width: 14px; height: 25px; background: #1e293b; border: 3px solid #000; }
-        .wing-l { left: -20px; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
-        .wing-r { right: -20px; clip-path: polygon(0 0, 0 100%, 100% 100%); }
-
-        .thruster {
-            position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%);
-            width: 16px; height: 25px; background: var(--cyber-blue);
-            box-shadow: 0 0 20px var(--cyber-blue); display: none;
-            animation: pulse 0.1s infinite;
+        /* جێت-پات و ئاگرێ شین */
+        .jetpack {
+            position: absolute; top: 8px; right: -12px;
+            width: 15px; height: 30px; background: var(--jp-metal);
+            border: 3px solid #000; box-shadow: inset -5px -5px 0px #1e293b;
         }
 
-        @keyframes pulse { 0% { opacity: 0.7; height: 20px; } 100% { opacity: 1; height: 30px; } }
+        .thrust {
+            position: absolute; bottom: -22px; right: -9px;
+            width: 10px; height: 20px; background: var(--jp-fire-blue);
+            box-shadow: 0 0 15px var(--jp-fire-blue);
+            display: none; animation: jitter 0.1s infinite;
+        }
 
-        /* 3. UI - Modern Glassmorphism */
+        @keyframes jitter { 0% { opacity: 0.7; } 100% { opacity: 1; } }
+
+        /* 3. پارچێن خۆریێ دەمێ تەقینێ */
+        .wool-particle { position: absolute; width: 10px; height: 10px; background: white; border: 3px solid #000; pointer-events: none; z-index: 10; }
+
+        /* 4. UI و پانێلا کەنترۆلێ */
         #multiplier {
-            position: absolute; top: 50px; width: 100%; text-align: center;
-            font-size: 4rem; font-weight: 900; color: white;
-            letter-spacing: -2px; z-index: 10;
+            position: absolute; top: 40px; width: 100%; text-align: center;
+            font-size: 3.8rem; font-weight: bold; color: var(--mult-color);
+            text-shadow: 5px 5px 0px #000; z-index: 20;
         }
 
         .controls {
-            width: 360px; background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px); padding: 25px;
-            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
-            box-sizing: border-box; border: 1px solid rgba(255,255,255,0.1);
+            width: 360px; background: #111827; padding: 25px;
+            border: 4px solid #334155; border-top: none; box-sizing: border-box;
         }
 
         .btn {
-            width: 100%; padding: 18px; font-size: 1.2rem; font-weight: bold;
-            color: #020617; background: var(--gold); border: none;
-            border-radius: 12px; cursor: pointer; text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            width: 100%; padding: 18px; font-size: 1.5rem; color: white;
+            background: #16a34a; border: none; border-bottom: 8px solid #14532d;
+            font-family: 'Courier New', Courier, monospace; font-weight: bold; cursor: pointer;
         }
 
-        .btn.cashout { background: var(--cyber-blue); box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3); }
+        .btn.cashout { background: #ca8a04; border-bottom-color: #713f12; }
+        .btn:active { transform: translateY(4px); border-bottom-width: 4px; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        #status { margin-top: 15px; text-align: center; font-size: 0.9rem; color: #94a3b8; }
     </style>
 </head>
 <body>
@@ -97,16 +117,16 @@
         <div id="multiplier">1.00x</div>
         <div id="rocket-container">
             <div id="rocket">
-                <div class="window"></div>
-                <div class="wing wing-l"></div>
-                <div class="wing wing-r"></div>
-                <div class="thruster" id="fire"></div>
+                <div class="eye"></div>
+                <div class="jetpack"></div>
+                <div class="thrust" id="fire"></div>
             </div>
         </div>
     </div>
 
     <div class="controls">
-        <button id="actionBtn" class="btn" onclick="handleAction()">Start Flight</button>
+        <button id="actionBtn" class="btn" onclick="handleAction()">Start Meme Bet</button>
+        <div id="status">ئامادەیە بۆ فڕینێ...</div>
     </div>
 
     <script>
@@ -116,9 +136,52 @@
         let crashPoint;
 
         const rocketCont = document.getElementById('rocket-container');
+        const rocketBody = document.getElementById('rocket');
         const fire = document.getElementById('fire');
         const multEl = document.getElementById('multiplier');
         const actionBtn = document.getElementById('actionBtn');
+        const statusEl = document.getElementById('status');
+        const screen = document.getElementById('game-screen');
+
+        // دروستکرنا ستارەیان
+        function spawnStar() {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 350 + 'px';
+            star.style.top = '-10px';
+            screen.appendChild(star);
+            let pos = -10;
+            let move = setInterval(() => {
+                pos += 4;
+                star.style.top = pos + 'px';
+                if (pos > 500) { clearInterval(move); star.remove(); }
+            }, 30);
+        }
+
+        // سیستمێ تەقینا کۆمیدی (پارچێن خۆریێ)
+        function explode(x, y) {
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'wool-particle';
+                p.style.left = x + 'px';
+                p.style.top = y + 'px';
+                screen.appendChild(p);
+
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 7 + 2;
+                let vx = Math.cos(angle) * speed;
+                let vy = Math.sin(angle) * speed;
+
+                let pMove = setInterval(() => {
+                    let px = parseFloat(p.style.left);
+                    let py = parseFloat(p.style.top);
+                    p.style.left = (px + vx) + 'px';
+                    p.style.top = (py + vy) + 'px';
+                    vy += 0.2; // Gravity
+                    if (py > 500) { clearInterval(pMove); p.remove(); }
+                }, 20);
+            }
+        }
 
         function handleAction() {
             if (!isRunning) startGame();
@@ -128,24 +191,34 @@
         function startGame() {
             isRunning = true;
             multiplier = 1.00;
-            crashPoint = (Math.random() * 5 + 1.1).toFixed(2);
+            crashPoint = (Math.random() * 6 + 1.2).toFixed(2);
+            
             actionBtn.innerText = "Cash Out";
             actionBtn.classList.add('cashout');
             fire.style.display = 'block';
+            rocketBody.style.display = 'block';
+            statusEl.innerText = "بەرخێ جێت-پات یێ بلند دبیت!";
+            multEl.style.color = "var(--mult-color)";
+
+            let starInterval = setInterval(() => { if(!isRunning) clearInterval(starInterval); spawnStar(); }, 80);
 
             gameLoop = setInterval(() => {
-                multiplier += 0.03;
+                multiplier += 0.04;
                 multEl.innerText = multiplier.toFixed(2) + "x";
-                let yPos = Math.min((multiplier - 1) * 60, 280);
+
+                let yPos = Math.min((multiplier - 1) * 55, 270);
                 rocketCont.style.bottom = (50 + yPos) + 'px';
+                rocketCont.style.transform = `translateX(-50%) rotate(${(Math.random()-0.5)*7}deg)`;
 
                 if (multiplier >= crashPoint) endGame(true);
-            }, 80);
+            }, 100);
         }
 
         function cashOut() {
             endGame(false);
-            rocketCont.style.transition = "bottom 1s ease-in";
+            statusEl.innerText = `💰 پیرۆزە! تە ${multiplier.toFixed(2)}x بردی.`;
+            multEl.style.color = "#38bdf8";
+            rocketCont.style.transition = "bottom 1.5s ease-in";
             rocketCont.style.bottom = "800px";
         }
 
@@ -153,16 +226,15 @@
             clearInterval(gameLoop);
             isRunning = false;
             fire.style.display = 'none';
-            actionBtn.innerText = "Try Again";
+            actionBtn.innerText = "دووبارە هەوڵبدە";
             actionBtn.classList.remove('cashout');
+
             if (isCrash) {
+                const rect = rocketCont.getBoundingClientRect();
+                explode(rect.left - screen.getBoundingClientRect().left + 25, rect.top - screen.getBoundingClientRect().top + 30);
+                statusEl.innerText = "💥 شکەست! بەرخ تەقیا.";
                 multEl.style.color = "#ef4444";
-                rocketCont.style.display = 'none';
-                setTimeout(() => {
-                    rocketCont.style.display = 'block';
-                    rocketCont.style.bottom = '50px';
-                    multEl.style.color = 'white';
-                }, 1000);
+                rocketBody.style.display = 'none';
             }
         }
     </script>
