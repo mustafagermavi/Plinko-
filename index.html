@@ -1,58 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crypto Wallet Scanner</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crypto Dashboard</title>
 
 <style>
 
 body{
-background:#0b0f16;
-font-family:monospace;
+background:linear-gradient(180deg,#05070c,#0d1118);
+font-family:Arial;
+margin:0;
 display:flex;
 justify-content:center;
-margin:0;
-color:#fff;
+color:white;
 }
 
 .app{
-width:370px;
-padding:12px;
+width:380px;
+padding:15px;
 }
 
 .header{
+font-size:20px;
 text-align:center;
-font-size:18px;
-margin-bottom:10px;
+margin-bottom:15px;
+letter-spacing:1px;
 }
 
 .console{
-background:#0f141c;
-border:1px solid #2a2f38;
-border-radius:8px;
-height:240px;
+background:rgba(255,255,255,0.03);
+border:1px solid rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+border-radius:12px;
+height:230px;
+padding:12px;
 overflow:auto;
-padding:10px;
+font-family:monospace;
 font-size:12px;
 }
 
-.line{
-margin-bottom:4px;
-color:#d0d0d0;
-}
-
-.found{
-margin-top:8px;
-font-size:13px;
-}
-
 .seedbox{
-margin-top:8px;
+margin-top:10px;
 height:70px;
-background:#0f141c;
-border:1px solid #2a2f38;
-border-radius:8px;
+border-radius:12px;
+background:rgba(255,255,255,0.03);
+border:1px solid rgba(255,255,255,0.08);
 display:flex;
 align-items:center;
 justify-content:center;
@@ -60,10 +52,10 @@ color:#777;
 }
 
 .coins{
-margin-top:20px;
+margin-top:25px;
 display:grid;
 grid-template-columns:repeat(3,1fr);
-gap:18px;
+gap:22px;
 }
 
 .coin{
@@ -73,41 +65,42 @@ align-items:center;
 }
 
 .icon{
-width:60px;
-height:60px;
+width:65px;
+height:65px;
 border-radius:50%;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:24px;
+font-size:26px;
 font-weight:bold;
+box-shadow:0 0 15px rgba(0,0,0,0.4);
 }
 
 .btc{background:#f7931a;}
-.eth{background:#e5e5e5;color:black;}
+.eth{background:#627eea;}
 .ltc{background:#345d9d;}
 .bnb{background:#f3ba2f;color:black;}
-.sol{background:#000;}
+.sol{background:#111;}
 .usdt{background:#26a17b;}
-.bch{background:#4cca47;}
 .doge{background:#c2a633;}
 .trx{background:#e50914;}
 
 .check{
 margin-top:6px;
-color:#00ff9d;
-font-size:16px;
+color:#00ffa6;
+font-size:18px;
 }
 
 button{
-margin-top:20px;
+margin-top:25px;
 width:100%;
-padding:12px;
-background:#00ff9d;
+padding:14px;
+border-radius:10px;
 border:none;
-border-radius:8px;
+background:linear-gradient(90deg,#00ffa6,#00d9ff);
 font-weight:bold;
 font-size:15px;
+color:black;
 }
 
 </style>
@@ -117,13 +110,20 @@ font-size:15px;
 
 <div class="app">
 
-<div class="header">Crypto Wallet Scanner</div>
+<div class="header">Crypto Dashboard</div>
 
-<div class="console" id="console"></div>
+<div class="console">
+Wallet Check: energy target ten<br>
+Wallet Check: panther click lumber<br>
+Wallet Check: glory witness put<br>
+Wallet Check: trap trick erode
+</div>
 
-<div class="found">Found: <span id="found">0</span></div>
+<div style="margin-top:8px">Found: 0</div>
 
-<div class="seedbox">Found Wallets Appear Here</div>
+<div class="seedbox">
+Found Wallets Appear Here
+</div>
 
 <div class="coins">
 
@@ -135,57 +135,15 @@ font-size:15px;
 <div class="coin"><div class="icon sol">S</div><div class="check">✓</div></div>
 <div class="coin"><div class="icon usdt">T</div><div class="check">✓</div></div>
 
-<div class="coin"><div class="icon bch">₿</div><div class="check">✓</div></div>
+<div class="coin"><div class="icon btc">₿</div><div class="check">✓</div></div>
 <div class="coin"><div class="icon doge">Ð</div><div class="check">✓</div></div>
 <div class="coin"><div class="icon trx">T</div><div class="check">✓</div></div>
 
 </div>
 
-<button onclick="startScan()">Start Scan</button>
+<button>Start</button>
 
 </div>
-
-<script>
-
-const words=[
-"panther click lumber",
-"energy target ten",
-"glory witness put drop",
-"trap trick erode jelly",
-"strong liberty laundry",
-"knock craft stay icon",
-"hill feel leave fat",
-"enforce claim wonder",
-"pass spoon during mist",
-"blanket fringe circle",
-"castle cabbage exotic",
-"birth blossom lunch",
-"panic sand fence bull"
-]
-
-function startScan(){
-
-const consoleBox=document.getElementById("console")
-
-setInterval(()=>{
-
-let phrase=words[Math.floor(Math.random()*words.length)]
-
-let line=document.createElement("div")
-
-line.className="line"
-
-line.textContent="Wallet Check: "+phrase
-
-consoleBox.appendChild(line)
-
-consoleBox.scrollTop=consoleBox.scrollHeight
-
-},300)
-
-}
-
-</script>
 
 </body>
 </html>
