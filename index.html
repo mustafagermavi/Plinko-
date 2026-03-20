@@ -3,140 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TON Predictor</title>
+    <title>TON Live Predictor</title>
     <style>
+        :root {
+            --bg: #0b0e11;
+            --card: #1e2329;
+            --green: #0ecb81;
+            --red: #f6465d;
+            --yellow: #f0b90b;
+        }
         body {
             margin: 0;
-            background-color: #0b0e11;
+            background-color: var(--bg);
             color: white;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Inter', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-        }
-        .chart-container {
-            width: 90%;
-            height: 200px;
-            background: #161a1e;
-            border-radius: 12px;
-            position: relative;
             overflow: hidden;
-            border: 1px solid #2b3139;
+        }
+        .container {
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
         }
         .price-display {
-            font-size: 32px;
-            font-weight: bold;
-            margin: 20px 0;
-            color: #f0b90b; /* ڕەنگی زەردی کریپتۆ */
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            font-family: monospace;
+            color: var(--yellow);
+            transition: 0.2s;
         }
-        .buttons {
-            display: flex;
-            gap: 20px;
-            width: 90%;
+        /* ستایلی Bento Grid بۆ گرافەکە */
+        .chart-box {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 10px;
+            border: 1px solid #2b3139;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+            position: relative;
+        }
+        canvas {
+            width: 100%;
+            height: 150px;
+            display: block;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
         button {
-            flex: 1;
-            padding: 15px;
+            padding: 18px;
             border: none;
-            border-radius: 8px;
+            border-radius: 15px;
             font-size: 18px;
             font-weight: bold;
+            color: white;
             cursor: pointer;
-            transition: 0.3s;
+            transition: transform 0.1s, opacity 0.3s;
         }
-        .up-btn { background-color: #0ecb81; color: white; }
-        .down-btn { background-color: #f6465d; color: white; }
-        .up-btn:disabled, .down-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        .timer { margin-top: 15px; font-size: 14px; color: #848e9c; }
-        .result { margin-top: 10px; font-weight: bold; }
+        .up { background: var(--green); box-shadow: 0 4px 15px rgba(14, 203, 129, 0.3); }
+        .down { background: var(--red); box-shadow: 0 4px 15px rgba(246, 70, 93, 0.3); }
+        button:active { transform: scale(0.95); }
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .status-bar {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #848e9c;
+            height: 20px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="price-display">$<span id="price">5.420</span></div>
+<div class="container">
+    <div class="price-display" id="price">5.4200</div>
     
-    <div class="chart-container">
-        <canvas id="miniChart" width="350" height="200"></canvas>
+    <div class="chart-box">
+        <canvas id="chart"></canvas>
     </div>
 
-    <div class="timer">کات بۆ ئەنجام: <span id="countdown">5</span> چرکە</div>
-
-    <div class="buttons">
-        <button class="up-btn" onclick="makeBet('up')">بەرزبوونەوە (UP)</button>
-        <button class="down-btn" onclick="makeBet('down')">نزمبوونەوە (DOWN)</button>
+    <div class="controls">
+        <button class="up" id="upBtn" onclick="bet('up')">UP ▲</button>
+        <button class="down" id="downBtn" onclick="bet('down')">DOWN ▼</button>
     </div>
 
-    <div id="result" class="result"></div>
+    <div id="status" class="status-bar">چاوەڕێی پێشبینی تۆین...</div>
+</div>
 
-    <script>
-        let currentPrice = 5.420;
-        let isWaiting = false;
-        let userBet = null;
-        let startPrice = 0;
+<script>
+    const canvas = document.getElementById('chart');
+    const ctx = canvas.getContext('2d');
+    const priceEl = document.getElementById('price');
+    const statusEl = document.getElementById('status');
+    
+    let prices = Array(50).fill(5.4200);
+    let currentPrice = 5.4200;
+    let isPlaying = false;
+    let entryPrice = 0;
 
-        function updatePrice() {
-            let change = (Math.random() - 0.5) * 0.02;
-            currentPrice = parseFloat((currentPrice + change).toFixed(3));
-            document.getElementById('price').innerText = currentPrice;
-            
-            // ئەگەر یاریزان گرەوی کردبێت، ڕەنگی نرخەکە بگۆڕە
-            if(isWaiting) {
-                document.getElementById('price').style.color = currentPrice >= startPrice ? "#0ecb81" : "#f6465d";
-            } else {
-                document.getElementById('price').style.color = "#f0b90b";
+    // ڕێکخستنی قەبارەی کانڤاس
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    function updatePrice() {
+        const change = (Math.random() - 0.5) * 0.005;
+        currentPrice = parseFloat((currentPrice + change).toFixed(4));
+        prices.push(currentPrice);
+        prices.shift();
+        
+        priceEl.innerText = currentPrice.toFixed(4);
+        drawChart();
+
+        if (isPlaying) {
+            priceEl.style.color = currentPrice >= entryPrice ? "#0ecb81" : "#f6465d";
+        } else {
+            priceEl.style.color = "#f0b90b";
+        }
+    }
+
+    function drawChart() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        ctx.strokeStyle = isPlaying ? (currentPrice >= entryPrice ? "#0ecb81" : "#f6465d") : "#f0b90b";
+        ctx.lineWidth = 3;
+        ctx.lineJoin = "round";
+
+        const min = Math.min(...prices);
+        const max = Math.max(...prices);
+        const range = max - min;
+
+        prices.forEach((p, i) => {
+            const x = (i / (prices.length - 1)) * canvas.width;
+            const y = canvas.height - ((p - min) / range) * canvas.height;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+
+        ctx.stroke();
+        
+        // دروستکردنی سێبەر (Gradient) لە ژێر هێڵەکە
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.lineTo(0, canvas.height);
+        const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        grad.addColorStop(0, ctx.strokeStyle + "33");
+        grad.addColorStop(1, "transparent");
+        ctx.fillStyle = grad;
+        ctx.fill();
+    }
+
+    function bet(type) {
+        if (isPlaying) return;
+        isPlaying = true;
+        entryPrice = currentPrice;
+        document.getElementById('upBtn').disabled = true;
+        document.getElementById('downBtn').disabled = true;
+        
+        let seconds = 5;
+        statusEl.innerText = `نرخی چوونە ژوورەوە: ${entryPrice} | کات: ${seconds}s`;
+
+        const timer = setInterval(() => {
+            seconds--;
+            statusEl.innerText = `نرخی چوونە ژوورەوە: ${entryPrice} | کات: ${seconds}s`;
+            if (seconds <= 0) {
+                clearInterval(timer);
+                finishBet(type);
             }
-        }
+        }, 1000);
+    }
 
-        setInterval(updatePrice, 1000);
+    function finishBet(type) {
+        const win = (type === 'up' && currentPrice > entryPrice) || (type === 'down' && currentPrice < entryPrice);
+        statusEl.innerText = win ? "🎉 پیرۆزە! بردتەوە" : "❌ بەداخەوە! دۆڕاندت";
+        statusEl.style.color = win ? "#0ecb81" : "#f6465d";
 
-        function makeBet(side) {
-            if(isWaiting) return;
-            
-            userBet = side;
-            startPrice = currentPrice;
-            isWaiting = true;
-            document.querySelectorAll('button').forEach(b => b.disabled = true);
-            document.getElementById('result').innerText = "چاوەڕێی ئەنجام بە...";
+        setTimeout(() => {
+            isPlaying = false;
+            statusEl.innerText = "چاوەڕێی پێشبینی تۆین...";
+            statusEl.style.color = "#848e9c";
+            document.getElementById('upBtn').disabled = false;
+            document.getElementById('downBtn').disabled = false;
+        }, 3000);
+    }
 
-            let timeLeft = 5;
-            let timerInterval = setInterval(() => {
-                timeLeft--;
-                document.getElementById('countdown').innerText = timeLeft;
-                if(timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    checkResult();
-                }
-            }, 1000);
-        }
+    setInterval(updatePrice, 100); // نوێکردنەوەی خێرا بۆ هەستی Live
+</script>
 
-        function checkResult() {
-            let finalPrice = currentPrice;
-            let win = false;
-
-            if(userBet === 'up' && finalPrice > startPrice) win = true;
-            if(userBet === 'down' && finalPrice < startPrice) win = true;
-
-            const resultDiv = document.getElementById('result');
-            if(win) {
-                resultDiv.innerText = "پیرۆزە! تۆ بردتەوە 🎉";
-                resultDiv.style.color = "#0ecb81";
-            } else {
-                resultDiv.innerText = "بەداخەوە! دۆڕاندت ❌";
-                resultDiv.style.color = "#f6465d";
-            }
-
-            // گەڕانەوە بۆ دۆخی ئاسایی
-            setTimeout(() => {
-                isWaiting = false;
-                userBet = null;
-                document.querySelectorAll('button').forEach(b => b.disabled = false);
-                document.getElementById('countdown').innerText = "5";
-                resultDiv.innerText = "";
-            }, 3000);
-        }
-    </script>
 </body>
 </html>
