@@ -3,60 +3,68 @@
 <head>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Crypto Wallet Dashboard</title>
+<title>Crypto Wallet BruteForce</title>
 
 <style>
 
 body{
-background:#0c0f14;
+background:#0b0e13;
 font-family:monospace;
-color:white;
 display:flex;
 justify-content:center;
+margin:0;
+color:white;
 }
 
 .app{
-width:360px;
-padding:10px;
+width:370px;
+padding:12px;
 }
 
-.title{
+.header{
 text-align:center;
-margin-bottom:10px;
 font-size:18px;
+margin-bottom:8px;
 }
 
 .console{
-background:black;
-border-radius:6px;
-height:220px;
+background:#0f131a;
+border:1px solid #2a2f3a;
+border-radius:8px;
+height:240px;
 overflow:auto;
 padding:10px;
 font-size:12px;
-border:1px solid #333;
+}
+
+.line{
+color:#cfcfcf;
+margin-bottom:3px;
 }
 
 .found{
 margin-top:8px;
+font-size:13px;
 }
 
-.seed{
-margin-top:10px;
-background:#111;
-border:1px solid #333;
-border-radius:6px;
+.seedbox{
+margin-top:8px;
+background:#0f131a;
+border:1px solid #2a2f3a;
+border-radius:8px;
 height:70px;
 display:flex;
 align-items:center;
 justify-content:center;
-color:#666;
+color:#777;
+font-size:13px;
 }
 
 .coins{
+margin-top:20px;
 display:grid;
 grid-template-columns:repeat(3,1fr);
 gap:18px;
-margin-top:20px;
 }
 
 .coin{
@@ -66,38 +74,41 @@ align-items:center;
 }
 
 .icon{
-width:55px;
-height:55px;
+width:60px;
+height:60px;
 border-radius:50%;
 display:flex;
 align-items:center;
 justify-content:center;
+font-size:24px;
 font-weight:bold;
-font-size:20px;
 }
 
 .btc{background:#f7931a;}
-.eth{background:#3c3c3d;}
+.eth{background:#eeeeee;color:black;}
 .ltc{background:#345d9d;}
-.bnb{background:#f3ba2f;}
-.sol{background:#111;}
+.bnb{background:#f3ba2f;color:black;}
+.sol{background:#000;}
 .usdt{background:#26a17b;}
+.bch{background:#4cca47;}
 .doge{background:#c2a633;}
 .trx{background:#e50914;}
 
 .check{
-margin-top:5px;
 color:#00ff9d;
+margin-top:6px;
+font-size:16px;
 }
 
 button{
 margin-top:20px;
 width:100%;
 padding:12px;
-background:#00ff9d;
 border:none;
 border-radius:8px;
+background:#00ff9d;
 font-weight:bold;
+font-size:15px;
 }
 
 </style>
@@ -108,13 +119,15 @@ font-weight:bold;
 
 <div class="app">
 
-<div class="title">Crypto Wallet Checker</div>
+<div class="header">Crypto Wallet BruteForce</div>
 
 <div class="console" id="console"></div>
 
-<div class="found">Found: 0</div>
+<div class="found">Found: <span id="found">0</span></div>
 
-<div class="seed">Found Wallets Appear Here</div>
+<div class="seedbox">
+Found Seed Phrases Appear Here
+</div>
 
 <div class="coins">
 
@@ -149,7 +162,7 @@ font-weight:bold;
 </div>
 
 <div class="coin">
-<div class="icon btc">₿</div>
+<div class="icon bch">₿</div>
 <div class="check">✓</div>
 </div>
 
@@ -165,7 +178,7 @@ font-weight:bold;
 
 </div>
 
-<button onclick="start()">Start</button>
+<button onclick="start()">Start Scan</button>
 
 </div>
 
@@ -177,10 +190,14 @@ const words=[
 "glory witness put",
 "trap trick erode",
 "strong liberty laundry",
-"knock craft stay",
-"hill feel leave",
+"knock craft stay icon",
+"hill feel leave fat",
 "enforce claim wonder",
-"pass spoon during"
+"pass spoon during mist",
+"blanket fringe circle",
+"castle cabbage exotic",
+"birth blossom lunch",
+"panic sand fence bull"
 ]
 
 function start(){
@@ -189,21 +206,24 @@ let consoleBox=document.getElementById("console")
 
 setInterval(()=>{
 
-let line="Wallet Check: "+words[Math.floor(Math.random()*words.length)]
+let text="Wallet Check: "+words[Math.floor(Math.random()*words.length)]
 
 let div=document.createElement("div")
 
-div.textContent=line
+div.className="line"
+
+div.textContent=text
 
 consoleBox.appendChild(div)
 
 consoleBox.scrollTop=consoleBox.scrollHeight
 
-},600)
+},400)
 
 }
 
 </script>
 
 </body>
+
 </html>
