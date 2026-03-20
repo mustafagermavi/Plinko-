@@ -1,624 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Crypto Wallet Scanner | BruteForce Recovery Tool</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Wallet Scanner | Terminal</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: #111111;
+            --neon-green: #00ff41;
+            --neon-red: #ff3131;
+            --neon-blue: #00d4ff;
+            --text-main: #e0e0e0;
+            --terminal-text: #00ff41;
+            --border-glow: rgba(0, 255, 65, 0.2);
+        }
 
-    body {
-      background: radial-gradient(circle at 30% 0%, #0b0f17, #020408);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      font-family: 'Inter', 'Segoe UI', 'Courier New', monospace;
-      padding: 20px 12px;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
 
-    /* main card */
-    .scanner-card {
-      max-width: 360px;
-      width: 100%;
-      background: rgba(6, 12, 20, 0.94);
-      backdrop-filter: blur(3px);
-      border-radius: 48px;
-      padding: 22px 18px 30px;
-      box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(0, 255, 200, 0.25), 0 0 16px rgba(0, 255, 200, 0.3);
-      transition: all 0.2s;
-      border: 1px solid rgba(0, 255, 180, 0.4);
-    }
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-main);
+            overflow: hidden;
+        }
 
-    /* header */
-    .title-section h1 {
-      font-size: 1.7rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #00f5d4, #86ffb0);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      letter-spacing: -0.3px;
-      font-family: 'Courier New', monospace;
-      text-shadow: 0 0 5px #0affb055;
-    }
-    .sub {
-      font-size: 0.6rem;
-      color: #5d8bb0;
-      border-left: 2px solid #2effb0;
-      padding-left: 8px;
-      margin-top: 4px;
-    }
+        /* Main Dashboard Container */
+        .dashboard {
+            width: 360px;
+            background: var(--card-bg);
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 1), 0 0 15px var(--border-glow);
+            position: relative;
+            z-index: 1;
+        }
 
-    /* stats row */
-    .stats-container {
-      display: flex;
-      justify-content: space-between;
-      background: #00000066;
-      border-radius: 50px;
-      padding: 8px 18px;
-      margin: 18px 0 14px 0;
-      border: 1px solid #1f4b58;
-    }
-    .stat-block {
-      text-align: center;
-    }
-    .stat-label {
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: #9dc3e0;
-      letter-spacing: 1px;
-    }
-    .stat-number {
-      font-size: 1.9rem;
-      font-weight: 800;
-      font-family: monospace;
-      color: #2effbc;
-      text-shadow: 0 0 5px #00ccaa;
-      line-height: 1.1;
-    }
+        h1 {
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 2px;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
 
-    /* terminal console */
-    .terminal {
-      background: #03090e;
-      border-radius: 28px;
-      padding: 12px 10px;
-      height: 210px;
-      overflow-y: auto;
-      font-family: 'Fira Code', 'Courier New', monospace;
-      font-size: 0.7rem;
-      border: 1px solid #2d6b78;
-      box-shadow: inset 0 0 12px #00000055, 0 5px 12px rgba(0, 0, 0, 0.5);
-      margin: 12px 0 12px 0;
-    }
-    .terminal-line {
-      color: #b5ffd8;
-      padding: 4px 6px;
-      border-left: 2px solid #2effb0;
-      margin-bottom: 5px;
-      background: #0b1322a0;
-      font-weight: 500;
-      word-break: break-word;
-    }
-    .terminal::-webkit-scrollbar {
-      width: 4px;
-    }
-    .terminal::-webkit-scrollbar-track {
-      background: #071a22;
-      border-radius: 8px;
-    }
-    .terminal::-webkit-scrollbar-thumb {
-      background: #1effb2;
-      border-radius: 8px;
-    }
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
 
-    /* found row */
-    .found-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      background: #0f1922aa;
-      border-radius: 40px;
-      padding: 6px 20px;
-      margin: 8px 0 14px 0;
-    }
-    .found-label {
-      font-size: 1rem;
-      font-weight: bold;
-      color: #ffae5a;
-    }
-    .found-value {
-      font-size: 1.8rem;
-      font-weight: 800;
-      font-family: monospace;
-      color: #ffb347;
-      text-shadow: 0 0 4px #ff8c00;
-    }
+        .stat-box {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid var(--neon-blue);
+            text-align: center;
+        }
 
-    /* result panel with icon + balance */
-    .result-panel {
-      background: #1a262f;
-      border-radius: 28px;
-      padding: 12px 18px;
-      margin: 6px 0 22px 0;
-      border: 1px solid #41707e;
-      box-shadow: inset 0 1px 2px #00000033, 0 5px 10px rgba(0, 0, 0, 0.4);
-      min-height: 80px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      transition: all 0.2s;
-    }
-    .result-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      font-weight: bold;
-      color: white;
-      text-shadow: 0 1px 2px black;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 255, 200, 0.6);
-      flex-shrink: 0;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,245,0.2), rgba(0,0,0,0.2));
-    }
-    .result-text {
-      font-family: monospace;
-      font-weight: bold;
-      font-size: 0.85rem;
-      color: #eef5ff;
-      word-break: break-word;
-      line-height: 1.4;
-    }
-    .result-placeholder {
-      color: #7e99ae;
-      font-style: italic;
-    }
+        .stat-label {
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
+        }
 
-    /* crypto grid 3x3 */
-    .crypto-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px 8px;
-      justify-items: center;
-      margin: 18px 0 24px;
-    }
-    .coin-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-    }
-    .coin-icon {
-      width: 68px;
-      height: 68px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      font-weight: bold;
-      color: white;
-      text-shadow: 0 1px 3px black;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(0, 255, 200, 0.3);
-      transition: transform 0.2s;
-    }
-    .coin-icon:hover {
-      transform: scale(1.02);
-    }
-    .blue-check {
-      margin-top: 6px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #3c9eff;
-      background: #0e1924;
-      width: 28px;
-      height: 28px;
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 2px cyan;
-    }
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            display: block;
+        }
 
-    /* buttons */
-    .action-group {
-      display: flex;
-      gap: 18px;
-      margin-top: 4px;
-    }
-    .btn {
-      flex: 1;
-      padding: 12px 0;
-      font-weight: 800;
-      font-size: 1.2rem;
-      border: none;
-      border-radius: 60px;
-      font-family: monospace;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: 0.08s linear;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
-    }
-    .btn-start {
-      background: #0f6e3a;
-      border-bottom: 3px solid #4effa0;
-      color: #eafff0;
-    }
-    .btn-start:active {
-      transform: scale(0.96);
-      background: #0a552e;
-    }
-    .btn-stop {
-      background: #742c2c;
-      border-bottom: 3px solid #ff7b7b;
-      color: #ffefef;
-    }
-    .btn-stop:active {
-      transform: scale(0.96);
-      background: #581f1f;
-    }
+        #checked-count { color: var(--neon-blue); }
+        #found-count { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
 
-    /* top corner alert (glow, fade) */
-    .top-alert {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #0f2129cc;
-      backdrop-filter: blur(10px);
-      color: #caffb0;
-      font-family: monospace;
-      font-weight: bold;
-      padding: 10px 24px;
-      border-radius: 60px;
-      font-size: 0.85rem;
-      letter-spacing: 1px;
-      border-left: 4px solid #2effb0;
-      border-right: 4px solid #2effb0;
-      box-shadow: 0 0 18px #00ffb3, 0 4px 12px black;
-      z-index: 1000;
-      white-space: nowrap;
-      transition: opacity 0.25s ease;
-      pointer-events: none;
-    }
-    @keyframes glowPulse {
-      0% { box-shadow: 0 0 0px #00ffb3; opacity: 1; }
-      100% { box-shadow: 0 0 22px #00ffcc; opacity: 0; }
-    }
-    .fadeout {
-      animation: glowPulse 0.4s ease-out forwards;
-      opacity: 1;
-    }
-  </style>
+        /* Terminal Console */
+        .terminal {
+            background: #000;
+            height: 180px;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 0.75rem;
+            overflow-y: hidden;
+            border: 1px solid #222;
+            margin-bottom: 15px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-line {
+            line-height: 1.4;
+            color: var(--terminal-text);
+            opacity: 0.8;
+            white-space: nowrap;
+        }
+
+        .terminal-line.hit {
+            color: #fff;
+            background: rgba(0, 255, 65, 0.2);
+            font-weight: bold;
+            padding: 2px 0;
+            animation: pulse-hit 0.5s infinite;
+        }
+
+        /* Crypto Grid */
+        .crypto-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #050505;
+            border-radius: 8px;
+        }
+
+        .crypto-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .icon-circle {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            border: 2px solid transparent;
+            color: white;
+        }
+
+        .check-mark {
+            font-size: 10px;
+            color: var(--neon-blue);
+            opacity: 0.5;
+        }
+
+        .scanning .check-mark {
+            animation: blink 1s infinite;
+        }
+
+        /* Control Buttons */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        #start-btn {
+            background: #004d1a;
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+        }
+
+        #start-btn:hover { background: var(--neon-green); color: #000; }
+
+        #stop-btn {
+            background: #4d0000;
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+        }
+
+        #stop-btn:hover { background: var(--neon-red); color: #000; }
+
+        /* Notification */
+        #alert-box {
+            position: fixed;
+            top: 20px;
+            right: -300px;
+            width: 250px;
+            background: #00ff41;
+            color: #000;
+            padding: 15px;
+            font-weight: bold;
+            border-radius: 4px;
+            box-shadow: 0 0 20px var(--neon-green);
+            transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 999;
+        }
+
+        #alert-box.show { right: 20px; }
+
+        /* Animations */
+        @keyframes blink {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes pulse-hit {
+            0% { box-shadow: 0 0 0px var(--neon-green); }
+            50% { box-shadow: 0 0 10px var(--neon-green); }
+            100% { box-shadow: 0 0 0px var(--neon-green); }
+        }
+
+        /* Specific Coin Colors */
+        .btc { background: #F7931A; }
+        .eth { background: #627EEA; }
+        .ltc { background: #345D9D; }
+        .bnb { background: #F3BA2F; }
+        .sol { background: #14F195; }
+        .usdt { background: #26A17B; }
+        .bch { background: #8BC34A; }
+        .doge { background: #C2A633; }
+        .trx { background: #FF0013; }
+
+    </style>
 </head>
 <body>
 
-<div class="scanner-card">
-  <div class="title-section">
-    <h1>Crypto Wallet Scanner</h1>
-    <div class="sub">// deep recovery engine //</div>
-  </div>
+    <div id="alert-box">⚠️ BALANCE FOUND!</div>
 
-  <!-- Checked counter row -->
-  <div class="stats-container">
-    <div class="stat-block">
-      <div class="stat-label">CHECKED</div>
-      <div class="stat-number" id="checkedCounter">0</div>
+    <div class="dashboard">
+        <h1>CRYPTO WALLET SCANNER</h1>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <span class="stat-label">Checked</span>
+                <span class="stat-value" id="checked-count">0</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Found</span>
+                <span class="stat-value" id="found-count">0</span>
+            </div>
+        </div>
+
+        <div class="terminal" id="terminal">
+            <div class="terminal-line">SYSTEM READY...</div>
+            <div class="terminal-line">WAITING FOR COMMAND_</div>
+        </div>
+
+        <div class="crypto-grid" id="crypto-grid">
+            <div class="crypto-item"><div class="icon-circle btc">₿</div><span class="check-mark">✓</span></div>
+            <div class="crypto-item"><div class="icon-circle eth">Ξ</div><span class="check-mark">✓</span></div>
+            <div class="crypto-item"><div class="icon-circle ltc">Ł</div><span class="check-mark">✓</span></div>
+            <div class="crypto-item"><div class="icon-circle bnb">BNB</div><span class="check-mark">✓</span></div>
+            <div class="crypto-item"><div class="icon-circle sol">S</div><span class="check-mark">✓</span></div>
+            <div class="crypto-item"><div class="icon-circle usdt">₮</div><span class="check-mark">✓</span></div>
+            <div class="crypto-item"><div class="icon-circle bch">BCH</div><span class="check-mark">✓</span></div>
+            <div class="crypto-item"><div class="icon-circle doge">Ð</div><span class="check-mark">✓</span></div>
+            <div class="crypto-item"><div class="icon-circle trx">TRX</div><span class="check-mark">✓</span></div>
+        </div>
+
+        <div class="controls">
+            <button id="start-btn">START SCAN</button>
+            <button id="stop-btn">STOP</button>
+        </div>
     </div>
-    <div class="stat-block">
-      <div class="stat-label">SCAN MODE</div>
-      <div class="stat-number" style="font-size:1rem; color:#66ffb0;">● IDLE</div>
-    </div>
-  </div>
 
-  <!-- Terminal console -->
-  <div class="terminal" id="terminalConsole">
-    <div class="terminal-line">> wallet_scanner v2.4 ready</div>
-    <div class="terminal-line">> press [START] to begin brute-force</div>
-  </div>
+    <script>
+        const terminal = document.getElementById('terminal');
+        const checkedEl = document.getElementById('checked-count');
+        const foundEl = document.getElementById('found-count');
+        const startBtn = document.getElementById('start-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const alertBox = document.getElementById('alert-box');
+        const cryptoGrid = document.getElementById('crypto-grid');
 
-  <!-- Found counter -->
-  <div class="found-row">
-    <span class="found-label">🔓 FOUND WALLETS</span>
-    <span class="found-value" id="foundCounter">0</span>
-  </div>
+        let isScanning = false;
+        let checkedCount = 0;
+        let foundCount = 0;
+        let scanInterval;
 
-  <!-- Result panel (dynamic icon + text) -->
-  <div class="result-panel" id="resultPanel">
-    <div class="result-icon" style="background:#2e5666;">⚡</div>
-    <div class="result-text result-placeholder">no balance captured yet</div>
-  </div>
+        const words = ["fluid", "busy", "gate", "deny", "pumpkin", "fossil", "radar", "puppy", "analyst", "category", "animal", "couch", "universe", "cream", "limit", "soul", "anxiety", "economy", "rescue", "retreat", "labor", "antenna", "victory", "shadow", "matrix", "cipher"];
 
-  <!-- Crypto icon grid with blue check marks -->
-  <div class="crypto-grid">
-    <div class="coin-item"><div class="coin-icon" style="background:#F7931A;">₿</div><div class="blue-check">✓</div></div>
-    <div class="coin-item"><div class="coin-icon" style="background:#627EEA;">Ξ</div><div class="blue-check">✓</div></div>
-    <div class="coin-item"><div class="coin-icon" style="background:#345D9D;">Ł</div><div class="blue-check">✓</div></div>
-    <div class="coin-item"><div class="coin-icon" style="background:#F3BA2F;">BNB</div><div class="blue-check">✓</div></div>
-    <div class="coin-item"><div class="coin-icon" style="background:#9945FF;">SOL</div><div class="blue-check">✓</div></div>
-    <div class="coin-item"><div class="coin-icon" style="background:#26A17B;">₮</div><div class="blue-check">✓</div></div>
-    <div class="coin-item"><div class="coin-icon" style="background:#8DC351;">BCH</div><div class="blue-check">✓</div></div>
-    <div class="coin-item"><div class="coin-icon" style="background:#C2A633;">Ð</div><div class="blue-check">✓</div></div>
-    <div class="coin-item"><div class="coin-icon" style="background:#FF0010;">TRX</div><div class="blue-check">✓</div></div>
-  </div>
+        const hits = [
+            { text: "0.004 BTC = 268$", icon: "₿" },
+            { text: "432.39 USDT.TRC20 = 432.33$", icon: "₮" },
+            { text: "0.72 ETH = 1500$", icon: "Ξ" }
+        ];
 
-  <!-- buttons -->
-  <div class="action-group">
-    <button class="btn btn-start" id="startBtn">▶ START</button>
-    <button class="btn btn-stop" id="stopBtn">■ STOP</button>
-  </div>
-</div>
+        function generatePhrase() {
+            let phrase = [];
+            for(let i=0; i<4; i++) {
+                phrase.push(words[Math.floor(Math.random() * words.length)]);
+            }
+            return phrase.join(" ");
+        }
 
-<script>
-  // ---------- HACKER-STYLE WALLET SCANNER (RARE BALANCE DETECTION) ----------
-  
-  // Predefined terminal lines pool (as per spec)
-  const scanLines = [
-    "Wallet Check: fluid busy gate deny",
-    "Wallet Check: pumpkin fossil radar",
-    "Wallet Check: puppy analyst category",
-    "Wallet Check: animal couch universe",
-    "Wallet Check: radar cream limit soul",
-    "Wallet Check: anxiety economy rescue",
-    "Wallet Check: retreat labor antenna"
-  ];
+        function addTerminalLine(text, isHit = false) {
+            const line = document.createElement('div');
+            line.className = 'terminal-line' + (isHit ? ' hit' : '');
+            line.textContent = isHit ? `>> SUCCESS: ${text}` : `Wallet Check: ${text}`;
+            terminal.appendChild(line);
+            
+            if (terminal.childNodes.length > 50) {
+                terminal.removeChild(terminal.firstChild);
+            }
+            terminal.scrollTop = terminal.scrollHeight;
+        }
 
-  // Mapping for coin icons (result panel)
-  const coinVisuals = {
-    'BTC': { bg: '#F7931A', symbol: '₿', name: 'Bitcoin' },
-    'ETH': { bg: '#627EEA', symbol: 'Ξ', name: 'Ethereum' },
-    'LTC': { bg: '#345D9D', symbol: 'Ł', name: 'Litecoin' },
-    'BNB': { bg: '#F3BA2F', symbol: 'BNB', name: 'BNB' },
-    'SOL': { bg: '#9945FF', symbol: 'SOL', name: 'Solana' },
-    'USDT': { bg: '#26A17B', symbol: '₮', name: 'Tether' },
-    'BCH': { bg: '#8DC351', symbol: 'BCH', name: 'Bitcoin Cash' },
-    'DOGE': { bg: '#C2A633', symbol: 'Ð', name: 'Dogecoin' },
-    'TRX': { bg: '#FF0010', symbol: 'TRX', name: 'TRON' }
-  };
-  
-  const allCoins = ['BTC', 'ETH', 'LTC', 'BNB', 'SOL', 'USDT', 'BCH', 'DOGE', 'TRX'];
+        function triggerAlert() {
+            alertBox.classList.add('show');
+            setTimeout(() => alertBox.classList.remove('show'), 3000);
+        }
 
-  // DOM elements
-  const terminalDiv = document.getElementById('terminalConsole');
-  const checkedSpan = document.getElementById('checkedCounter');
-  const foundSpan = document.getElementById('foundCounter');
-  const resultPanelDiv = document.getElementById('resultPanel');
-  const startBtn = document.getElementById('startBtn');
-  const stopBtn = document.getElementById('stopBtn');
+        function startScan() {
+            if (isScanning) return;
+            isScanning = true;
+            cryptoGrid.classList.add('scanning');
+            
+            scanInterval = setInterval(() => {
+                // Update counter
+                checkedCount += Math.floor(Math.random() * 3) + 1;
+                checkedEl.textContent = checkedCount.toLocaleString();
 
-  // State
-  let checkedWallets = 0;
-  let foundWallets = 0;
-  let isScanning = false;
-  let timeoutId = null;
+                // Logic for finding balance (Rare: 1 in 500 chance per tick ~ roughly every few thousand scans)
+                const luckyDip = Math.floor(Math.random() * 800);
+                
+                if (luckyDip === 7) {
+                    foundCount++;
+                    foundEl.textContent = foundCount;
+                    const hit = hits[Math.floor(Math.random() * hits.length)];
+                    addTerminalLine(`${hit.icon} ${hit.text}`, true);
+                    triggerAlert();
+                } else {
+                    addTerminalLine(generatePhrase());
+                }
 
-  // Rare balance threshold: 1 in 3500 (approx once every 2000-5000 scans)
-  const BALANCE_RARITY = 1 / 3500;   // ~0.0002857 probability per wallet check
+            }, Math.random() * (350 - 200) + 200);
+        }
 
-  // Helper: add line to terminal + auto-scroll
-  function addTerminalLine(text) {
-    const lineDiv = document.createElement('div');
-    lineDiv.className = 'terminal-line';
-    lineDiv.innerText = `> ${text}`;
-    terminalDiv.appendChild(lineDiv);
-    terminalDiv.scrollTop = terminalDiv.scrollHeight;
-    // keep last 200 lines for performance
-    while (terminalDiv.children.length > 200) terminalDiv.removeChild(terminalDiv.firstChild);
-  }
+        function stopScan() {
+            isScanning = false;
+            cryptoGrid.classList.remove('scanning');
+            clearInterval(scanInterval);
+            addTerminalLine("--- SCAN PAUSED ---");
+        }
 
-  // update UI counters
-  function updateCheckedUI() {
-    checkedSpan.innerText = checkedWallets;
-  }
-  function updateFoundUI() {
-    foundSpan.innerText = foundWallets;
-  }
-
-  // generate realistic balance string based on coin key
-  function generateBalanceForCoin(coinKey) {
-    const randomPrice = (min, max) => (Math.random() * (max - min) + min).toFixed(0);
-    switch(coinKey) {
-      case 'BTC': {
-        let amount = (Math.random() * 2.2 + 0.0012).toFixed(5);
-        let price = Number(randomPrice(32000, 72000));
-        let usd = (parseFloat(amount) * price).toFixed(2);
-        return { display: `${amount} BTC = ${usd}$`, coinKey };
-      }
-      case 'ETH': {
-        let amount = (Math.random() * 14 + 0.05).toFixed(4);
-        let price = Number(randomPrice(1600, 4100));
-        let usd = (parseFloat(amount) * price).toFixed(2);
-        return { display: `${amount} ETH = ${usd}$`, coinKey };
-      }
-      case 'LTC': {
-        let amount = (Math.random() * 55 + 0.5).toFixed(2);
-        let price = Number(randomPrice(60, 135));
-        let usd = (parseFloat(amount) * price).toFixed(2);
-        return { display: `${amount} LTC = ${usd}$`, coinKey };
-      }
-      case 'BNB': {
-        let amount = (Math.random() * 30 + 0.3).toFixed(3);
-        let price = Number(randomPrice(280, 690));
-        let usd = (parseFloat(amount) * price).toFixed(2);
-        return { display: `${amount} BNB = ${usd}$`, coinKey };
-      }
-      case 'SOL': {
-        let amount = (Math.random() * 210 + 0.7).toFixed(2);
-        let price = Number(randomPrice(75, 215));
-        let usd = (parseFloat(amount) * price).toFixed(2);
-        return { display: `${amount} SOL = ${usd}$`, coinKey };
-      }
-      case 'USDT': {
-        let amount = (Math.random() * 4800 + 15).toFixed(2);
-        let usd = parseFloat(amount).toFixed(2);
-        return { display: `${amount} USDT.TRC20 = ${usd}$`, coinKey };
-      }
-      case 'BCH': {
-        let amount = (Math.random() * 14 + 0.2).toFixed(4);
-        let price = Number(randomPrice(180, 540));
-        let usd = (parseFloat(amount) * price).toFixed(2);
-        return { display: `${amount} BCH = ${usd}$`, coinKey };
-      }
-      case 'DOGE': {
-        let amount = Math.floor(Math.random() * 22000 + 200);
-        let price = 0.11 + Math.random() * 0.09;
-        let usd = (amount * price).toFixed(2);
-        return { display: `${amount} DOGE = ${usd}$`, coinKey };
-      }
-      case 'TRX': {
-        let amount = Math.floor(Math.random() * 9500 + 350);
-        let price = 0.08 + Math.random() * 0.07;
-        let usd = (amount * price).toFixed(2);
-        return { display: `${amount} TRX = ${usd}$`, coinKey };
-      }
-      default:
-        let defAmount = (Math.random() * 900 + 20).toFixed(2);
-        return { display: `${defAmount} USDT.TRC20 = ${defAmount}$`, coinKey: 'USDT' };
-    }
-  }
-
-  // Show top corner glowing notification
-  function showBalanceAlert() {
-    const existingAlert = document.querySelector('.top-alert');
-    if(existingAlert) existingAlert.remove();
-    const alertDiv = document.createElement('div');
-    alertDiv.className = 'top-alert';
-    alertDiv.innerText = '⚡ BALANCE FOUND! ⚡';
-    document.body.appendChild(alertDiv);
-    // fade out after 2.3 seconds
-    setTimeout(() => {
-      if(alertDiv) {
-        alertDiv.style.transition = 'opacity 0.5s';
-        alertDiv.style.opacity = '0';
-        setTimeout(() => { if(alertDiv && alertDiv.parentNode) alertDiv.remove(); }, 500);
-      }
-    }, 2100);
-  }
-
-  // update result panel with coin icon and balance text
-  function updateResultPanel(coinKey, displayText) {
-    const coin = coinVisuals[coinKey];
-    if (!coin) return;
-    resultPanelDiv.innerHTML = '';
-    const iconDiv = document.createElement('div');
-    iconDiv.className = 'result-icon';
-    iconDiv.style.background = coin.bg;
-    iconDiv.style.display = 'flex';
-    iconDiv.style.alignItems = 'center';
-    iconDiv.style.justifyContent = 'center';
-    iconDiv.innerText = coin.symbol;
-    const textSpan = document.createElement('div');
-    textSpan.className = 'result-text';
-    textSpan.innerText = displayText;
-    resultPanelDiv.appendChild(iconDiv);
-    resultPanelDiv.appendChild(textSpan);
-  }
-
-  // reset result panel to idle (optional after stop, but we keep last found)
-  function resetResultPlaceholder() {
-    if(resultPanelDiv.children.length === 0) {
-      resultPanelDiv.innerHTML = `<div class="result-icon" style="background:#2e5666;">⚡</div><div class="result-text result-placeholder">no balance captured yet</div>`;
-    }
-  }
-
-  // trigger found wallet (rare event)
-  function triggerFoundBalance() {
-    foundWallets++;
-    updateFoundUI();
-    
-    // pick random coin from all supported
-    const randomCoin = allCoins[Math.floor(Math.random() * allCoins.length)];
-    const { display, coinKey } = generateBalanceForCoin(randomCoin);
-    // Update result panel with icon and text
-    updateResultPanel(coinKey, display);
-    // show top corner alert
-    showBalanceAlert();
-  }
-
-  // main scanning tick (called recursively)
-  function scanTick() {
-    if (!isScanning) return;
-    
-    // 1. increment checked wallets
-    checkedWallets++;
-    updateCheckedUI();
-    
-    // 2. pick random terminal line from predefined set
-    const randomLine = scanLines[Math.floor(Math.random() * scanLines.length)];
-    addTerminalLine(randomLine);
-    
-    // 3. rare balance detection (1/3500 probability)
-    const willFind = Math.random() < BALANCE_RARITY;
-    if (willFind) {
-      triggerFoundBalance();
-    }
-    
-    // 4. schedule next tick with random delay between 200 and 400 ms
-    const nextDelay = Math.floor(Math.random() * (400 - 200 + 1) + 200);
-    timeoutId = setTimeout(() => {
-      scanTick();
-    }, nextDelay);
-  }
-
-  // start scanning (reset any pending, fresh)
-  function startScanning() {
-    if (isScanning) return; // already active
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-      timeoutId = null;
-    }
-    isScanning = true;
-    // update status indicator
-    const modeSpan = document.querySelector('.stats-container .stat-block:last-child .stat-number');
-    if (modeSpan) {
-      modeSpan.innerText = '● SCANNING';
-      modeSpan.style.color = "#7affb0";
-    }
-    addTerminalLine(">> SCAN ENGINE STARTED | brute-force active");
-    addTerminalLine(">> scanning wallets... (rare balance detection)");
-    // begin the loop
-    scanTick();
-  }
-
-  // stop scanning
-  function stopScanning() {
-    if (!isScanning) {
-      addTerminalLine(">> no active scan — press START");
-      return;
-    }
-    isScanning = false;
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-      timeoutId = null;
-    }
-    const modeSpan = document.querySelector('.stats-container .stat-block:last-child .stat-number');
-    if (modeSpan) {
-      modeSpan.innerText = '● STOPPED';
-      modeSpan.style.color = "#ffaa77";
-    }
-    addTerminalLine(">> [HALT] Scan stopped by user");
-    // keep result panel as is (last found remains)
-  }
-
-  // event listeners
-  startBtn.addEventListener('click', startScanning);
-  stopBtn.addEventListener('click', stopScanning);
-  
-  // initial placeholder for result panel (ensures proper)
-  resetResultPlaceholder();
-  updateCheckedUI();
-  updateFoundUI();
-  
-  // small boot message
-  addTerminalLine(">> idle - ready for deep wallet scan");
-</script>
+        startBtn.addEventListener('click', startScan);
+        stopBtn.addEventListener('click', stopScan);
+    </script>
 </body>
 </html>
