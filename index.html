@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Rocket Crash - Ultimate Edition</title>
+    <title>Pixel Dino Crash - TON Game</title>
     <style>
         :root {
             --bg-space: #020617;
             --primary-neon: #00ffa3;
-            --r-body: #f1f5f9;
-            --r-shade: #cbd5e1;
-            --r-accent: #ef4444;
-            --r-accent-dark: #b91c1c;
+            /* Dino Colors */
+            --dino-main: #22c55e;
+            --dino-shade: #166534;
+            --dino-belly: #a3e635;
         }
 
         body {
@@ -32,54 +32,60 @@
 
         .star { position: absolute; background: white; width: 2px; height: 2px; opacity: 0.5; }
 
-        /* 2. پرۆفیشناڵترین دیزاینێ موشەکا پیکسڵی */
-        #rocket-container {
+        /* 2. دیزاینێ دیناسۆرێ قه‌له‌و یێ پیکسڵی (CSS Only) */
+        #dino-container {
             position: absolute; bottom: 50px; left: 50%;
             transform: translateX(-50%); transition: bottom 0.1s linear;
             z-index: 5;
         }
 
-        #rocket {
-            width: 42px; height: 80px; background: var(--r-body);
+        #dino {
+            width: 48px; height: 55px; background: var(--dino-main);
             position: relative; border: 4px solid #000;
-            box-shadow: inset -10px 0px 0px var(--r-shade), inset 4px 0px 0px #ffffff;
+            box-shadow: inset -10px -10px 0px var(--dino-shade);
         }
 
-        #rocket::before { /* سەرێ موشەکێ */
-            content: ""; position: absolute; top: -22px; left: -4px;
-            width: 42px; height: 18px; background: var(--r-accent);
-            border: 4px solid #000; box-shadow: inset -10px 0px 0px var(--r-accent-dark), inset 4px 0px 0px #f87171;
+        /* سه‌ر و ده‌ڤێ دیناسۆری */
+        #dino::before {
+            content: ""; position: absolute; top: 10px; left: -10px;
+            width: 25px; height: 20px; background: var(--dino-main);
+            border: 4px solid #000; box-shadow: inset -5px -5px 0px var(--dino-shade);
         }
 
-        .window {
-            position: absolute; top: 20px; left: 11px;
-            width: 14px; height: 14px; background: #38bdf8;
-            border: 4px solid #000; box-shadow: inset -4px -4px 0px #0ea5e9;
+        /* چاڤێ دیناسۆری */
+        #dino::after {
+            content: ""; position: absolute; top: 16px; left: -2px;
+            width: 6px; height: 6px; background: #000; z-index: 10;
         }
 
-        .wing { position: absolute; bottom: 5px; width: 16px; height: 28px; background: var(--r-accent); border: 4px solid #000; }
-        .wing-l { left: -24px; box-shadow: inset 6px 0px 0px var(--r-accent-dark); clip-path: polygon(100% 0, 100% 100%, 0 100%); }
-        .wing-r { right: -24px; box-shadow: inset -6px 0px 0px var(--r-accent-dark); clip-path: polygon(0 0, 0 100%, 100% 100%); }
-
-        .engine-block { position: absolute; bottom: -8px; left: 4px; width: 26px; height: 8px; background: #475569; border: 4px solid #000; }
-
-        .exhaust-flame {
-            position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%);
-            width: 24px; height: 30px; background: #fbbf24; display: none;
-            box-shadow: 0 8px 0 #f97316, 0 16px 0 #ef4444;
-            animation: thrust 0.1s infinite;
+        /* زكێ سپی یێ دیناسۆری (قه‌له‌وی) */
+        .belly {
+            position: absolute; bottom: 5px; left: 8px;
+            width: 28px; height: 35px; background: var(--dino-belly);
+            border: 4px solid #000;
         }
 
-        @keyframes thrust {
-            0% { height: 25px; transform: translateX(-50%) scaleX(1); }
-            50% { height: 35px; transform: translateX(-50%) scaleX(1.1); }
-            100% { height: 25px; transform: translateX(-50%) scaleX(1); }
+        /* باڵێن سپی یێن بچووك (بۆ ئه‌وێ ب كه‌یف بیت) */
+        .wing {
+            position: absolute; top: 10px; left: 35px;
+            width: 15px; height: 10px; background: #f1f5f9;
+            border: 3px solid #000;
+            animation: flap 0.1s infinite;
         }
 
-        /* 3. پارتیکڵێن تەقینێ (Particles) */
-        .particle {
-            position: absolute; width: 6px; height: 6px;
-            pointer-events: none; z-index: 10;
+        @keyframes flap {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* 3. پارتیکڵێن تەقینێ و هێكا شكه‌ستی */
+        .particle { position: absolute; width: 6px; height: 6px; pointer-events: none; z-index: 10; }
+        #egg-shell {
+            width: 30px; height: 40px; background: #f1f5f9;
+            border: 4px solid #000; position: absolute;
+            display: none; z-index: 4;
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 30% 60%, 70% 60%);
         }
 
         /* 4. UI و پانێلا کەنترۆلێ */
@@ -111,20 +117,17 @@
 
     <div id="game-screen">
         <div id="multiplier">1.00x</div>
-        <div id="rocket-container">
-            <div id="rocket">
-                <div class="window"></div>
-                <div class="wing wing-l"></div>
-                <div class="wing wing-r"></div>
-                <div class="engine-block"></div>
-                <div class="exhaust-flame" id="fire"></div>
+        <div id="dino-container">
+            <div id="dino">
+                <div class="belly"></div>
+                <div class="wing"></div>
             </div>
-        </div>
+            <div id="egg-shell"></div> </div>
     </div>
 
     <div class="controls">
         <button id="actionBtn" class="btn" onclick="handleAction()">BET TON</button>
-        <div id="status">ئامادەیە بۆ گەشتەکا نوی...</div>
+        <div id="status">ئامادەیە بۆ فڕینێ...</div>
     </div>
 
     <script>
@@ -133,9 +136,9 @@
         let gameLoop;
         let crashPoint;
 
-        const rocketCont = document.getElementById('rocket-container');
-        const rocketBody = document.getElementById('rocket');
-        const fire = document.getElementById('fire');
+        const dinoCont = document.getElementById('dino-container');
+        const dinoBody = document.getElementById('dino');
+        const eggShell = document.getElementById('egg-shell');
         const multEl = document.getElementById('multiplier');
         const actionBtn = document.getElementById('actionBtn');
         const statusEl = document.getElementById('status');
@@ -156,10 +159,10 @@
             }, 30);
         }
 
-        // سیستمێ تەقینا پیکسڵی
+        // سیستمێ تەقینا پیکسڵی و هێكا شكه‌ستی
         function explode(x, y) {
-            const colors = ['#ef4444', '#f59e0b', '#f1f5f9', '#475569'];
-            for (let i = 0; i < 30; i++) {
+            const colors = ['#ef4444', '#f59e0b', '#f1f5f9', '#22c55e', '#a3e635'];
+            for (let i = 0; i < 25; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
                 p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
@@ -168,7 +171,7 @@
                 screen.appendChild(p);
 
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 8 + 2;
+                const speed = Math.random() * 6 + 2;
                 let vx = Math.cos(angle) * speed;
                 let vy = Math.sin(angle) * speed;
 
@@ -191,13 +194,13 @@
         function startGame() {
             isRunning = true;
             multiplier = 1.00;
-            crashPoint = (Math.random() * 6 + 1.2).toFixed(2);
+            crashPoint = (Math.random() * 5 + 1.2).toFixed(2);
             
             actionBtn.innerText = "CASH OUT";
             actionBtn.classList.add('cashout');
-            fire.style.display = 'block';
-            rocketBody.style.display = 'block';
-            statusEl.innerText = "موشەک یا بلند دبیت...";
+            dinoBody.style.display = 'block';
+            eggShell.style.display = 'none';
+            statusEl.innerText = "دیناسۆرێ قه‌له‌و یێ بلند دبیت!";
             multEl.style.color = "var(--primary-neon)";
 
             let starInterval = setInterval(() => { if(!isRunning) clearInterval(starInterval); spawnStar(); }, 80);
@@ -207,8 +210,8 @@
                 multEl.innerText = multiplier.toFixed(2) + "x";
 
                 let yPos = Math.min((multiplier - 1) * 55, 270);
-                rocketCont.style.bottom = (50 + yPos) + 'px';
-                rocketCont.style.transform = `translateX(-50%) rotate(${(Math.random()-0.5)*6}deg)`;
+                dinoCont.style.bottom = (50 + yPos) + 'px';
+                dinoCont.style.transform = `translateX(-50%) rotate(${(Math.random()-0.5)*7}deg)`;
 
                 if (multiplier >= crashPoint) endGame(true);
             }, 100);
@@ -216,27 +219,27 @@
 
         function cashOut() {
             endGame(false);
-            statusEl.innerText = `💰 پیرۆزە! تە ${multiplier.toFixed(2)}x بردی.`;
+            statusEl.innerText = `✅ دیناسۆری پارە بردی! مڵتیپلایەر: ${multiplier.toFixed(2)}x`;
             multEl.style.color = "#38bdf8";
-            rocketCont.style.transition = "bottom 1.5s ease-in";
-            rocketCont.style.bottom = "800px";
+            dinoCont.style.transition = "bottom 1.5s ease-in";
+            dinoCont.style.bottom = "800px";
         }
 
         function endGame(isCrash) {
             clearInterval(gameLoop);
             isRunning = false;
-            fire.style.display = 'none';
             actionBtn.innerText = "دووبارە هەوڵبدە";
             actionBtn.classList.remove('cashout');
 
             if (isCrash) {
-                const rect = rocketCont.getBoundingClientRect();
+                const rect = dinoCont.getBoundingClientRect();
                 const screenRect = screen.getBoundingClientRect();
-                explode(rect.left - screenRect.left + 20, rect.top - screenRect.top + 40);
+                explode(rect.left - screenRect.left + 25, rect.top - screenRect.top + 30);
                 
-                statusEl.innerText = "💥 تەقیا! تە دۆڕاندن.";
+                statusEl.innerText = "💥 شكه‌ست! هێكا دیناسۆری شكه‌ست.";
                 multEl.style.color = "#ef4444";
-                rocketBody.style.display = 'none';
+                dinoBody.style.display = 'none';
+                eggShell.style.display = 'block'; // نیشاندانا هێكا شكه‌ستی
             }
         }
     </script>
