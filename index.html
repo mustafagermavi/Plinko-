@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>BTC BruteForce | Crypto Scanner</title>
+  <title>Crypto Wallet Scanner | BruteForce Recovery Tool</title>
   <style>
     * {
       margin: 0;
@@ -12,84 +12,79 @@
     }
 
     body {
-      background: radial-gradient(circle at 30% 10%, #0a0f1c, #020408);
+      background: radial-gradient(circle at 30% 0%, #0b0f17, #020408);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       font-family: 'Inter', 'Segoe UI', 'Courier New', monospace;
-      padding: 16px;
+      padding: 20px 12px;
     }
 
-    /* main hacker card */
-    .scanner-dashboard {
+    /* main card */
+    .scanner-card {
       max-width: 360px;
       width: 100%;
-      background: rgba(8, 14, 22, 0.96);
+      background: rgba(6, 12, 20, 0.94);
       backdrop-filter: blur(3px);
       border-radius: 48px;
-      padding: 22px 18px 28px;
-      box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(0, 255, 200, 0.2), 0 0 12px rgba(0, 255, 200, 0.3);
+      padding: 22px 18px 30px;
+      box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(0, 255, 200, 0.25), 0 0 16px rgba(0, 255, 200, 0.3);
       transition: all 0.2s;
-      border: 1px solid rgba(0, 255, 200, 0.35);
+      border: 1px solid rgba(0, 255, 180, 0.4);
     }
 
     /* header */
-    .glitch-header h1 {
-      font-size: 1.65rem;
+    .title-section h1 {
+      font-size: 1.7rem;
       font-weight: 800;
-      background: linear-gradient(125deg, #00f5d4, #7effb0);
+      background: linear-gradient(135deg, #00f5d4, #86ffb0);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       letter-spacing: -0.3px;
       font-family: 'Courier New', monospace;
-      text-shadow: 0 0 6px #0affb0;
-      margin-bottom: 4px;
+      text-shadow: 0 0 5px #0affb055;
     }
-
-    .badge {
-      font-size: 0.65rem;
-      color: #6c8fb0;
+    .sub {
+      font-size: 0.6rem;
+      color: #5d8bb0;
       border-left: 2px solid #2effb0;
       padding-left: 8px;
-      margin-top: -2px;
+      margin-top: 4px;
     }
 
-    /* counters row */
-    .stats-row {
+    /* stats row */
+    .stats-container {
       display: flex;
       justify-content: space-between;
-      background: #00000055;
-      border-radius: 60px;
+      background: #00000066;
+      border-radius: 50px;
       padding: 8px 18px;
       margin: 18px 0 14px 0;
-      border: 1px solid #1f4552;
+      border: 1px solid #1f4b58;
     }
-
-    .stat {
+    .stat-block {
       text-align: center;
     }
-
     .stat-label {
       font-size: 0.7rem;
       font-weight: 600;
       text-transform: uppercase;
-      color: #94b7d0;
+      color: #9dc3e0;
       letter-spacing: 1px;
     }
-
-    .stat-value {
+    .stat-number {
       font-size: 1.9rem;
       font-weight: 800;
       font-family: monospace;
-      color: #1effbc;
-      text-shadow: 0 0 5px #00cca3;
-      line-height: 1;
+      color: #2effbc;
+      text-shadow: 0 0 5px #00ccaa;
+      line-height: 1.1;
     }
 
-    /* terminal */
-    .terminal-box {
+    /* terminal console */
+    .terminal {
       background: #03090e;
       border-radius: 28px;
       padding: 12px 10px;
@@ -97,122 +92,111 @@
       overflow-y: auto;
       font-family: 'Fira Code', 'Courier New', monospace;
       font-size: 0.7rem;
-      border: 1px solid #2b5b66;
-      box-shadow: inset 0 0 12px #00000044, 0 6px 12px rgba(0, 0, 0, 0.4);
+      border: 1px solid #2d6b78;
+      box-shadow: inset 0 0 12px #00000055, 0 5px 12px rgba(0, 0, 0, 0.5);
       margin: 12px 0 12px 0;
     }
-
     .terminal-line {
-      color: #aaffdd;
-      padding: 5px 6px;
+      color: #b5ffd8;
+      padding: 4px 6px;
       border-left: 2px solid #2effb0;
       margin-bottom: 5px;
-      background: #0b1422a0;
+      background: #0b1322a0;
       font-weight: 500;
       word-break: break-word;
     }
-
-    .terminal-box::-webkit-scrollbar {
+    .terminal::-webkit-scrollbar {
       width: 4px;
     }
-    .terminal-box::-webkit-scrollbar-track {
-      background: #0a1a24;
+    .terminal::-webkit-scrollbar-track {
+      background: #071a22;
       border-radius: 8px;
     }
-    .terminal-box::-webkit-scrollbar-thumb {
-      background: #1affb2;
+    .terminal::-webkit-scrollbar-thumb {
+      background: #1effb2;
       border-radius: 8px;
     }
 
     /* found row */
-    .found-wrapper {
+    .found-row {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      background: #0a121caa;
+      background: #0f1922aa;
       border-radius: 40px;
       padding: 6px 20px;
-      margin: 8px 0 12px 0;
+      margin: 8px 0 14px 0;
     }
-
     .found-label {
       font-size: 1rem;
       font-weight: bold;
-      color: #ffb347;
+      color: #ffae5a;
     }
-
-    .found-count {
+    .found-value {
       font-size: 1.8rem;
       font-weight: 800;
       font-family: monospace;
-      color: #ffae42;
+      color: #ffb347;
       text-shadow: 0 0 4px #ff8c00;
     }
 
-    /* RESULT PANEL with icon + text (dynamic) */
+    /* result panel with icon + balance */
     .result-panel {
-      background: #1c262f;
+      background: #1a262f;
       border-radius: 28px;
-      padding: 12px 16px;
-      margin: 8px 0 20px 0;
-      border: 1px solid #3e606b;
-      box-shadow: inset 0 1px 2px #00000033, 0 6px 10px rgba(0, 0, 0, 0.3);
+      padding: 12px 18px;
+      margin: 6px 0 22px 0;
+      border: 1px solid #41707e;
+      box-shadow: inset 0 1px 2px #00000033, 0 5px 10px rgba(0, 0, 0, 0.4);
       min-height: 80px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
       transition: all 0.2s;
     }
-
     .result-icon {
-      width: 44px;
-      height: 44px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 24px;
       font-weight: bold;
       color: white;
       text-shadow: 0 1px 2px black;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 255, 200, 0.5);
-      background: radial-gradient(circle at 35% 35%, rgba(255, 255, 245, 0.2), rgba(0, 0, 0, 0.3));
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 255, 200, 0.6);
       flex-shrink: 0;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,245,0.2), rgba(0,0,0,0.2));
     }
-
     .result-text {
       font-family: monospace;
       font-weight: bold;
       font-size: 0.85rem;
-      color: #e0eef7;
+      color: #eef5ff;
       word-break: break-word;
-      line-height: 1.35;
+      line-height: 1.4;
     }
-
-    .placeholder-text {
-      color: #7e95aa;
+    .result-placeholder {
+      color: #7e99ae;
       font-style: italic;
-      font-family: monospace;
-      letter-spacing: 0.5px;
     }
 
-    /* 3x3 crypto grid */
+    /* crypto grid 3x3 */
     .crypto-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px 10px;
+      gap: 12px 8px;
       justify-items: center;
-      margin: 16px 0 22px;
+      margin: 18px 0 24px;
     }
-
-    .coin-card {
+    .coin-item {
       display: flex;
       flex-direction: column;
       align-items: center;
       width: 100%;
     }
-
-    .coin-circle {
+    .coin-icon {
       width: 68px;
       height: 68px;
       border-radius: 50%;
@@ -222,21 +206,19 @@
       font-size: 28px;
       font-weight: bold;
       color: white;
-      text-shadow: 0 2px 3px black;
-      box-shadow: 0 8px 14px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(0, 230, 210, 0.4);
-      transition: transform 0.2s ease;
+      text-shadow: 0 1px 3px black;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(0, 255, 200, 0.3);
+      transition: transform 0.2s;
     }
-
-    .coin-circle:hover {
+    .coin-icon:hover {
       transform: scale(1.02);
     }
-
     .blue-check {
       margin-top: 6px;
       font-size: 18px;
       font-weight: bold;
       color: #3c9eff;
-      background: #0f1c24;
+      background: #0e1924;
       width: 28px;
       height: 28px;
       border-radius: 30px;
@@ -247,13 +229,12 @@
     }
 
     /* buttons */
-    .button-row {
+    .action-group {
       display: flex;
-      gap: 20px;
-      margin-top: 8px;
+      gap: 18px;
+      margin-top: 4px;
     }
-
-    .action-btn {
+    .btn {
       flex: 1;
       padding: 12px 0;
       font-weight: 800;
@@ -262,111 +243,125 @@
       border-radius: 60px;
       font-family: monospace;
       letter-spacing: 1px;
-      transition: 0.1s linear;
       cursor: pointer;
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+      transition: 0.08s linear;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
     }
-
-    .start {
+    .btn-start {
       background: #0f6e3a;
-      border-bottom: 3px solid #3effa0;
-      color: #e6ffee;
+      border-bottom: 3px solid #4effa0;
+      color: #eafff0;
     }
-
-    .start:active {
+    .btn-start:active {
       transform: scale(0.96);
-      background: #0b552e;
+      background: #0a552e;
     }
-
-    .stop {
-      background: #722b2b;
-      border-bottom: 3px solid #ff7676;
-      color: #ffe0e0;
+    .btn-stop {
+      background: #742c2c;
+      border-bottom: 3px solid #ff7b7b;
+      color: #ffefef;
     }
-
-    .stop:active {
+    .btn-stop:active {
       transform: scale(0.96);
-      background: #571f1f;
+      background: #581f1f;
     }
 
-    .action-btn:active {
-      transform: scale(0.96);
+    /* top corner alert (glow, fade) */
+    .top-alert {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f2129cc;
+      backdrop-filter: blur(10px);
+      color: #caffb0;
+      font-family: monospace;
+      font-weight: bold;
+      padding: 10px 24px;
+      border-radius: 60px;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      border-left: 4px solid #2effb0;
+      border-right: 4px solid #2effb0;
+      box-shadow: 0 0 18px #00ffb3, 0 4px 12px black;
+      z-index: 1000;
+      white-space: nowrap;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+    @keyframes glowPulse {
+      0% { box-shadow: 0 0 0px #00ffb3; opacity: 1; }
+      100% { box-shadow: 0 0 22px #00ffcc; opacity: 0; }
+    }
+    .fadeout {
+      animation: glowPulse 0.4s ease-out forwards;
+      opacity: 1;
     }
   </style>
 </head>
 <body>
-<div class="scanner-dashboard">
-  <div class="glitch-header">
-    <h1>Crypto Wallet BruteForce</h1>
-    <div class="badge">// ACTIVE DEEP SCAN v3.1</div>
+
+<div class="scanner-card">
+  <div class="title-section">
+    <h1>Crypto Wallet Scanner</h1>
+    <div class="sub">// deep recovery engine //</div>
   </div>
 
   <!-- Checked counter row -->
-  <div class="stats-row">
-    <div class="stat">
+  <div class="stats-container">
+    <div class="stat-block">
       <div class="stat-label">CHECKED</div>
-      <div class="stat-value" id="checkedCounter">0</div>
+      <div class="stat-number" id="checkedCounter">0</div>
     </div>
-    <div class="stat">
+    <div class="stat-block">
       <div class="stat-label">SCAN MODE</div>
-      <div class="stat-value" style="font-size:1rem; color:#6effb0;">● READY</div>
+      <div class="stat-number" style="font-size:1rem; color:#66ffb0;">● IDLE</div>
     </div>
   </div>
 
   <!-- Terminal console -->
-  <div class="terminal-box" id="terminalConsole">
-    <div class="terminal-line">> wallet_bruteforce_engine loaded</div>
-    <div class="terminal-line">> idle — press [START] to begin</div>
+  <div class="terminal" id="terminalConsole">
+    <div class="terminal-line">> wallet_scanner v2.4 ready</div>
+    <div class="terminal-line">> press [START] to begin brute-force</div>
   </div>
 
-  <!-- Found counter row -->
-  <div class="found-wrapper">
+  <!-- Found counter -->
+  <div class="found-row">
     <span class="found-label">🔓 FOUND WALLETS</span>
-    <span class="found-count" id="foundCounter">0</span>
+    <span class="found-value" id="foundCounter">0</span>
   </div>
 
-  <!-- RESULT PANEL (dynamic icon + balance) -->
+  <!-- Result panel (dynamic icon + text) -->
   <div class="result-panel" id="resultPanel">
-    <div class="result-icon" style="background:#2e4a5a; font-size:20px;">⚡</div>
-    <div class="result-text placeholder-text">awaiting balance capture...</div>
+    <div class="result-icon" style="background:#2e5666;">⚡</div>
+    <div class="result-text result-placeholder">no balance captured yet</div>
   </div>
 
-  <!-- Crypto grid 3x3 official icons + blue checkmarks -->
+  <!-- Crypto icon grid with blue check marks -->
   <div class="crypto-grid">
-    <!-- Bitcoin -->
-    <div class="coin-card"><div class="coin-circle" style="background: #F7931A;">₿</div><div class="blue-check">✓</div></div>
-    <!-- Ethereum -->
-    <div class="coin-card"><div class="coin-circle" style="background: #627EEA;">Ξ</div><div class="blue-check">✓</div></div>
-    <!-- Litecoin -->
-    <div class="coin-card"><div class="coin-circle" style="background: #345D9D;">Ł</div><div class="blue-check">✓</div></div>
-    <!-- BNB -->
-    <div class="coin-card"><div class="coin-circle" style="background: #F3BA2F;">BNB</div><div class="blue-check">✓</div></div>
-    <!-- Solana -->
-    <div class="coin-card"><div class="coin-circle" style="background: #9945FF;">SOL</div><div class="blue-check">✓</div></div>
-    <!-- Tether -->
-    <div class="coin-card"><div class="coin-circle" style="background: #26A17B;">₮</div><div class="blue-check">✓</div></div>
-    <!-- Bitcoin Cash -->
-    <div class="coin-card"><div class="coin-circle" style="background: #8DC351;">BCH</div><div class="blue-check">✓</div></div>
-    <!-- Dogecoin -->
-    <div class="coin-card"><div class="coin-circle" style="background: #C2A633;">Ð</div><div class="blue-check">✓</div></div>
-    <!-- TRON -->
-    <div class="coin-card"><div class="coin-circle" style="background: #FF0010;">TRX</div><div class="blue-check">✓</div></div>
+    <div class="coin-item"><div class="coin-icon" style="background:#F7931A;">₿</div><div class="blue-check">✓</div></div>
+    <div class="coin-item"><div class="coin-icon" style="background:#627EEA;">Ξ</div><div class="blue-check">✓</div></div>
+    <div class="coin-item"><div class="coin-icon" style="background:#345D9D;">Ł</div><div class="blue-check">✓</div></div>
+    <div class="coin-item"><div class="coin-icon" style="background:#F3BA2F;">BNB</div><div class="blue-check">✓</div></div>
+    <div class="coin-item"><div class="coin-icon" style="background:#9945FF;">SOL</div><div class="blue-check">✓</div></div>
+    <div class="coin-item"><div class="coin-icon" style="background:#26A17B;">₮</div><div class="blue-check">✓</div></div>
+    <div class="coin-item"><div class="coin-icon" style="background:#8DC351;">BCH</div><div class="blue-check">✓</div></div>
+    <div class="coin-item"><div class="coin-icon" style="background:#C2A633;">Ð</div><div class="blue-check">✓</div></div>
+    <div class="coin-item"><div class="coin-icon" style="background:#FF0010;">TRX</div><div class="blue-check">✓</div></div>
   </div>
 
-  <!-- START / STOP buttons -->
-  <div class="button-row">
-    <button class="action-btn start" id="startBtn">▶ START</button>
-    <button class="action-btn stop" id="stopBtn">■ STOP</button>
+  <!-- buttons -->
+  <div class="action-group">
+    <button class="btn btn-start" id="startBtn">▶ START</button>
+    <button class="btn btn-stop" id="stopBtn">■ STOP</button>
   </div>
 </div>
 
 <script>
-  // -------------------------------
-  //  HACKER-STYLE WALLET BRUTEFORCE
-  // -------------------------------
+  // ---------- HACKER-STYLE WALLET SCANNER (RARE BALANCE DETECTION) ----------
   
-  // Predefined terminal lines pool
-  const walletChecks = [
+  // Predefined terminal lines pool (as per spec)
+  const scanLines = [
     "Wallet Check: fluid busy gate deny",
     "Wallet Check: pumpkin fossil radar",
     "Wallet Check: puppy analyst category",
@@ -376,8 +371,8 @@
     "Wallet Check: retreat labor antenna"
   ];
 
-  // Mapping for result panel icons & coin data (9 major coins)
-  const coinIconMap = {
+  // Mapping for coin icons (result panel)
+  const coinVisuals = {
     'BTC': { bg: '#F7931A', symbol: '₿', name: 'Bitcoin' },
     'ETH': { bg: '#627EEA', symbol: 'Ξ', name: 'Ethereum' },
     'LTC': { bg: '#345D9D', symbol: 'Ł', name: 'Litecoin' },
@@ -388,117 +383,130 @@
     'DOGE': { bg: '#C2A633', symbol: 'Ð', name: 'Dogecoin' },
     'TRX': { bg: '#FF0010', symbol: 'TRX', name: 'TRON' }
   };
+  
+  const allCoins = ['BTC', 'ETH', 'LTC', 'BNB', 'SOL', 'USDT', 'BCH', 'DOGE', 'TRX'];
 
   // DOM elements
   const terminalDiv = document.getElementById('terminalConsole');
   const checkedSpan = document.getElementById('checkedCounter');
   const foundSpan = document.getElementById('foundCounter');
   const resultPanelDiv = document.getElementById('resultPanel');
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn = document.getElementById('stopBtn');
 
   // State
   let checkedWallets = 0;
   let foundWallets = 0;
   let isScanning = false;
-  let currentTimeout = null;
+  let timeoutId = null;
+
+  // Rare balance threshold: 1 in 3500 (approx once every 2000-5000 scans)
+  const BALANCE_RARITY = 1 / 3500;   // ~0.0002857 probability per wallet check
 
   // Helper: add line to terminal + auto-scroll
   function addTerminalLine(text) {
-    const line = document.createElement('div');
-    line.className = 'terminal-line';
-    line.innerText = `> ${text}`;
-    terminalDiv.appendChild(line);
+    const lineDiv = document.createElement('div');
+    lineDiv.className = 'terminal-line';
+    lineDiv.innerText = `> ${text}`;
+    terminalDiv.appendChild(lineDiv);
     terminalDiv.scrollTop = terminalDiv.scrollHeight;
-    // keep last 180 lines for performance
-    if (terminalDiv.children.length > 180) {
-      terminalDiv.removeChild(terminalDiv.children[0]);
-    }
+    // keep last 200 lines for performance
+    while (terminalDiv.children.length > 200) terminalDiv.removeChild(terminalDiv.firstChild);
   }
 
-  // Update Checked UI
+  // update UI counters
   function updateCheckedUI() {
     checkedSpan.innerText = checkedWallets;
   }
-
-  // Update Found UI
   function updateFoundUI() {
     foundSpan.innerText = foundWallets;
   }
 
-  // Generate random realistic balance for a specific coinKey
-  function generateFoundData(coinKey) {
-    const coin = coinIconMap[coinKey];
-    if (!coin) return { display: "0.00 USDT = 0.00$", coinKey: 'USDT' };
-    
-    let amount, usdValue, displayText;
-    const randomPriceSeed = () => Math.random() * 0.8 + 0.6; // variety
-
+  // generate realistic balance string based on coin key
+  function generateBalanceForCoin(coinKey) {
+    const randomPrice = (min, max) => (Math.random() * (max - min) + min).toFixed(0);
     switch(coinKey) {
-      case 'BTC':
-        amount = (Math.random() * 2.2 + 0.002).toFixed(5);
-        const btcPrice = Math.floor(Math.random() * (72000 - 38000 + 1) + 38000);
-        usdValue = (parseFloat(amount) * btcPrice).toFixed(2);
-        displayText = `${amount} BTC = ${usdValue}$`;
-        break;
-      case 'ETH':
-        amount = (Math.random() * 12 + 0.08).toFixed(4);
-        const ethPrice = Math.floor(Math.random() * (4100 - 1700 + 1) + 1700);
-        usdValue = (parseFloat(amount) * ethPrice).toFixed(2);
-        displayText = `${amount} ETH = ${usdValue}$`;
-        break;
-      case 'LTC':
-        amount = (Math.random() * 48 + 0.5).toFixed(2);
-        const ltcPrice = Math.floor(Math.random() * (130 - 60 + 1) + 60);
-        usdValue = (parseFloat(amount) * ltcPrice).toFixed(2);
-        displayText = `${amount} LTC = ${usdValue}$`;
-        break;
-      case 'BNB':
-        amount = (Math.random() * 28 + 0.3).toFixed(3);
-        const bnbPrice = Math.floor(Math.random() * (680 - 280 + 1) + 280);
-        usdValue = (parseFloat(amount) * bnbPrice).toFixed(2);
-        displayText = `${amount} BNB = ${usdValue}$`;
-        break;
-      case 'SOL':
-        amount = (Math.random() * 210 + 0.8).toFixed(2);
-        const solPrice = Math.floor(Math.random() * (210 - 80 + 1) + 80);
-        usdValue = (parseFloat(amount) * solPrice).toFixed(2);
-        displayText = `${amount} SOL = ${usdValue}$`;
-        break;
-      case 'USDT':
-        amount = (Math.random() * 4850 + 12).toFixed(2);
-        usdValue = parseFloat(amount).toFixed(2);
-        displayText = `${amount} USDT.TRC20 = ${usdValue}$`;
-        break;
-      case 'BCH':
-        amount = (Math.random() * 12 + 0.2).toFixed(4);
-        const bchPrice = Math.floor(Math.random() * (520 - 180 + 1) + 180);
-        usdValue = (parseFloat(amount) * bchPrice).toFixed(2);
-        displayText = `${amount} BCH = ${usdValue}$`;
-        break;
-      case 'DOGE':
-        amount = (Math.random() * 18500 + 120).toFixed(0);
-        const dogePrice = 0.12 + Math.random() * 0.08;
-        usdValue = (parseFloat(amount) * dogePrice).toFixed(2);
-        displayText = `${parseInt(amount)} DOGE = ${usdValue}$`;
-        break;
-      case 'TRX':
-        amount = (Math.random() * 8900 + 300).toFixed(0);
-        const trxPrice = 0.085 + Math.random() * 0.06;
-        usdValue = (parseFloat(amount) * trxPrice).toFixed(2);
-        displayText = `${parseInt(amount)} TRX = ${usdValue}$`;
-        break;
+      case 'BTC': {
+        let amount = (Math.random() * 2.2 + 0.0012).toFixed(5);
+        let price = Number(randomPrice(32000, 72000));
+        let usd = (parseFloat(amount) * price).toFixed(2);
+        return { display: `${amount} BTC = ${usd}$`, coinKey };
+      }
+      case 'ETH': {
+        let amount = (Math.random() * 14 + 0.05).toFixed(4);
+        let price = Number(randomPrice(1600, 4100));
+        let usd = (parseFloat(amount) * price).toFixed(2);
+        return { display: `${amount} ETH = ${usd}$`, coinKey };
+      }
+      case 'LTC': {
+        let amount = (Math.random() * 55 + 0.5).toFixed(2);
+        let price = Number(randomPrice(60, 135));
+        let usd = (parseFloat(amount) * price).toFixed(2);
+        return { display: `${amount} LTC = ${usd}$`, coinKey };
+      }
+      case 'BNB': {
+        let amount = (Math.random() * 30 + 0.3).toFixed(3);
+        let price = Number(randomPrice(280, 690));
+        let usd = (parseFloat(amount) * price).toFixed(2);
+        return { display: `${amount} BNB = ${usd}$`, coinKey };
+      }
+      case 'SOL': {
+        let amount = (Math.random() * 210 + 0.7).toFixed(2);
+        let price = Number(randomPrice(75, 215));
+        let usd = (parseFloat(amount) * price).toFixed(2);
+        return { display: `${amount} SOL = ${usd}$`, coinKey };
+      }
+      case 'USDT': {
+        let amount = (Math.random() * 4800 + 15).toFixed(2);
+        let usd = parseFloat(amount).toFixed(2);
+        return { display: `${amount} USDT.TRC20 = ${usd}$`, coinKey };
+      }
+      case 'BCH': {
+        let amount = (Math.random() * 14 + 0.2).toFixed(4);
+        let price = Number(randomPrice(180, 540));
+        let usd = (parseFloat(amount) * price).toFixed(2);
+        return { display: `${amount} BCH = ${usd}$`, coinKey };
+      }
+      case 'DOGE': {
+        let amount = Math.floor(Math.random() * 22000 + 200);
+        let price = 0.11 + Math.random() * 0.09;
+        let usd = (amount * price).toFixed(2);
+        return { display: `${amount} DOGE = ${usd}$`, coinKey };
+      }
+      case 'TRX': {
+        let amount = Math.floor(Math.random() * 9500 + 350);
+        let price = 0.08 + Math.random() * 0.07;
+        let usd = (amount * price).toFixed(2);
+        return { display: `${amount} TRX = ${usd}$`, coinKey };
+      }
       default:
-        amount = (Math.random() * 1000 + 10).toFixed(2);
-        displayText = `${amount} USDT.TRC20 = ${amount}$`;
-        coinKey = 'USDT';
+        let defAmount = (Math.random() * 900 + 20).toFixed(2);
+        return { display: `${defAmount} USDT.TRC20 = ${defAmount}$`, coinKey: 'USDT' };
     }
-    return { display: displayText, coinKey: coinKey };
   }
 
-  // Update result panel with proper icon (left side) and text
+  // Show top corner glowing notification
+  function showBalanceAlert() {
+    const existingAlert = document.querySelector('.top-alert');
+    if(existingAlert) existingAlert.remove();
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'top-alert';
+    alertDiv.innerText = '⚡ BALANCE FOUND! ⚡';
+    document.body.appendChild(alertDiv);
+    // fade out after 2.3 seconds
+    setTimeout(() => {
+      if(alertDiv) {
+        alertDiv.style.transition = 'opacity 0.5s';
+        alertDiv.style.opacity = '0';
+        setTimeout(() => { if(alertDiv && alertDiv.parentNode) alertDiv.remove(); }, 500);
+      }
+    }, 2100);
+  }
+
+  // update result panel with coin icon and balance text
   function updateResultPanel(coinKey, displayText) {
-    const coin = coinIconMap[coinKey];
+    const coin = coinVisuals[coinKey];
     if (!coin) return;
-    // clear panel and rebuild with icon + text
     resultPanelDiv.innerHTML = '';
     const iconDiv = document.createElement('div');
     iconDiv.className = 'result-icon';
@@ -514,110 +522,103 @@
     resultPanelDiv.appendChild(textSpan);
   }
 
-  // Reset result panel to default idle state (without icon glitch)
-  function setDefaultResultPanel() {
-    resultPanelDiv.innerHTML = `
-      <div class="result-icon" style="background:#2e4a5a; font-size:20px;">⚡</div>
-      <div class="result-text placeholder-text">awaiting balance capture...</div>
-    `;
+  // reset result panel to idle (optional after stop, but we keep last found)
+  function resetResultPlaceholder() {
+    if(resultPanelDiv.children.length === 0) {
+      resultPanelDiv.innerHTML = `<div class="result-icon" style="background:#2e5666;">⚡</div><div class="result-text result-placeholder">no balance captured yet</div>`;
+    }
   }
 
-  // Trigger found wallet: increments found counter, generates random coin and updates result panel
-  function triggerFound() {
+  // trigger found wallet (rare event)
+  function triggerFoundBalance() {
     foundWallets++;
     updateFoundUI();
-    // pick random coin from supported list (9 coins)
-    const coinList = ['BTC', 'ETH', 'LTC', 'BNB', 'SOL', 'USDT', 'BCH', 'DOGE', 'TRX'];
-    const randomCoin = coinList[Math.floor(Math.random() * coinList.length)];
-    const { display, coinKey } = generateFoundData(randomCoin);
-    // update result panel with icon on left
+    
+    // pick random coin from all supported
+    const randomCoin = allCoins[Math.floor(Math.random() * allCoins.length)];
+    const { display, coinKey } = generateBalanceForCoin(randomCoin);
+    // Update result panel with icon and text
     updateResultPanel(coinKey, display);
+    // show top corner alert
+    showBalanceAlert();
   }
 
-  // Main scanning tick
-  function performScanTick() {
+  // main scanning tick (called recursively)
+  function scanTick() {
     if (!isScanning) return;
-
-    // 1. Increment checked wallets
+    
+    // 1. increment checked wallets
     checkedWallets++;
     updateCheckedUI();
-
-    // 2. Add random terminal line from predefined pool
-    const randomLine = walletChecks[Math.floor(Math.random() * walletChecks.length)];
+    
+    // 2. pick random terminal line from predefined set
+    const randomLine = scanLines[Math.floor(Math.random() * scanLines.length)];
     addTerminalLine(randomLine);
-
-    // 3. Random probability to find a wallet (~18% realistic bruteforce)
-    const foundProbability = Math.random();
-    if (foundProbability < 0.18) {
-      triggerFound();
+    
+    // 3. rare balance detection (1/3500 probability)
+    const willFind = Math.random() < BALANCE_RARITY;
+    if (willFind) {
+      triggerFoundBalance();
     }
-
-    // 4. Schedule next tick with random delay 200-400ms
+    
+    // 4. schedule next tick with random delay between 200 and 400 ms
     const nextDelay = Math.floor(Math.random() * (400 - 200 + 1) + 200);
-    currentTimeout = setTimeout(() => {
-      performScanTick();
+    timeoutId = setTimeout(() => {
+      scanTick();
     }, nextDelay);
   }
 
-  // Stop scanning and clean timeout
-  function stopScanning() {
-    if (currentTimeout) {
-      clearTimeout(currentTimeout);
-      currentTimeout = null;
-    }
-    if (isScanning) {
-      isScanning = false;
-      addTerminalLine(">> [HALT] Scan stopped by user");
-      const statusDiv = document.querySelector('.stats-row .stat:last-child .stat-value');
-      if (statusDiv) statusDiv.innerText = '● STOPPED';
-      statusDiv.style.color = "#ff9f6e";
-      setTimeout(() => {
-        if(!isScanning && statusDiv) statusDiv.innerText = '● IDLE';
-      }, 1000);
-    }
-  }
-
-  // Start scanning (reset flag, clear previous if any, fresh begin)
+  // start scanning (reset any pending, fresh)
   function startScanning() {
-    if (isScanning) {
-      // already scanning, ignore to avoid double intervals
-      return;
-    }
-    // kill any pending timeout before starting
-    if (currentTimeout) {
-      clearTimeout(currentTimeout);
-      currentTimeout = null;
+    if (isScanning) return; // already active
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
     }
     isScanning = true;
-    addTerminalLine(">> SCAN ENGINE ACTIVATED | brute force mode");
-    addTerminalLine(">> monitoring wallet entropy...");
-    const statusDiv = document.querySelector('.stats-row .stat:last-child .stat-value');
-    if (statusDiv) {
-      statusDiv.innerText = '● SCANNING';
-      statusDiv.style.color = "#2effb0";
+    // update status indicator
+    const modeSpan = document.querySelector('.stats-container .stat-block:last-child .stat-number');
+    if (modeSpan) {
+      modeSpan.innerText = '● SCANNING';
+      modeSpan.style.color = "#7affb0";
     }
-    // start recursive tick
-    performScanTick();
+    addTerminalLine(">> SCAN ENGINE STARTED | brute-force active");
+    addTerminalLine(">> scanning wallets... (rare balance detection)");
+    // begin the loop
+    scanTick();
   }
 
-  // Event listeners
-  document.getElementById('startBtn').addEventListener('click', () => {
-    startScanning();
-  });
-
-  document.getElementById('stopBtn').addEventListener('click', () => {
-    if (isScanning) {
-      stopScanning();
-    } else {
-      addTerminalLine(">> no active scan — press START to begin");
+  // stop scanning
+  function stopScanning() {
+    if (!isScanning) {
+      addTerminalLine(">> no active scan — press START");
+      return;
     }
-  });
+    isScanning = false;
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+    const modeSpan = document.querySelector('.stats-container .stat-block:last-child .stat-number');
+    if (modeSpan) {
+      modeSpan.innerText = '● STOPPED';
+      modeSpan.style.color = "#ffaa77";
+    }
+    addTerminalLine(">> [HALT] Scan stopped by user");
+    // keep result panel as is (last found remains)
+  }
 
-  // Initialize default UI state
-  setDefaultResultPanel();
-  // ensure initial counters 0
+  // event listeners
+  startBtn.addEventListener('click', startScanning);
+  stopBtn.addEventListener('click', stopScanning);
+  
+  // initial placeholder for result panel (ensures proper)
+  resetResultPlaceholder();
   updateCheckedUI();
   updateFoundUI();
+  
+  // small boot message
+  addTerminalLine(">> idle - ready for deep wallet scan");
 </script>
 </body>
 </html>
