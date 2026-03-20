@@ -3,92 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Neon Climber Pro</title>
+    <title>Neon Climber - Tap to Jump</title>
     <style>
-        :root {
-            --primary: #00f2ff;
-            --bg: #050a14;
-            --surface: rgba(255, 255, 255, 0.05);
-        }
-
-        body {
-            margin: 0;
-            background-color: var(--bg);
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            touch-action: none;
-        }
-
-        #game-container {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            height: 90vh;
-            background: radial-gradient(circle at top, #1a2a44 0%, #050a14 100%);
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 100px rgba(0,242,255,0.05);
-            border: 1px solid rgba(0,242,255,0.2);
-        }
-
-        canvas {
-            display: block;
-        }
-
-        .hud {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            right: 0;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        .score-box {
-            background: var(--surface);
-            backdrop-filter: blur(10px);
-            padding: 10px 20px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .score-label { font-size: 12px; color: #aaa; text-transform: uppercase; }
-        .score-val { font-size: 24px; font-weight: 800; color: var(--primary); display: block; }
-
-        #start-screen {
-            position: absolute;
-            inset: 0;
-            background: rgba(5, 10, 20, 0.9);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 20;
-            backdrop-filter: blur(5px);
-        }
-
-        .btn-play {
-            background: var(--primary);
-            color: #000;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 0 20px var(--primary);
-            transition: 0.3s;
-        }
-
-        .btn-play:active { transform: scale(0.9); }
+        :root { --primary: #00f2ff; --bg: #050a14; }
+        body { margin: 0; background-color: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; touch-action: none; }
+        #game-container { position: relative; width: 100%; max-width: 400px; height: 90vh; background: radial-gradient(circle at top, #1a2a44 0%, #050a14 100%); border-radius: 24px; overflow: hidden; border: 1px solid rgba(0,242,255,0.2); }
+        canvas { display: block; }
+        .hud { position: absolute; top: 20px; left: 20px; pointer-events: none; z-index: 10; }
+        .score-box { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+        .score-val { font-size: 24px; font-weight: 800; color: var(--primary); }
+        #start-screen { position: absolute; inset: 0; background: rgba(5, 10, 20, 0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20; }
+        .btn-play { background: var(--primary); color: #000; border: none; padding: 15px 40px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 0 20px var(--primary); }
     </style>
 </head>
 <body>
@@ -96,14 +21,13 @@
     <div id="game-container">
         <div class="hud">
             <div class="score-box">
-                <span class="score-label">SCORE</span>
                 <span id="score" class="score-val">0</span>
             </div>
         </div>
 
         <div id="start-screen">
-            <h1 style="color: var(--primary); letter-spacing: 2px;">NEON CLIMBER</h1>
-            <p style="color: #666; margin-bottom: 30px;">Tap to Jump & Climb!</p>
+            <h1 style="color: var(--primary);">NEON JUMP</h1>
+            <p style="color: #666; margin-bottom: 30px;">Tap anywhere to Jump!</p>
             <button class="btn-play" onclick="startGame()">START GAME</button>
         </div>
 
@@ -120,7 +44,6 @@
     let score = 0;
     let cameraY = 0;
 
-    // تنظیم قەبارە
     function resize() {
         canvas.width = document.getElementById('game-container').clientWidth;
         canvas.height = document.getElementById('game-container').clientHeight;
@@ -132,55 +55,43 @@
         y: canvas.height - 100,
         r: 12,
         dy: 0,
-        jump: -12,
-        grav: 0.6,
+        jump: -10, // هێزا بازدانێ
+        grav: 0.4, // کێشانا عەردی (Gravity)
         color: '#00f2ff'
     };
 
     let platforms = [];
     function initPlatforms() {
         platforms = [];
-        platforms.push({x: 0, y: canvas.height - 20, w: canvas.width, h: 20, color: '#1e293b'});
-        for(let i=0; i<8; i++) {
-            addPlatform(canvas.height - (i * 120) - 150);
+        platforms.push({x: 0, y: canvas.height - 20, w: canvas.width, h: 20}); // عەرد
+        for(let i=0; i<6; i++) {
+            addPlatform(canvas.height - (i * 150) - 200);
         }
     }
 
     function addPlatform(y) {
-        const w = 70 + Math.random() * 50;
-        platforms.push({
-            x: Math.random() * (canvas.width - w),
-            y: y,
-            w: w,
-            h: 12,
-            color: '#334155'
-        });
+        const w = 80 + Math.random() * 40;
+        platforms.push({ x: Math.random() * (canvas.width - w), y: y, w: w, h: 12 });
     }
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
         ctx.save();
         ctx.translate(0, cameraY);
 
-        // کیشانا پاترمان
         platforms.forEach(p => {
-            ctx.fillStyle = p.color;
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = p.y < player.y ? 'rgba(0,242,255,0.1)' : 'transparent';
+            ctx.fillStyle = '#334155';
             ctx.beginPath();
             ctx.roundRect(p.x, p.y, p.w, p.h, 6);
             ctx.fill();
         });
 
-        // کیشانا یاریزانی
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 15;
         ctx.shadowColor = player.color;
         ctx.fillStyle = player.color;
         ctx.beginPath();
         ctx.arc(player.x, player.y, player.r, 0, Math.PI*2);
         ctx.fill();
-        
         ctx.restore();
     }
 
@@ -190,24 +101,23 @@
         player.dy += player.grav;
         player.y += player.dy;
 
-        // Collision Logic
+        // Collision (مانەوە ل سەر پاترمێ)
         if(player.dy > 0) {
             platforms.forEach(p => {
                 if(player.x > p.x && player.x < p.x + p.w && 
                    player.y + player.r > p.y && player.y + player.r < p.y + p.h + player.dy) {
-                    player.dy = player.jump;
-                    if(p.y < canvas.height - 20) score++;
+                    player.dy = 0;
+                    player.y = p.y - player.r;
                 }
             });
         }
 
-        // Camera Follow
+        // Camera move
         if(player.y < canvas.height/2 + cameraY) {
             cameraY = canvas.height/2 - player.y;
+            score++;
+            scoreVal.innerText = Math.floor(score/10);
         }
-
-        // Score update
-        scoreVal.innerText = Math.floor(score/5); // کێمەک سادەکرن بۆ سکۆری
 
         // Game Over
         if(player.y > cameraY + canvas.height + 100) {
@@ -215,43 +125,38 @@
             startScreen.style.display = 'flex';
         }
 
-        // Clean & Add platforms
+        // Infinite Platforms
         if(platforms[0].y > cameraY + canvas.height + 100) {
             platforms.shift();
-            addPlatform(platforms[platforms.length-1].y - 120);
+            addPlatform(platforms[platforms.length-1].y - 150);
         }
     }
 
     function loop() {
-        update();
-        draw();
+        update(); draw();
         requestAnimationFrame(loop);
     }
 
+    function handleInput(e) {
+        if(!gameActive) return;
+        player.dy = player.jump; // بازدان ب هەر کلیکەکێ
+        
+        // لڤینا چەپ و ڕاست ب کلیک یان تاتش
+        let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        let rect = canvas.getBoundingClientRect();
+        player.x = clientX - rect.left;
+    }
+
+    window.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e); });
+    window.addEventListener('mousedown', (e) => { handleInput(e); });
+
     function startGame() {
-        score = 0;
-        cameraY = 0;
-        player.x = canvas.width / 2;
-        player.y = canvas.height - 100;
-        player.dy = 0;
+        score = 0; cameraY = 0; scoreVal.innerText = "0";
+        player.x = canvas.width / 2; player.y = canvas.height - 100; player.dy = 0;
         initPlatforms();
         gameActive = true;
         startScreen.style.display = 'none';
     }
-
-    // کۆنترۆل ب مۆبایلێ (Accelerometer یان Touch)
-    window.addEventListener('touchmove', (e) => {
-        if(!gameActive) return;
-        let touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
-        player.x = touchX;
-    });
-
-    // بۆ کومپیوتەرێ (Mouse)
-    window.addEventListener('mousemove', (e) => {
-        if(!gameActive) return;
-        let rect = canvas.getBoundingClientRect();
-        player.x = e.clientX - rect.left;
-    });
 
     initPlatforms();
     loop();
