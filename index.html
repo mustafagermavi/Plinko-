@@ -3,218 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TON APEX MASTERPIECE</title>
+    <title>TON APEX X-PRO</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon: #00f3ff; --gain: #39ff14; --loss: #ff0055; --gold: #fefe33;
+            --neon-blue: #00f3ff;
+            --neon-green: #39ff14;
+            --neon-red: #ff0055;
+            --bg-dark: #020406;
         }
 
-        body, html {
-            margin: 0; padding: 0; background: #020205; color: white;
-            font-family: 'Press Start 2P', cursive; overflow: hidden; height: 100vh;
-        }
-
-        /* 3D Parallax Background */
-        #starfield { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; }
-
-        .app-wrapper {
+        body {
+            margin: 0; background: var(--bg-dark); color: white;
+            font-family: 'Orbitron', sans-serif; overflow: hidden;
             display: flex; flex-direction: column; align-items: center;
-            height: 100vh; padding: 15px; box-sizing: border-box;
-            background: radial-gradient(circle at center, rgba(0, 243, 255, 0.05) 0%, transparent 70%);
         }
 
-        /* The Cyber Console */
-        .console-frame {
-            width: 100%; max-width: 400px; border: 4px solid #1a1a2e;
-            background: rgba(0, 0, 0, 0.9); position: relative;
-            box-shadow: 0 0 40px rgba(0, 243, 255, 0.2), inset 0 0 20px rgba(0, 243, 255, 0.1);
-            border-radius: 5px; overflow: hidden;
+        /* شاشەی سەرەکی وەک داشبۆردی کەشتی ئاسمانی */
+        .dashboard {
+            width: 95%; max-width: 420px; margin-top: 10px;
+            background: rgba(10, 15, 25, 0.8);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 20px; padding: 20px;
+            backdrop-filter: blur(15px); position: relative;
         }
 
-        .crt-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 3px, 2px 100%; pointer-events: none; z-index: 10;
+        /* نرخی گەورە و نەرم */
+        .price-container { text-align: center; margin-bottom: 20px; }
+        #price {
+            font-size: 36px; font-weight: 700; color: var(--neon-blue);
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
         }
 
-        .status-bar {
-            padding: 8px 12px; background: #111; font-size: 7px;
-            display: flex; justify-content: space-between; border-bottom: 2px solid #222;
+        /* چارتێکی زۆر خێرا و پڕۆفیشناڵ */
+        #chartContainer {
+            width: 100%; height: 200px; position: relative;
+            background: linear-gradient(180deg, rgba(0, 243, 255, 0.05) 0%, transparent 100%);
+            border-radius: 10px; overflow: hidden;
+        }
+        canvas#mainChart { width: 100%; height: 100%; image-rendering: auto; }
+
+        /* دوگمە دیزاین کراوەکان (نەک ئیمۆجی) */
+        .trade-actions {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px;
+            width: 95%; max-width: 420px;
         }
 
-        .main-display { padding: 20px 0; text-align: center; position: relative; }
-        #price { font-size: 28px; color: var(--gold); text-shadow: 0 0 15px var(--gold); letter-spacing: -2px; }
-
-        canvas#tradeCanvas { width: 100%; height: 180px; image-rendering: pixelated; }
-
-        /* Pro Controls */
-        .button-deck {
-            width: 100%; max-width: 400px; margin-top: 20px;
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+        .btn-pro {
+            height: 65px; border: none; border-radius: 12px;
+            font-family: 'Orbitron', sans-serif; font-weight: 700;
+            color: white; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; gap: 10px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase; letter-spacing: 2px;
         }
 
-        .input-wrap {
-            grid-column: span 2; position: relative; background: #000;
-            border: 2px solid #333; padding: 10px;
+        .btn-up { 
+            background: linear-gradient(135deg, #064e3b 0%, #0ecb81 100%);
+            box-shadow: 0 0 15px rgba(14, 203, 129, 0.3);
+            border-bottom: 4px solid #053326;
+        }
+        .btn-down { 
+            background: linear-gradient(135deg, #7f1d1d 0%, #f6465d 100%);
+            box-shadow: 0 0 15px rgba(246, 70, 93, 0.3);
+            border-bottom: 4px solid #4a1111;
         }
 
-        input {
-            width: 100%; background: transparent; border: none; color: var(--gain);
-            font-family: 'Press Start 2P'; font-size: 16px; text-align: center; outline: none;
-        }
+        .btn-pro:active { transform: translateY(4px); box-shadow: none; }
 
-        .apex-btn {
-            height: 70px; border: none; font-family: 'Press Start 2P'; font-size: 12px;
-            color: white; cursor: pointer; position: relative; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
-            transition: 0.1s;
-        }
-        .btn-up { background: linear-gradient(45deg, #064e3b, #0ecb81); border-right: 5px solid #39ff14; }
-        .btn-down { background: linear-gradient(45deg, #7f1d1d, #f6465d); border-left: 5px solid #ff0055; }
-        .apex-btn:active { filter: brightness(1.5); transform: scale(0.98); }
+        /* ئایکۆنی پڕۆفیشناڵ دروستکراو بە CSS */
+        .icon-bull { width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 12px solid white; }
+        .icon-bear { width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 12px solid white; }
 
-        .whale-feed {
-            width: 100%; font-size: 7px; color: var(--neon); margin-top: 15px;
-            height: 40px; border-left: 2px solid var(--neon); padding-left: 10px;
-            display: flex; align-items: center; opacity: 0.7;
+        /* شریتی زانیاری ژێرەوە */
+        .info-bar {
+            width: 100%; display: flex; justify-content: space-between;
+            padding: 10px 20px; font-size: 10px; color: #555;
+            border-top: 1px solid #111; margin-top: auto;
         }
     </style>
 </head>
 <body>
 
-<canvas id="starfield"></canvas>
-<div class="app-wrapper">
-    
-    <div class="console-frame">
-        <div class="crt-overlay"></div>
-        <div class="status-bar">
-            <span id="user-tag">SYSTEM: READY</span>
-            <span id="balance-val" style="color: var(--neon);">CREDITS: 1000.00</span>
-        </div>
-
-        <div class="main-display">
-            <div style="font-size: 8px; color: #555; margin-bottom: 5px;">TON/USDT REALTIME</div>
-            <div id="price">FETCHING...</div>
-        </div>
-
-        <canvas id="tradeCanvas"></canvas>
-        
-        <div class="whale-feed" id="whale-log">
-            > INITIALIZING NEURAL NETWORK...
-        </div>
+<div class="dashboard">
+    <div class="price-container">
+        <div style="font-size: 10px; color: #444; margin-bottom: 5px;">TON NETWORK / REALTIME FEED</div>
+        <div id="price">0.0000</div>
     </div>
 
-    <div class="button-deck">
-        <div class="input-wrap">
-            <div style="font-size: 6px; color: #444; position: absolute; top: 2px; left: 5px;">BET AMOUNT</div>
-            <input type="number" id="betAmt" value="100">
-        </div>
-        <button class="apex-btn btn-up" onclick="execute('up')">BULLISH</button>
-        <button class="apex-btn btn-down" onclick="execute('down')">BEARISH</button>
+    <div id="chartContainer">
+        <canvas id="mainChart"></canvas>
     </div>
 
+    <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+        <span style="font-size: 12px; color: #888;">BALANCE:</span>
+        <span id="balance" style="color: var(--neon-blue); font-weight: bold;">1000.00 PTS</span>
+    </div>
+</div>
+
+<div class="trade-actions">
+    <button class="btn-pro btn-up" onclick="handleTrade('up')">
+        <div class="icon-bull"></div> BUY
+    </button>
+    <button class="btn-pro btn-down" onclick="handleTrade('down')">
+        SELL <div class="icon-bear"></div>
+    </button>
+</div>
+
+<div class="info-bar">
+    <span>LATENCY: 14MS</span>
+    <span>ENGINE: APEX-X1</span>
+    <span>STATUS: SECURE</span>
 </div>
 
 <script>
     const tg = window.Telegram.WebApp;
     tg.ready(); tg.expand();
 
-    // 1. 3D Parallax Starfield
-    const sCanvas = document.getElementById('starfield');
-    const sCtx = sCanvas.getContext('2d');
-    let stars = [];
-
-    function initStars() {
-        sCanvas.width = window.innerWidth; sCanvas.height = window.innerHeight;
-        stars = Array(150).fill().map(() => ({
-            x: Math.random() * sCanvas.width, y: Math.random() * sCanvas.height,
-            z: Math.random() * sCanvas.width, s: Math.random() * 2
-        }));
-    }
-
-    function drawStars() {
-        sCtx.fillStyle = '#020205'; sCtx.fillRect(0,0,sCanvas.width,sCanvas.height);
-        stars.forEach(st => {
-            st.z -= 2; if(st.z <= 0) st.z = sCanvas.width;
-            let k = 128 / st.z;
-            let px = (st.x - sCanvas.width/2) * k + sCanvas.width/2;
-            let py = (st.y - sCanvas.height/2) * k + sCanvas.height/2;
-            if(px>=0 && px<=sCanvas.width && py>=0 && py<=sCanvas.height) {
-                let size = (1 - st.z/sCanvas.width) * 3;
-                sCtx.fillStyle = `rgba(255,255,255,${1 - st.z/sCanvas.width})`;
-                sCtx.fillRect(px, py, size, size);
-            }
-        });
-        requestAnimationFrame(drawStars);
-    }
-
-    // 2. Realtime Engine
-    let priceData = Array(60).fill(0);
-    let curPrice = 0;
-    let entryPrice = 0;
+    let balance = 1000.00;
+    let prices = Array(100).fill(0);
+    let currentPrice = 0;
     let isLive = false;
-    const tCanvas = document.getElementById('tradeCanvas');
-    const tCtx = tCanvas.getContext('2d');
-    tCanvas.width = 400; tCanvas.height = 200;
 
-    async function sync() {
+    const canvas = document.getElementById('mainChart');
+    const ctx = canvas.getContext('2d');
+
+    // سیستەمی نوێکردنەوەی نرخ (بە خێرایی و بە بێ دابڕان)
+    async function updateData() {
         try {
-            const r = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=TONUSDT');
-            const d = await r.json();
-            let p = parseFloat(d.price);
-            if(curPrice === 0) priceData.fill(p);
-            curPrice = p; priceData.push(p); priceData.shift();
-            document.getElementById('price').innerText = curPrice.toFixed(4);
-            renderChart();
+            const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=TONUSDT');
+            const data = await res.json();
+            let p = parseFloat(data.price);
+            
+            if(currentPrice === 0) prices.fill(p);
+            currentPrice = p;
+            prices.push(p);
+            prices.shift();
+            
+            document.getElementById('price').innerText = currentPrice.toFixed(4);
         } catch(e) {}
     }
 
-    function renderChart() {
-        tCtx.clearRect(0,0,400,200);
-        tCtx.strokeStyle = 'rgba(0, 243, 255, 0.1)'; tCtx.lineWidth = 1;
-        for(let i=0; i<400; i+=20) { tCtx.beginPath(); tCtx.moveTo(i,0); tCtx.lineTo(i,200); tCtx.stroke(); }
+    // ئەنیمەیشنی چارت (٦٠ فریم لە چرکەیەکدا بۆ ئەوەی خاو نەبێت)
+    function animate() {
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = canvas.offsetHeight * 2;
+        ctx.scale(2, 2);
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        let min = Math.min(...prices);
+        let max = Math.max(...prices);
+        let range = max - min || 0.1;
 
-        tCtx.shadowBlur = 15;
-        tCtx.shadowColor = isLive ? (curPrice >= entryPrice ? "#39ff14" : "#ff0055") : "#00f3ff";
-        tCtx.strokeStyle = tCtx.shadowColor; tCtx.lineWidth = 4;
-        tCtx.beginPath();
-        let min = Math.min(...priceData), max = Math.max(...priceData);
-        priceData.forEach((p, i) => {
-            let x = (i / 59) * 400;
-            let y = 200 - ((p-min)/(max-min || 1)) * 200;
-            if(i===0) tCtx.moveTo(x,y); else tCtx.lineTo(x,y);
+        // کێشانی سێبەری ژێر گرافەکە (Glow Area)
+        let gradient = ctx.createLinearGradient(0, 0, 0, 180);
+        gradient.addColorStop(0, 'rgba(0, 243, 255, 0.2)');
+        gradient.addColorStop(1, 'transparent');
+        
+        ctx.beginPath();
+        ctx.fillStyle = gradient;
+        prices.forEach((p, i) => {
+            let x = (i / 99) * canvas.offsetWidth;
+            let y = 180 - ((p - min) / range) * 150;
+            if(i === 0) ctx.moveTo(x, 180);
+            ctx.lineTo(x, y);
+            if(i === 99) ctx.lineTo(x, 180);
         });
-        tCtx.stroke();
-        tCtx.shadowBlur = 0;
+        ctx.fill();
+
+        // کێشانی هێڵی سەرەکی
+        ctx.beginPath();
+        ctx.strokeStyle = varColor();
+        ctx.lineWidth = 3;
+        ctx.lineJoin = 'round';
+        prices.forEach((p, i) => {
+            let x = (i / 99) * canvas.offsetWidth;
+            let y = 180 - ((p - min) / range) * 150;
+            if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        requestAnimationFrame(animate);
     }
 
-    function execute(dir) {
-        let amt = parseFloat(document.getElementById('betAmt').value);
-        isLive = true; entryPrice = curPrice;
-        tg.HapticFeedback.notificationOccurred('warning');
-        document.getElementById('whale-log').innerText = `> EXECUTING ${dir.toUpperCase()} ORDER...`;
+    function varColor() {
+        return isLive ? (currentPrice > entryPrice ? "#39ff14" : "#ff0055") : "#00f3ff";
+    }
+
+    let entryPrice = 0;
+    function handleTrade(dir) {
+        if(isLive) return;
+        isLive = true;
+        entryPrice = currentPrice;
+        tg.HapticFeedback.impactOccurred('heavy');
         
         setTimeout(() => {
-            let win = (dir==='up' && curPrice > entryPrice) || (dir==='down' && curPrice < entryPrice);
+            let win = (dir === 'up' && currentPrice > entryPrice) || (dir === 'down' && currentPrice < entryPrice);
             if(win) {
+                balance += 50; 
                 tg.HapticFeedback.notificationOccurred('success');
-                document.getElementById('whale-log').innerText = `> ANALYSIS: PROFIT DETECTED.`;
             } else {
+                balance -= 50;
                 tg.HapticFeedback.notificationOccurred('error');
-                document.getElementById('whale-log').innerText = `> ANALYSIS: LIQUIDATION EVENT.`;
             }
+            document.getElementById('balance').innerText = balance.toFixed(2) + " PTS";
             isLive = false;
-        }, 4000);
+        }, 3000);
     }
 
-    initStars(); drawStars();
-    setInterval(sync, 1000);
-    setInterval(() => {
-        const msgs = ["> WHALE ALERT: 1M TON MOVED", "> MONITORING LIQUIDITY...", "> NETWORK LATENCY: 12ms", "> APEX PROTOCOL ACTIVE"];
-        document.getElementById('whale-log').innerText = msgs[Math.floor(Math.random()*msgs.length)];
-    }, 5000);
+    setInterval(updateData, 1000);
+    animate();
 </script>
+
 </body>
 </html>
