@@ -8,82 +8,105 @@
         /* ستایلێ گشتی یێ شاشەیێ */
         body {
             margin: 0;
-            background-color: #0d1117;
+            background-color: #0d1117; /* ڕەنگێ تاریکێ تێلگرام */
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Courier New', Courier, monospace; /* فۆنتەکێ وەک پیکسڵ */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             overflow: hidden;
+            /* بۆ ئەوەی پیکسڵ نەرم نەبن و تیژ بمێنن */
+            image-rendering: pixelated; 
         }
 
-        /* چوارچۆڤێ یاریێ ب ستایلێ Glassmorphism */
+        /* چوارچۆڤێ یاریێ */
         .game-container {
             width: 90%;
             max-width: 400px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid #30363d;
-            border-radius: 20px;
+            background: #161b22;
+            border: 4px solid #30363d; /* چوارچۆڤەکێ ستوور */
+            border-radius: 0px; /* پیکسڵ پێدڤی ب گۆشەیێن تیژە */
             padding: 20px;
             text-align: center;
-            backdrop-filter: blur(10px);
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.5); /* سێبەرا پیکسڵی */
         }
 
-        /* نیشاندانا ژمارا قازانجی (Multiplier) */
-        #multiplier {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #00d2ff;
-            margin: 20px 0;
-            text-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
-        }
-
-        /* وێنەیێ پیکسڵێ (موشەک) */
-        .pixel-rocket {
-            font-size: 50px;
-            transition: transform 0.1s;
-            display: inline-block;
+        /* جهێ وێنەیێ موشەکێ */
+        .stage {
+            height: 150px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
             margin-bottom: 20px;
+            position: relative;
+            background-color: #090c10;
+            border: 2px solid #30363d;
         }
 
-        /* دوگمەیێن یاریێ */
+        /* وێنەیێ موشەکێ ب ستایلێ Pixel Art */
+        #rocket-img {
+            width: 50px; /* قەبارێ وێنەی */
+            height: auto;
+            image-rendering: pixelated; /* گرنگترین بەش بۆ پاراستنا ستایلێ پیکسڵ */
+            transition: transform 0.1s linear;
+        }
+
+        /* نیشاندانا ژمارا قازانجی */
+        #multiplier {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #00ff00; /* ڕەنگێ سەوزێ کلاسیک یێ کۆمپیوتەری */
+            margin: 10px 0;
+            text-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+        }
+
+        /* دوگمەیێن پیکسڵی */
         .btn {
-            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
-            border: none;
+            background-color: #238636; /* سەوزێ تێلگرام */
+            border: 4px solid #104e1d;
+            border-bottom: 8px solid #104e1d;
             padding: 15px 30px;
             color: white;
             font-size: 1.2rem;
-            border-radius: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
             cursor: pointer;
             width: 100%;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+            text-transform: uppercase;
+        }
+
+        .btn:active {
+            border-bottom: 4px solid #104e1d;
+            transform: translateY(4px);
         }
 
         .btn:disabled {
-            background: #444;
-            box-shadow: none;
+            background-color: #444;
+            border-color: #222;
+            cursor: not-allowed;
         }
 
         #status {
             margin-top: 15px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #8b949e;
+            min-height: 1.2rem;
         }
     </style>
 </head>
 <body>
 
     <div class="game-container">
-        <div id="status">ئامادەیە بۆ دەستپێکرن...</div>
-        
-        <div id="rocket" class="pixel-rocket">🚀</div>
+        <div class="stage">
+            <img id="rocket-img" src="https://cdna.artstation.com/p/assets/images/images/019/292/136/original/g6-4-1.gif?1562846985" alt="Pixel Rocket">
+        </div>
         
         <div id="multiplier">1.00x</div>
         
         <button id="actionBtn" class="btn" onclick="startGame()">دەستپێبکە (BET)</button>
+        <div id="status">ئامادەیە بۆ چاندنێ...</div>
     </div>
 
     <script>
@@ -92,8 +115,12 @@
         let gameInterval;
         let crashPoint;
 
+        // وێنەیێن جودا بۆ حالەتێن جودا
+        const rocketGif = "https://cdna.artstation.com/p/assets/images/images/019/292/136/original/g6-4-1.gif?1562846985";
+        const explosionGif = "https://i.gifer.com/origin/d7/d7ac6537774061327f300c14441405b0_w200.gif";
+
         const multiplierEl = document.getElementById('multiplier');
-        const rocketEl = document.getElementById('rocket');
+        const rocketImgEl = document.getElementById('rocket-img');
         const actionBtn = document.getElementById('actionBtn');
         const statusEl = document.getElementById('status');
 
@@ -108,19 +135,27 @@
             isRunning = true;
             multiplier = 1.00;
             multiplierEl.innerText = "1.00x";
-            multiplierEl.style.color = "#00d2ff";
-            statusEl.innerText = "یاری یا کار دکەت...";
+            multiplierEl.style.color = "#00ff00";
+            statusEl.innerText = "یا بلند دبیت...";
             actionBtn.innerText = "CASH OUT";
+            actionBtn.style.backgroundColor = "#d29922"; // ڕەنگێ پرتەقاڵی بۆ کاش ئاوت
             
-            // دیارکرنا خاڵا تەقینێ ب شێوەیەکێ هەرەمەکی (Random)
-            crashPoint = (Math.random() * 5 + 1.1).toFixed(2);
+            // دانانا وێنەیێ موشەکێ کو بلند دبیت
+            rocketImgEl.src = rocketGif;
+            rocketImgEl.style.transform = "translateY(0px)";
+
+            // دیارکرنا خاڵا تەقینێ ب شێوەیەکێ هەرەمەکی
+            crashPoint = (Math.random() * 4 + 1.1).toFixed(2);
 
             gameInterval = setInterval(() => {
-                multiplier += 0.02;
+                multiplier += 0.03;
                 multiplierEl.innerText = multiplier.toFixed(2) + "x";
                 
-                // لێرەدا وێنەی لۆجیکێ لەرینێ (Animation) ددەینێ
-                rocketEl.style.transform = `translateY(-${(multiplier - 1) * 20}px) rotate(${(Math.random() - 0.5) * 5}deg)`;
+                // لێدان (Animation) یا موشەکێ بەرەف سەر
+                let height = (multiplier - 1) * 25; // چەند مڵتیپلایەر زێدە بیت، بلندتر لێ دهێت
+                if (height > 110) height = 110; // سنووردارکرن کو ژ کەنترۆلی دەرنەکەڤیت
+                
+                rocketImgEl.style.transform = `translateY(-${height}px) translateX(${(Math.random() - 0.5) * 2}px)`;
 
                 if (multiplier >= crashPoint) {
                     stopGame(true);
@@ -134,19 +169,19 @@
 
             if (isCrash) {
                 multiplierEl.style.color = "#ff4b2b";
-                statusEl.innerText = "موشەک تەقیا! تە هەمی دۆراندن.";
-                rocketEl.innerText = "💥";
+                statusEl.innerText = `💥 تەقیا ل ${multiplier.toFixed(2)}x`;
+                // گوهۆڕینا وێنەی بۆ تەقینەکا پیکسڵی
+                rocketImgEl.src = explosionGif;
+                rocketImgEl.style.transform = "translateY(-50px) scale(1.5)";
             } else {
-                multiplierEl.style.color = "#4ca1af";
-                statusEl.innerText = `تە قازانج کر! مڵتیپلایەر: ${multiplier.toFixed(2)}x`;
+                multiplierEl.style.color = "#00d2ff";
+                statusEl.innerText = `✅ تە قازانج کر! پیرۆزە.`;
+                // موشەک یا بەردەوامە ل سەر بلندبوونێ ئەگەر تە کاش ئاوت کر
+                rocketImgEl.style.transform = "translateY(-150px)";
             }
 
             actionBtn.innerText = "دووبارە هەوڵبدە";
-            
-            // زڤڕاندنا ئایبۆنێ پشتی ٢ چرکەیان
-            setTimeout(() => {
-                if (!isRunning) rocketEl.innerText = "🚀";
-            }, 2000);
+            actionBtn.style.backgroundColor = "#238636";
         }
     </script>
 </body>
