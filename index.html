@@ -3,240 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Crypto Hunter Mobile</title>
+    <title>Quantum Bento Hunter</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
-            --bg: #000000;
-            --primary: #00f2ff;
-            --success: #00ff9d;
-            --danger: #ff0055;
-            --card-bg: rgba(20, 20, 20, 0.9);
-            --border: rgba(0, 242, 255, 0.2);
+            --bg: #02040a;
+            --accent: #00f2ff;
+            --card-glass: rgba(15, 20, 30, 0.7);
+            --border: rgba(255, 255, 255, 0.05);
+            --success: #00ffa3;
         }
 
         body {
             background-color: var(--bg);
-            color: #fff;
-            font-family: 'JetBrains Mono', monospace;
+            background-image: radial-gradient(circle at 50% 0%, #111827 0%, #02040a 100%);
+            color: #e5e7eb;
+            font-family: 'Space Grotesk', sans-serif;
             margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background-image: radial-gradient(circle at 50% -20%, #1a1a2e, #000);
-        }
-
-        /* Header Area */
-        .header {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .status-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(0, 242, 255, 0.1);
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 10px;
-            color: var(--primary);
-            border: 1px solid var(--border);
-        }
-
-        .pulse {
-            width: 6px; height: 6px;
-            background: var(--primary);
-            border-radius: 50%;
-            animation: pulse-kf 1.5s infinite;
-        }
-
-        @keyframes pulse-kf {
-            0% { box-shadow: 0 0 0 0px rgba(0, 242, 255, 0.7); }
-            100% { box-shadow: 0 0 0 10px rgba(0, 242, 255, 0); }
-        }
-
-        /* Main Content - Stats */
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .stats-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            text-align: center;
-        }
-
-        .stat-label { font-size: 10px; color: #666; margin-bottom: 5px; }
-        .stat-value { font-size: 18px; font-weight: bold; color: var(--primary); }
-
-        /* Terminal Style Console */
-        .console {
-            background: #050505;
-            border: 1px solid var(--border);
-            border-radius: 15px;
             padding: 15px;
-            height: 150px;
+            min-height: 100vh;
+        }
+
+        /* Bento Grid Container */
+        .bento-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-auto-rows: minmax(100px, auto);
+            gap: 12px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Base Bento Card Style */
+        .bento-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Large Card for Terminal */
+        .card-large { grid-column: span 2; height: 180px; }
+        
+        /* Stats Cards */
+        .stat-card { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .stat-num { font-family: 'JetBrains Mono'; font-size: 22px; color: var(--accent); font-weight: bold; }
+        .stat-label { font-size: 10px; color: #6b7280; letter-spacing: 1px; }
+
+        /* Terminal Styling */
+        .terminal-box {
+            font-family: 'JetBrains Mono';
             font-size: 11px;
             color: var(--success);
-            overflow: hidden;
-            box-shadow: inset 0 0 15px rgba(0, 255, 157, 0.05);
+            height: 100%;
+            overflow-y: hidden;
+            line-height: 1.5;
         }
 
-        /* 8 Icons Grid - Optimized for Mobile */
-        .grid-8 {
+        /* Coin Grid in Bento */
+        .coin-bento-grid {
+            grid-column: span 2;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 10px;
+            background: rgba(255,255,255,0.02);
+            padding: 15px;
+            border-radius: 28px;
+            border: 1px dashed var(--border);
         }
 
-        .coin-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 5px;
+        .coin-icon {
+            aspect-ratio: 1;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 8px;
-            transition: 0.2s;
+            justify-content: center;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            border: 1px solid transparent;
+            transition: 0.3s;
         }
 
-        .coin-btn.active {
-            border-color: var(--primary);
+        .coin-icon.active {
+            border-color: var(--accent);
             background: rgba(0, 242, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
         }
 
-        .coin-btn svg { width: 24px; height: 24px; }
+        .coin-icon svg { width: 28px; height: 28px; }
 
-        /* Result Popup */
-        #popup {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            width: 85%;
-            background: #000;
-            border: 2px solid var(--success);
-            border-radius: 25px;
-            padding: 25px;
-            z-index: 100;
-            text-align: center;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        #popup.show { transform: translate(-50%, -50%) scale(1); }
-
-        /* Sticky Action Button */
-        .action-area {
-            padding: 20px;
-            background: linear-gradient(to top, #000, transparent);
+        /* Scanning Animation */
+        .scan-line {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            animation: scan-move 3s linear infinite;
+            display: none;
         }
 
+        @keyframes scan-move {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        /* Action Button */
         .launch-btn {
-            width: 100%;
-            padding: 18px;
-            border-radius: 50px;
-            border: none;
-            background: var(--primary);
+            grid-column: span 2;
+            background: #fff;
             color: #000;
-            font-weight: bold;
+            border: none;
+            padding: 20px;
+            border-radius: 24px;
+            font-weight: 700;
             font-size: 16px;
-            letter-spacing: 2px;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+            margin-top: 10px;
+            cursor: pointer;
+            transition: 0.3s;
         }
 
-        .launch-btn:active { transform: scale(0.95); opacity: 0.8; }
+        .launch-btn:active { transform: scale(0.96); }
+
+        /* Result Modal */
+        #result-modal {
+            position: fixed;
+            bottom: -100%; left: 0;
+            width: 100%; height: 60%;
+            background: #0a0a0a;
+            border-top: 2px solid var(--accent);
+            border-radius: 40px 40px 0 0;
+            z-index: 1000;
+            padding: 30px;
+            box-sizing: border-box;
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+
+        #result-modal.open { bottom: 0; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="status-pill">
-            <div class="pulse"></div>
-            QUANTUM LINK: ACTIVE
+<div class="bento-container">
+    <div class="bento-card card-large" style="height: auto; text-align: center;">
+        <h2 style="margin:0; font-size: 18px; letter-spacing: 2px;">QUANTUM <span style="color:var(--accent)">HUNTER</span></h2>
+        <p style="font-size: 10px; color: #6b7280; margin-top: 5px;">BENTO EDITION v3.0</p>
+    </div>
+
+    <div class="bento-card stat-card">
+        <span class="stat-num" id="checked">0</span>
+        <span class="stat-label">SCANNING</span>
+    </div>
+    <div class="bento-card stat-card">
+        <span class="stat-num" id="found" style="color:#ff0055">0</span>
+        <span class="stat-label">RESULTS</span>
+    </div>
+
+    <div class="bento-card card-large">
+        <div class="scan-line" id="scanner"></div>
+        <div class="terminal-box" id="log">
+            > Ready for neural link...<br>
+            > Select assets and execute.
         </div>
     </div>
 
-    <div class="main-content">
-        <div class="stats-card">
-            <div>
-                <div class="stat-label">CHECKED</div>
-                <div class="stat-value" id="count">0</div>
-            </div>
-            <div style="border-left: 1px solid var(--border);">
-                <div class="stat-label">FOUND</div>
-                <div class="stat-value" id="found-num" style="color: var(--danger);">0</div>
-            </div>
-        </div>
-
-        <div class="console" id="term">
-            > SYSTEM READY...<br>
-            > STANDBY FOR COMMAND...
-        </div>
-
-        <div class="grid-8">
-            <div class="coin-btn active"><svg viewBox="0 0 32 32"><path fill="#F7931A" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M23.189 14.022c.336-2.247-1.374-3.455-3.712-4.26l.758-3.04-1.85-.461-.738 2.961c-.486-.121-.984-.236-1.48-.349l.744-2.984-1.85-.461-.758 3.038c-.403-.092-.802-.181-1.189-.275l.001-.005-2.552-.637-.492 1.976s1.373.315 1.344.334c.75.187.885.684.862 1.078l-.864 3.464c.051.013.118.032.191.061l-.193-.048-1.21 4.857c-.092.23-.326.575-.85.445.02.03-1.344-.334-1.344-.334l-.918 2.116 2.408.6c.447.112.886.228 1.319.336l-.768 3.085 1.849.461.758-3.041c.504.137 1.0.264 1.489.385l-.756 3.033 1.85.461.767-3.076c3.155.597 5.531.356 6.53-2.497.804-2.296-.04-3.621-1.698-4.485 1.206-.279 2.114-1.074 2.357-2.713zm-4.215 5.923c-.572 2.298-4.439 1.056-5.694.744l1.016-4.075c1.255.313 5.27.931 4.678 3.331zm.573-5.955c-.521 2.088-3.743 1.028-4.788.769l.922-3.698c1.045.26 4.398.745 3.866 2.929z"/></svg></div>
-            <div class="coin-btn active"><svg viewBox="0 0 32 32"><path fill="#627EEA" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" fill-opacity=".602" d="M16.498 4v8.87l7.497 3.35z"/><path fill="#FFF" d="M16.498 4L9 16.22l7.498-3.35z"/></svg></div>
-            <div class="coin-btn active"><svg viewBox="0 0 32 32"><path fill="#26A17B" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M17.922 17.383v-.002c-.017.008-.67.318-1.922.318s-1.905-.31-1.922-.318"/></svg></div>
-            <div class="coin-btn active"><svg viewBox="0 0 32 32"><path fill="#F3BA2F" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M12.116 14.404L16 10.52l3.886 3.886"/></svg></div>
-            <div class="coin-btn active"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#000"/><path fill="#00FFA3" d="M7.525 21.056l2.366-2.4c.36-.36.85-.563 1.36-.563"/></svg></div>
-            <div class="coin-btn active"><svg viewBox="0 0 32 32"><path fill="#0088CC" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M16 23.5l-8.5-7.5h17z"/></svg></div>
-            <div class="coin-btn active"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#E44033"/><path fill="#FFF" d="M21 10h-10v2h10z"/></svg></div>
-            <div class="coin-btn active"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#1C1C1C"/><path fill="#FFF" d="M16 8l-8 8 8 8 8-8-8-8z"/></svg></div>
-        </div>
+    <div class="coin-bento-grid">
+        <div class="coin-icon active"><svg viewBox="0 0 32 32"><path fill="#F7931A" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M23.189 14.022c.336-2.247-1.374-3.455-3.712-4.26l.758-3.04-1.85-.461-.738 2.961c-.486-.121-.984-.236-1.48-.349l.744-2.984-1.85-.461-.758 3.038c-.403-.092-.802-.181-1.189-.275l.001-.005-2.552-.637-.492 1.976s1.373.315 1.344.334c.75.187.885.684.862 1.078l-.864 3.464c.051.013.118.032.191.061l-.193-.048-1.21 4.857c-.092.23-.326.575-.85.445.02.03-1.344-.334-1.344-.334l-.918 2.116 2.408.6c.447.112.886.228 1.319.336l-.768 3.085 1.849.461.758-3.041c.504.137 1.0.264 1.489.385l-.756 3.033 1.85.461.767-3.076c3.155.597 5.531.356 6.53-2.497.804-2.296-.04-3.621-1.698-4.485 1.206-.279 2.114-1.074 2.357-2.713zm-4.215 5.923c-.572 2.298-4.439 1.056-5.694.744l1.016-4.075c1.255.313 5.27.931 4.678 3.331zm.573-5.955c-.521 2.088-3.743 1.028-4.788.769l.922-3.698c1.045.26 4.398.745 3.866 2.929z"/></svg></div>
+        <div class="coin-icon active"><svg viewBox="0 0 32 32"><path fill="#627EEA" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" fill-opacity=".602" d="M16.498 4v8.87l7.497 3.35z"/><path fill="#FFF" d="M16.498 4L9 16.22l7.498-3.35z"/></svg></div>
+        <div class="coin-icon active"><svg viewBox="0 0 32 32"><path fill="#0088CC" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M16 23.5l-8.5-7.5h17z"/></svg></div>
+        <div class="coin-icon active"><svg viewBox="0 0 32 32"><path fill="#F3BA2F" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M12.116 14.404L16 10.52l3.886 3.886"/></svg></div>
+        <div class="coin-icon active"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#000"/><path fill="#00FFA3" d="M7.525 21.056l2.366-2.4c.36-.36.85-.563 1.36-.563"/></svg></div>
+        <div class="coin-icon active"><svg viewBox="0 0 32 32"><path fill="#26A17B" d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16z"/><path fill="#FFF" d="M17.922 17.383v-.002c-.017.008-.67.318-1.922.318"/></svg></div>
+        <div class="coin-icon active"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#E44033"/><path fill="#FFF" d="M21 10h-10v2h10z"/></svg></div>
+        <div class="coin-icon active"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#1C1C1C"/><path fill="#FFF" d="M16 8l-8 8 8 8 8-8-8-8z"/></svg></div>
     </div>
 
-    <div id="popup">
-        <h2 style="color: var(--success); margin-bottom: 10px;">MATCH FOUND!</h2>
-        <div style="background: #111; padding: 15px; border-radius: 12px; font-size: 11px; margin-bottom: 20px; line-height: 1.6;">
-            solar energy ocean planet mountain river forest silver golden shadow crystal light
-        </div>
-        <button onclick="document.getElementById('popup').classList.remove('show')" style="background: var(--success); border: none; padding: 10px 30px; border-radius: 10px; font-weight: bold;">CLOSE</button>
+    <button class="launch-btn" onclick="startProcess()">INITIALIZE PROTOCOL</button>
+</div>
+
+<div id="result-modal">
+    <div style="width: 50px; height: 5px; background: #333; border-radius: 10px; margin: 0 auto 20px;"></div>
+    <h2 style="color: var(--success); margin: 0;">DATA EXTRACTED</h2>
+    <p style="color: #666; font-size: 12px;">Private Key Match Found</p>
+    <div style="background: rgba(0, 255, 163, 0.05); border: 1px dashed var(--success); padding: 20px; border-radius: 20px; margin: 25px 0; font-family: 'JetBrains Mono'; font-size: 13px; color: var(--success);">
+        ocean-spirit-crypto-blue-whale-lens-alpha-gamma-delta-omega-zeta-beta
     </div>
+    <button onclick="location.reload()" style="background: var(--success); color: #000; border: none; padding: 15px 40px; border-radius: 15px; font-weight: bold; width: 100%;">ACKNOWLEDGE</button>
+</div>
 
-    <div class="action-area">
-        <button class="launch-btn" onclick="runMobileScan()">START SCANNING</button>
-    </div>
+<script>
+    function startProcess() {
+        const log = document.getElementById('log');
+        const count = document.getElementById('checked');
+        const scanner = document.getElementById('scanner');
+        const modal = document.getElementById('result-modal');
+        let c = 0;
 
-    <script>
-        function runMobileScan() {
-            const term = document.getElementById('term');
-            const countEl = document.getElementById('count');
-            const foundEl = document.getElementById('found-num');
-            const popup = document.getElementById('popup');
-            let c = 0;
+        scanner.style.display = 'block';
+        log.innerHTML = "> Scanning memory blocks...<br>";
 
-            const timer = setInterval(() => {
-                c += Math.floor(Math.random() * 80);
-                countEl.innerText = c.toLocaleString();
+        const run = setInterval(() => {
+            c += Math.floor(Math.random() * 120);
+            count.innerText = c.toLocaleString();
 
-                const addr = "0x" + Math.random().toString(16).slice(2, 10).toUpperCase();
-                const div = document.createElement('div');
-                div.innerHTML = `> SCAN: ${addr} <span style="color:var(--danger)">FAIL</span>`;
-                term.appendChild(div);
+            const hex = Math.random().toString(16).slice(2, 12).toUpperCase();
+            const div = document.createElement('div');
+            div.innerHTML = `> HASH: 0x${hex}... <span style="color:#ff0055">SKIP</span>`;
+            log.appendChild(div);
 
-                if(term.childNodes.length > 8) term.removeChild(term.firstChild);
-                term.scrollTop = term.scrollHeight;
+            if(log.childNodes.length > 8) log.removeChild(log.firstChild);
+            
+            if(c > 12000 && Math.random() > 0.98) {
+                clearInterval(run);
+                document.getElementById('found').innerText = "1";
+                modal.classList.add('open');
+            }
+        }, 50);
+    }
+</script>
 
-                if (c > 8000 && Math.random() > 0.97) {
-                    clearInterval(timer);
-                    foundEl.innerText = "1";
-                    foundEl.style.color = "var(--success)";
-                    popup.classList.add('show');
-                }
-            }, 60);
-        }
-    </script>
 </body>
 </html>
