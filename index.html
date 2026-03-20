@@ -1,30 +1,126 @@
 <!DOCTYPE html>
-<html lang="kmr">
+<html lang="ku">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Plinko Pro TON</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stacker - TON Edition</title>
+    <style>
+        body {
+            margin: 0;
+            background: radial-gradient(circle, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        canvas {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            margin-top: 20px;
+        }
+        .score-board {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00d2ff;
+        }
+        .info {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
-    <div id="ton-connect-btn"></div>
 
-    <div id="game-wrapper">
-        <div class="stats">
-            <span>BALANCE</span>
-            <span id="balance">0.00 TON</span>
-        </div>
+    <div class="score-board">Score: <span id="score">0</span></div>
+    <div class="info">Click to drop the block!</div>
+    <canvas id="gameCanvas" width="350" height="500"></canvas>
 
-        <canvas id="plinkoCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
 
-        <div class="ui-panel">
-            <button id="drop-btn" class="btn-main">BET / DROP</button>
-        </div>
-    </div>
+        let score = 0;
+        let speed = 2;
+        let blocks = [];
+        let currentBlock = { x: 0, y: 450, w: 150, direction: 1 };
+        let baseWidth = 150;
 
-    <script src="script.js"></script>
+        // دەستپێکردنی یاری بە بلۆکی یەکەم
+        blocks.push({ x: 100, y: 470, w: 150 });
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // کێشانی بلۆکە جێگیرەکان
+            blocks.forEach((b, index) => {
+                ctx.fillStyle = `hsl(${200 + index * 10}, 70%, 50%)`;
+                ctx.fillRect(b.x, b.y, b.w, 25);
+                
+                // ستایلی مۆدێرن بۆ بلۆکەکان
+                ctx.strokeStyle = "white";
+                ctx.lineWidth = 1;
+                ctx.strokeRect(b.x, b.y, b.w, 25);
+            });
+
+            // جوڵەی بلۆکی ئێستا
+            currentBlock.x += speed * currentBlock.direction;
+            if (currentBlock.x + currentBlock.w > canvas.width || currentBlock.x < 0) {
+                currentBlock.direction *= -1;
+            }
+
+            // کێشانی بلۆکی جوڵاو
+            ctx.fillStyle = "#00d2ff";
+            ctx.fillRect(currentBlock.x, currentBlock.y, currentBlock.w, 25);
+            ctx.strokeRect(currentBlock.x, currentBlock.y, currentBlock.w, 25);
+
+            requestAnimationFrame(draw);
+        }
+
+        canvas.addEventListener('mousedown', () => {
+            const lastBlock = blocks[blocks.length - 1];
+            
+            // دیاریکردنی جیاوازی و بڕینی زیادەکان
+            let diff = currentBlock.x - lastBlock.x;
+            
+            if (Math.abs(diff) >= currentBlock.w) {
+                alert("Game Over! Score: " + score);
+                location.reload();
+                return;
+            }
+
+            // ئەگەر بە سەرکەوتوویی کەوتە سەر بلۆکەکە
+            let newWidth = currentBlock.w - Math.abs(diff);
+            let newX = diff > 0 ? currentBlock.x : lastBlock.x;
+
+            blocks.push({ x: newX, y: currentBlock.y, w: newWidth });
+            
+            // ئامادەکردنی بلۆکی داهاتوو
+            score++;
+            scoreElement.innerText = score;
+            speed += 0.2; // خێراکردنی یاری
+            
+            currentBlock = {
+                x: 0,
+                y: currentBlock.y - 25,
+                w: newWidth,
+                direction: 1
+            };
+
+            // بەرزکردنەوەی کامێرا (وەک ئەوەی یارییەکە بچێتە سەرەوە)
+            if (blocks.length > 10) {
+                blocks.forEach(b => b.y += 25);
+                currentBlock.y += 25;
+            }
+        });
+
+        draw();
+    </script>
 </body>
 </html>
