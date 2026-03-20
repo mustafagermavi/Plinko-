@@ -1,219 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crypto Wallet Dashboard</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crypto Balance Checker</title>
 
 <style>
 
 body{
-background:#0f1117;
-font-family:monospace;
-margin:0;
+background:#0d1117;
+font-family:Arial;
 color:white;
-display:flex;
-justify-content:center;
+text-align:center;
+padding:20px;
 }
 
 .container{
-width:360px;
-padding:15px;
+max-width:400px;
+margin:auto;
 }
 
-.title{
-font-size:18px;
-margin-bottom:10px;
-text-align:center;
-}
-
-.console{
-background:#0a0c12;
-border:1px solid #222;
-height:220px;
-overflow:auto;
-padding:10px;
-border-radius:8px;
-font-size:12px;
-}
-
-.found{
+input{
+width:100%;
+padding:12px;
 margin-top:10px;
-font-size:14px;
-}
-
-.seed-box{
-margin-top:10px;
-height:80px;
-background:#0a0c12;
-border:1px solid #222;
 border-radius:8px;
-display:flex;
-align-items:center;
-justify-content:center;
-color:#777;
-font-size:13px;
-}
-
-.coins{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:18px;
-margin-top:20px;
-}
-
-.coin{
-display:flex;
-flex-direction:column;
-align-items:center;
-}
-
-.circle{
-width:55px;
-height:55px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:24px;
-color:white;
-}
-
-.btc{background:#f7931a;}
-.eth{background:#3c3c3d;}
-.ltc{background:#345d9d;}
-.bnb{background:#f3ba2f;}
-.sol{background:#000;}
-.usdt{background:#26a17b;}
-.doge{background:#c2a633;}
-.trx{background:#e50914;}
-
-.check{
-margin-top:6px;
-color:#00ff95;
+border:none;
 }
 
 button{
-margin-top:20px;
-width:100%;
+margin-top:10px;
 padding:12px;
-background:#00ff95;
+width:100%;
 border:none;
-border-radius:8px;
+background:#00ffa6;
 font-weight:bold;
-cursor:pointer;
+border-radius:8px;
+}
+
+.result{
+margin-top:20px;
+background:#161b22;
+padding:15px;
+border-radius:10px;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-<div class="title">Crypto Wallet Checker</div>
+<h2>Crypto Balance Checker</h2>
 
-<div class="console" id="console"></div>
+<input id="address" placeholder="Enter BTC Wallet Address">
 
-<div class="found">Found: <span id="found">0</span></div>
+<button onclick="checkBalance()">Check Balance</button>
 
-<div class="seed-box">
-Found Seed Phrases Appear Here
+<div class="result" id="result">
+Balance will appear here
 </div>
-
-<div class="coins">
-
-<div class="coin">
-<div class="circle btc"><i class="fab fa-bitcoin"></i></div>
-<div class="check">✔</div>
-</div>
-
-<div class="coin">
-<div class="circle eth"><i class="fab fa-ethereum"></i></div>
-<div class="check">✔</div>
-</div>
-
-<div class="coin">
-<div class="circle ltc">Ł</div>
-<div class="check">✔</div>
-</div>
-
-<div class="coin">
-<div class="circle bnb">B</div>
-<div class="check">✔</div>
-</div>
-
-<div class="coin">
-<div class="circle sol">S</div>
-<div class="check">✔</div>
-</div>
-
-<div class="coin">
-<div class="circle usdt">T</div>
-<div class="check">✔</div>
-</div>
-
-<div class="coin">
-<div class="circle btc"><i class="fab fa-bitcoin"></i></div>
-<div class="check">✔</div>
-</div>
-
-<div class="coin">
-<div class="circle doge">Ð</div>
-<div class="check">✔</div>
-</div>
-
-<div class="coin">
-<div class="circle trx">T</div>
-<div class="check">✔</div>
-</div>
-
-</div>
-
-<button onclick="start()">Start Scan</button>
 
 </div>
 
 <script>
 
-const words = [
-"panther click lumber",
-"energy target ten",
-"glory witness put",
-"trap trick erode",
-"strong liberty laundry",
-"knock craft stay",
-"hill feel leave",
-"enforce claim wonder",
-"pass spoon during",
-"blanket fringe circle",
-"castle cabbage exotic",
-"birth blossom lunch"
-];
+async function checkBalance(){
 
-function start(){
+let address = document.getElementById("address").value
 
-let consoleBox = document.getElementById("console")
+let url = "https://api.blockcypher.com/v1/btc/main/addrs/"+address+"/balance"
 
-let i=0
+let response = await fetch(url)
 
-setInterval(()=>{
+let data = await response.json()
 
-let line = "Wallet Check: " + words[Math.floor(Math.random()*words.length)]
+let btc = data.balance / 100000000
 
-let div = document.createElement("div")
-
-div.textContent=line
-
-consoleBox.appendChild(div)
-
-consoleBox.scrollTop=consoleBox.scrollHeight
-
-i++
-
-},700)
+document.getElementById("result").innerHTML =
+"Balance: " + btc + " BTC"
 
 }
 
