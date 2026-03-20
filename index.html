@@ -1,149 +1,634 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Crypto Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>⛓️ CRYPTO WALLET SCANNER | DARK TERMINAL</title>
+    <!-- Font Awesome 6 (free icons + brands) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts: monospace hacker style -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<style>
+        body {
+            background: #0b0f16;
+            font-family: 'Space Mono', 'Courier New', monospace;
+            padding: 20px 12px 32px 12px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-body{
-background:linear-gradient(180deg,#05070c,#0d1118);
-font-family:Arial;
-margin:0;
-display:flex;
-justify-content:center;
-color:white;
-}
+        /* MAIN DASHBOARD CARD — hacker mobile container */
+        .dashboard {
+            max-width: 380px;
+            width: 100%;
+            margin: 0 auto;
+            background: #0e121c;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 255, 100, 0.15);
+            overflow: hidden;
+            backdrop-filter: blur(1px);
+            transition: all 0.2s;
+        }
 
-.app{
-width:380px;
-padding:15px;
-}
+        .content {
+            padding: 20px 18px 26px 18px;
+        }
 
-.header{
-font-size:20px;
-text-align:center;
-margin-bottom:15px;
-letter-spacing:1px;
-}
+        /* GLOW TITLE */
+        .title-section {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+        .crypto-title {
+            font-size: 1.65rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #c0ffb0 0%, #2aff8c 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 6px rgba(40, 255, 100, 0.4);
+            word-break: keep-all;
+            display: inline-block;
+        }
+        .badge {
+            font-size: 0.7rem;
+            background: #1a1f2c;
+            color: #2eff9e;
+            border-radius: 40px;
+            padding: 4px 10px;
+            margin-top: 6px;
+            display: inline-block;
+            font-family: monospace;
+            letter-spacing: 1px;
+            border: 0.5px solid #2eff9e50;
+        }
 
-.console{
-background:rgba(255,255,255,0.03);
-border:1px solid rgba(255,255,255,0.08);
-backdrop-filter:blur(10px);
-border-radius:12px;
-height:230px;
-padding:12px;
-overflow:auto;
-font-family:monospace;
-font-size:12px;
-}
+        /* TERMINAL CONSOLE PANEL */
+        .console-panel {
+            background: #03050a;
+            border-radius: 18px;
+            padding: 14px 12px;
+            margin-bottom: 24px;
+            border: 1px solid #1f2a3e;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .console-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #2a3548;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+        .console-dot {
+            width: 10px;
+            height: 10px;
+            background: #2eff9e;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #2eff9e;
+        }
+        .console-header span {
+            color: #94a3b8;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+        .console-window {
+            height: 180px;
+            overflow-y: auto;
+            font-size: 0.7rem;
+            line-height: 1.5;
+            color: #b7efc5;
+            font-family: 'Space Mono', monospace;
+            padding-right: 6px;
+            scroll-behavior: smooth;
+        }
+        .console-line {
+            border-left: 2px solid #2eff9e60;
+            padding-left: 8px;
+            margin-bottom: 8px;
+            word-break: break-word;
+            white-space: pre-wrap;
+            font-size: 0.68rem;
+            opacity: 0.85;
+            animation: fadeSlide 0.2s ease-out;
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(-5px);}
+            to { opacity: 0.85; transform: translateX(0);}
+        }
+        .console-window::-webkit-scrollbar {
+            width: 3px;
+        }
+        .console-window::-webkit-scrollbar-track {
+            background: #0f121b;
+        }
+        .console-window::-webkit-scrollbar-thumb {
+            background: #2eff9e;
+            border-radius: 10px;
+        }
 
-.seedbox{
-margin-top:10px;
-height:70px;
-border-radius:12px;
-background:rgba(255,255,255,0.03);
-border:1px solid rgba(255,255,255,0.08);
-display:flex;
-align-items:center;
-justify-content:center;
-color:#777;
-}
+        /* FOUND COUNTER + BOX */
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .found-counter {
+            background: #010101aa;
+            border-radius: 60px;
+            padding: 6px 16px;
+            border: 1px solid #2eff9e40;
+            backdrop-filter: blur(2px);
+        }
+        .found-counter .label {
+            font-size: 0.7rem;
+            color: #7f8fa4;
+            letter-spacing: 1px;
+        }
+        .found-counter .number {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #2eff9e;
+            text-shadow: 0 0 4px #1eff8a;
+            line-height: 1;
+            margin-left: 8px;
+        }
+        .found-wallets-box {
+            background: #080c14;
+            border-radius: 18px;
+            border: 1px solid #1f2a3c;
+            padding: 12px 10px;
+            margin-bottom: 24px;
+            max-height: 140px;
+            overflow-y: auto;
+        }
+        .found-wallets-box h4 {
+            font-size: 0.7rem;
+            color: #b9c7dd;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+            border-left: 3px solid #2eff9e;
+            padding-left: 8px;
+        }
+        .wallet-entry {
+            background: #0c1020;
+            border-radius: 12px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            font-size: 0.65rem;
+            font-family: monospace;
+            border-left: 2px solid #2eff9e;
+            color: #cfecdb;
+            word-break: break-all;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.1s;
+        }
+        .wallet-coin-badge {
+            background: #1f2a44;
+            border-radius: 30px;
+            padding: 2px 8px;
+            font-weight: bold;
+            font-size: 0.6rem;
+            color: #bbffcc;
+        }
+        .wallet-addr {
+            font-size: 0.65rem;
+            letter-spacing: -0.2px;
+        }
 
-.coins{
-margin-top:25px;
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:22px;
-}
+        /* 3x3 GRID COIN ICONS + GREEN CHECKMARK */
+        .coin-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px 12px;
+            margin-bottom: 30px;
+            margin-top: 6px;
+        }
+        .coin-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .coin-circle {
+            width: 68px;
+            height: 68px;
+            background: #1e2438;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(46, 255, 158, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+        }
+        /* each coin gets unique background color (official style) */
+        .coin-circle i, .coin-circle span {
+            filter: drop-shadow(0 1px 2px black);
+        }
+        .check-icon {
+            color: #25f18b;
+            font-size: 1rem;
+            margin-top: 4px;
+            background: rgba(0,0,0,0.5);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+            backdrop-filter: blur(2px);
+        }
+        .check-icon i {
+            font-size: 0.9rem;
+        }
 
-.coin{
-display:flex;
-flex-direction:column;
-align-items:center;
-}
+        /* START SCAN BUTTON (LARGE HACKER STYLE) */
+        .scan-btn-wrapper {
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+        .start-scan {
+            width: 100%;
+            background: linear-gradient(95deg, #0f231a, #05100c);
+            border: 1.5px solid #2eff9e;
+            color: #b5ffcf;
+            font-family: 'Space Mono', monospace;
+            font-weight: bold;
+            font-size: 1.2rem;
+            padding: 14px 10px;
+            border-radius: 80px;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 6px #2eff9e60;
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .start-scan i {
+            font-size: 1.2rem;
+            color: #2eff9e;
+        }
+        .start-scan:active {
+            transform: scale(0.97);
+            background: #10271e;
+            box-shadow: 0 0 12px #2eff9e;
+        }
 
-.icon{
-width:65px;
-height:65px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:26px;
-font-weight:bold;
-box-shadow:0 0 15px rgba(0,0,0,0.4);
-}
+        /* scrollbar global */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0e16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2eff9e;
+            border-radius: 12px;
+        }
 
-.btc{background:#f7931a;}
-.eth{background:#627eea;}
-.ltc{background:#345d9d;}
-.bnb{background:#f3ba2f;color:black;}
-.sol{background:#111;}
-.usdt{background:#26a17b;}
-.doge{background:#c2a633;}
-.trx{background:#e50914;}
-
-.check{
-margin-top:6px;
-color:#00ffa6;
-font-size:18px;
-}
-
-button{
-margin-top:25px;
-width:100%;
-padding:14px;
-border-radius:10px;
-border:none;
-background:linear-gradient(90deg,#00ffa6,#00d9ff);
-font-weight:bold;
-font-size:15px;
-color:black;
-}
-
-</style>
+        /* responsive touch */
+        @media (max-width: 400px) {
+            .coin-circle {
+                width: 60px;
+                height: 60px;
+                font-size: 1.7rem;
+            }
+            .content {
+                padding: 16px 14px;
+            }
+        }
+    </style>
 </head>
-
 <body>
+<div class="dashboard">
+    <div class="content">
+        <!-- TITLE -->
+        <div class="title-section">
+            <div class="crypto-title">⛓️ CRYPTO WALLET SCANNER</div>
+            <div class="badge">TERMINAL_ACTIVE // v.0x3F</div>
+        </div>
 
-<div class="app">
+        <!-- TERMINAL CONSOLE -->
+        <div class="console-panel">
+            <div class="console-header">
+                <div class="console-dot"></div>
+                <span>>_ WALLET_VERIFICATION_STREAM</span>
+                <div style="flex:1"></div>
+                <i class="fas fa-terminal" style="color:#2eff9e; font-size:10px;"></i>
+            </div>
+            <div class="console-window" id="consoleWindow">
+                <!-- dynamic lines injected via JS -->
+                <div class="console-line">> Wallet Check: energy target ten</div>
+                <div class="console-line">> Wallet Check: panther click lumber</div>
+                <div class="console-line">> Wallet Check: glory witness put</div>
+                <div class="console-line">> Wallet Check: trap trick erode</div>
+            </div>
+        </div>
 
-<div class="header">Crypto Dashboard</div>
+        <!-- FOUND COUNTER -->
+        <div class="stats-row">
+            <div class="found-counter">
+                <span class="label">FOUND:</span>
+                <span class="number" id="foundCountDisplay">0</span>
+            </div>
+            <div style="font-size: 0.6rem; color:#2c7a47;"><i class="fas fa-shield-alt"></i> live_scan</div>
+        </div>
 
-<div class="console">
-Wallet Check: energy target ten<br>
-Wallet Check: panther click lumber<br>
-Wallet Check: glory witness put<br>
-Wallet Check: trap trick erode
+        <!-- FOUND WALLETS BOX -->
+        <div class="found-wallets-box" id="foundWalletsBox">
+            <h4><i class="fas fa-database"></i> FOUND WALLETS APPEAR HERE</h4>
+            <div id="walletsListContainer" style="min-height: 50px;">
+                <div style="color:#4b5568; text-align:center; font-size:0.7rem; padding:12px;">⛔ no wallets discovered yet</div>
+            </div>
+        </div>
+
+        <!-- COIN GRID 9 ICONS (circular + green check under) -->
+        <div class="coin-grid" id="coinGrid"></div>
+
+        <!-- LARGE START SCAN BUTTON -->
+        <div class="scan-btn-wrapper">
+            <button class="start-scan" id="startScanBtn">
+                <i class="fas fa-radar"></i> START SCAN
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
 </div>
 
-<div style="margin-top:8px">Found: 0</div>
+<script>
+    // ========== COIN DATA (official colors + icon/text for circle) ==========
+    const coinsList = [
+        { name: "Bitcoin", color: "#f7931a", iconType: "fab", iconClass: "fa-bitcoin", fallback: "₿" },
+        { name: "Ethereum", color: "#627eea", iconType: "fab", iconClass: "fa-ethereum", fallback: "Ξ" },
+        { name: "Litecoin", color: "#bfbbbb", iconType: "fab", iconClass: "fa-litecoin-sign", fallback: "Ł" },
+        { name: "BNB", color: "#f3ba2f", iconType: "fas", iconClass: "fa-chart-line", fallback: "BNB" },
+        { name: "Solana", color: "#14F195", iconType: "fas", iconClass: "fa-sun", fallback: "SOL" },
+        { name: "Tether", color: "#26A17B", iconType: "fas", iconClass: "fa-dollar-sign", fallback: "USDT" },
+        { name: "Bitcoin Cash", color: "#f7a81b", iconType: "fab", iconClass: "fa-btc", fallback: "BCH" },
+        { name: "Dogecoin", color: "#c2a633", iconType: "fab", iconClass: "fa-dog", fallback: "Ð" },
+        { name: "TRON", color: "#ff0015", iconType: "fas", iconClass: "fa-bolt", fallback: "TRX" }
+    ];
 
-<div class="seedbox">
-Found Wallets Appear Here
-</div>
+    // Helper: generate random wallet address (mock realistic)
+    function generateMockAddress(coinSymbol) {
+        const prefixes = {
+            "Bitcoin": "bc1", "Ethereum": "0x", "Litecoin": "ltc1", "BNB": "bnb1",
+            "Solana": "Sol", "Tether": "0x", "Bitcoin Cash": "bitcoincash:", "Dogecoin": "D", "TRON": "T"
+        };
+        let prefix = prefixes[coinSymbol] || "addr";
+        let chars = "abcdef1234567890";
+        let len = coinSymbol === "Ethereum" || coinSymbol === "Tether" ? 40 : 32;
+        let addr = "";
+        for (let i = 0; i < len; i++) addr += chars[Math.floor(Math.random() * chars.length)];
+        if (coinSymbol === "Ethereum" || coinSymbol === "Tether") return prefix + addr.substring(0, 40);
+        if (coinSymbol === "Bitcoin") return prefix + addr.substring(0, 32);
+        if (coinSymbol === "Dogecoin") return prefix + addr.substring(0, 28);
+        return prefix + addr.substring(0, 24);
+    }
 
-<div class="coins">
+    // build coin grid with checkmark under each
+    function buildCoinGrid() {
+        const gridContainer = document.getElementById("coinGrid");
+        gridContainer.innerHTML = "";
+        coinsList.forEach(coin => {
+            const coinDiv = document.createElement("div");
+            coinDiv.className = "coin-item";
+            const circle = document.createElement("div");
+            circle.className = "coin-circle";
+            circle.style.background = coin.color;
+            circle.style.background = `radial-gradient(circle at 30% 25%, ${coin.color}, ${adjustBrightness(coin.color, -20)})`;
+            // icon or fallback
+            let iconHtml = "";
+            if (coin.iconType === "fab" && coin.iconClass !== "fa-litecoin-sign") {
+                // Litecoin brand sometimes not available: fallback
+                if (coin.name === "Litecoin") {
+                    iconHtml = `<span style="font-weight:bold; font-size:1.5rem;">Ł</span>`;
+                } else {
+                    iconHtml = `<i class="${coin.iconType} ${coin.iconClass}" style="font-size: 2rem; color:white;"></i>`;
+                }
+            } else if (coin.name === "BNB") {
+                iconHtml = `<span style="font-weight:bold; font-size:1.5rem;">BNB</span>`;
+            } else if (coin.name === "Solana") {
+                iconHtml = `<i class="fas fa-sun" style="font-size:1.8rem; color:#0a0f1f;"></i>`;
+            } else if (coin.name === "Tether") {
+                iconHtml = `<i class="fas fa-dollar-sign" style="font-size:1.8rem;"></i>`;
+            } else if (coin.name === "TRON") {
+                iconHtml = `<i class="fas fa-bolt" style="font-size:1.8rem;"></i>`;
+            } else if (coin.name === "Bitcoin Cash") {
+                iconHtml = `<i class="fab fa-btc" style="font-size:1.8rem;"></i>`;
+            } else if (coin.name === "Dogecoin") {
+                iconHtml = `<i class="fab fa-dog" style="font-size:1.8rem;"></i>`;
+            } else {
+                iconHtml = `<span style="font-size:1.3rem; font-weight:bold;">${coin.fallback || coin.name.charAt(0)}</span>`;
+            }
+            circle.innerHTML = iconHtml;
+            // green check under
+            const checkDiv = document.createElement("div");
+            checkDiv.className = "check-icon";
+            checkDiv.innerHTML = `<i class="fas fa-check-circle"></i>`;
+            coinDiv.appendChild(circle);
+            coinDiv.appendChild(checkDiv);
+            gridContainer.appendChild(coinDiv);
+        });
+    }
+    function adjustBrightness(hex, percent) {
+        // simple darken
+        return hex;
+    }
 
-<div class="coin"><div class="icon btc">₿</div><div class="check">✓</div></div>
-<div class="coin"><div class="icon eth">Ξ</div><div class="check">✓</div></div>
-<div class="coin"><div class="icon ltc">Ł</div><div class="check">✓</div></div>
+    // ---------- GLOBAL STATE ----------
+    let consoleInterval = null;          // for generic scrolling lines
+    let scanningInterval = null;         // for "Start Scan" detection
+    let currentFound = 0;
+    let isScanningActive = false;
+    const consoleWindow = document.getElementById("consoleWindow");
+    const foundCountSpan = document.getElementById("foundCountDisplay");
+    const walletsContainer = document.getElementById("walletsListContainer");
 
-<div class="coin"><div class="icon bnb">B</div><div class="check">✓</div></div>
-<div class="coin"><div class="icon sol">S</div><div class="check">✓</div></div>
-<div class="coin"><div class="icon usdt">T</div><div class="check">✓</div></div>
+    // TERMINAL message queue: add line and auto scroll
+    function addConsoleLine(message) {
+        const lineDiv = document.createElement("div");
+        lineDiv.className = "console-line";
+        lineDiv.innerHTML = `> ${message}`;
+        consoleWindow.appendChild(lineDiv);
+        // auto-scroll to bottom
+        consoleWindow.scrollTop = consoleWindow.scrollHeight;
+        // limit lines to 200 to avoid performance
+        while (consoleWindow.children.length > 200) {
+            consoleWindow.removeChild(consoleWindow.firstChild);
+        }
+    }
 
-<div class="coin"><div class="icon btc">₿</div><div class="check">✓</div></div>
-<div class="coin"><div class="icon doge">Ð</div><div class="check">✓</div></div>
-<div class="coin"><div class="icon trx">T</div><div class="check">✓</div></div>
+    // Predefined hacker phrases (including required ones)
+    const terminalPhrases = [
+        "Wallet Check: energy target ten",
+        "Wallet Check: panther click lumber",
+        "Wallet Check: glory witness put",
+        "Wallet Check: trap trick erode",
+        "Wallet Check: vanish alpha orbit",
+        "Wallet Check: quantum surge nexus",
+        "Wallet Check: drift cipher void",
+        "Blockchain sync :: latency 0.23ms",
+        "Deep scan :: entropy pool 87%",
+        "Signature verification :: PASS"
+    ];
 
-</div>
+    // continuous terminal scrolling (every 350-500ms)
+    function startTerminalAutoScroll() {
+        if (consoleInterval) clearInterval(consoleInterval);
+        consoleInterval = setInterval(() => {
+            const randomIdx = Math.floor(Math.random() * terminalPhrases.length);
+            let msg = terminalPhrases[randomIdx];
+            // sometimes mix with extra style
+            if (Math.random() > 0.7) msg = "Wallet Check: " + msg.replace("Wallet Check: ", "");
+            addConsoleLine(msg);
+        }, Math.floor(Math.random() * 200) + 350); // 350-550ms
+    }
 
-<button>Start</button>
+    // Reset found wallets UI & counter
+    function resetFoundDisplay() {
+        currentFound = 0;
+        foundCountSpan.innerText = "0";
+        walletsContainer.innerHTML = `<div style="color:#4b5568; text-align:center; font-size:0.7rem; padding:12px;">⛔ no wallets discovered yet</div>`;
+    }
 
-</div>
+    // Add new found wallet entry (called during scanning)
+    function addFoundWalletEntry(coinName, address) {
+        // Remove placeholder if exists
+        if (walletsContainer.children.length === 1 && walletsContainer.children[0].innerText.includes("no wallets discovered")) {
+            walletsContainer.innerHTML = "";
+        }
+        const entry = document.createElement("div");
+        entry.className = "wallet-entry";
+        entry.style.animation = "fadeSlide 0.2s ease";
+        const badgeSpan = document.createElement("span");
+        badgeSpan.className = "wallet-coin-badge";
+        badgeSpan.innerText = coinName;
+        const addrSpan = document.createElement("span");
+        addrSpan.className = "wallet-addr";
+        addrSpan.innerText = address.length > 38 ? address.slice(0, 20) + "..." + address.slice(-12) : address;
+        entry.appendChild(badgeSpan);
+        entry.appendChild(addrSpan);
+        walletsContainer.appendChild(entry);
+        // auto-scroll inside found box
+        const box = document.getElementById("foundWalletsBox");
+        box.scrollTop = box.scrollHeight;
+    }
 
+    // update found counter
+    function incrementFound(coinName, walletAddr) {
+        currentFound++;
+        foundCountSpan.innerText = currentFound;
+        addFoundWalletEntry(coinName, walletAddr);
+        // also add detection line to console for realism
+        addConsoleLine(`[FOUND] ${coinName} wallet → ${walletAddr.slice(0, 22)}...  |  status: ACTIVE`);
+    }
+
+    // SCAN TICK: generates random wallet discovery
+    function performScanTick() {
+        if (!isScanningActive) return;
+        // pick random coin from coinsList
+        const randomCoin = coinsList[Math.floor(Math.random() * coinsList.length)];
+        const mockAddr = generateMockAddress(randomCoin.name);
+        incrementFound(randomCoin.name, mockAddr);
+        // extra: if user wants to see special console echo
+        if (Math.random() > 0.6) {
+            addConsoleLine(`🔍 deep packet match: ${randomCoin.name} pattern found → ${mockAddr.slice(0,12)}...`);
+        }
+    }
+
+    // STOP scanning (kill interval)
+    function stopScanningProcess() {
+        if (scanningInterval) {
+            clearInterval(scanningInterval);
+            scanningInterval = null;
+        }
+        isScanningActive = false;
+    }
+
+    // START SCAN (reset + new scanning session)
+    function startFullScan() {
+        // if already scanning, reset completely
+        if (scanningInterval) {
+            stopScanningProcess();
+        }
+        // reset found wallets and counter
+        resetFoundDisplay();
+        // activate new scanning
+        isScanningActive = true;
+        addConsoleLine("🚀 [SCAN_INIT] wallet deep scan engaged ...");
+        addConsoleLine("🚀 scanning memory pools & dark nodes");
+        // first scan tick immediate? optional small delay, but set interval
+        scanningInterval = setInterval(() => {
+            if (isScanningActive) {
+                performScanTick();
+            } else {
+                // safety
+                if (scanningInterval) clearInterval(scanningInterval);
+            }
+        }, 900); // new wallet every 0.9 sec (smooth but not too fast)
+        // also add additional console event after 2 secs for flair
+        setTimeout(() => {
+            if (isScanningActive) addConsoleLine("⚡ scanning 9 blockchains · entropy rising");
+        }, 500);
+    }
+
+    // ----- INITIALIZATION -----
+    function init() {
+        buildCoinGrid();
+        // Prepopulate console with first 4 lines
+        // but we already have those lines in HTML, but ensure we keep them consistent
+        // Clear initial dummy lines? Keep them and start adding new after.
+        // Ensure consoleWindow children already contains initial 4 lines: keep them
+        // Overwrite extra clear? but we want exactly those lines exist + scrolling
+        // but remove duplicate? Actually we keep default ones, but auto-scroll will add.
+        // We'll just start auto-scroll without clearing terminal defaults
+        startTerminalAutoScroll();
+        
+        // attach event to start scan button
+        const scanBtn = document.getElementById("startScanBtn");
+        scanBtn.addEventListener("click", () => {
+            // haptic feedback: start fresh scan
+            startFullScan();
+            // blink effect
+            scanBtn.style.transform = "scale(0.97)";
+            setTimeout(() => { scanBtn.style.transform = ""; }, 120);
+        });
+        
+        // extra style: initial found counter 0
+        currentFound = 0;
+        foundCountSpan.innerText = "0";
+        // In case any pending intervals cleanup on page reload
+    }
+
+    // graceful cleanup (optional)
+    window.addEventListener("beforeunload", () => {
+        if (consoleInterval) clearInterval(consoleInterval);
+        if (scanningInterval) clearInterval(scanningInterval);
+    });
+
+    init();
+</script>
 </body>
 </html>
