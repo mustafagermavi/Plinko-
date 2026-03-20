@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>⎾ WALLET SCANNER ⏌ | DARK TERMINAL</title>
+  <title>⎾ CYBER WALLET SCANNER ⏌ | HACKER TERMINAL</title>
   <!-- Font Awesome 6 (free icons) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Font: modern monospace for hacker style -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -15,220 +17,247 @@
 
     body {
       background: #0b0f16;
-      font-family: 'Courier New', 'Space Mono', 'Fira Code', monospace;
+      font-family: 'Share Tech Mono', 'Space Mono', 'Courier New', monospace;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 18px 12px;
+      padding: 20px 12px;
     }
 
-    /* MAIN DASHBOARD CARD — hacker mobile core */
+    /* Mobile-first container (360px optimized) */
     .dashboard {
-      max-width: 380px;
+      max-width: 360px;
       width: 100%;
       margin: 0 auto;
-      background: #0d111c;
-      border-radius: 36px;
-      box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 255, 140, 0.2);
+      background: #0f141c;
+      border-radius: 40px;
+      box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(46, 255, 158, 0.2);
       overflow: hidden;
+      backdrop-filter: blur(0.5px);
       transition: all 0.2s;
     }
 
     .content {
-      padding: 20px 18px 28px 18px;
+      padding: 22px 18px 28px 18px;
     }
 
-    /* === HEADER (cyber glow) === */
+    /* ========== HEADER ========== */
     .header {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
-    .glitch-title {
-      font-size: 1.65rem;
-      font-weight: 800;
+    .cyber-title {
+      font-size: 1.7rem;
+      font-weight: 700;
       letter-spacing: -0.3px;
-      background: linear-gradient(135deg, #b5ffd0, #2eff9e);
+      background: linear-gradient(135deg, #d0ffdd, #2eff9e);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      text-shadow: 0 0 5px rgba(46, 255, 158, 0.3);
-      font-family: 'Courier New', monospace;
+      text-shadow: 0 0 8px rgba(46, 255, 158, 0.3);
+      font-family: 'Space Mono', monospace;
     }
-    .sub-badge {
-      font-size: 0.6rem;
-      background: #10141f;
+    .title-badge {
+      font-size: 0.58rem;
+      background: #10161f;
       color: #2eff9e;
       border-radius: 30px;
       padding: 4px 12px;
       display: inline-block;
-      margin-top: 6px;
-      border: 0.5px solid #2eff9e70;
-      letter-spacing: 1px;
+      margin-top: 8px;
+      border: 0.5px solid #2eff9e80;
+      letter-spacing: 1.2px;
     }
 
-    /* === TERMINAL CONSOLE (height 240px) === */
+    /* ========== TERMINAL CONSOLE ========== */
     .terminal {
-      background: #03050a;
-      border-radius: 20px;
-      border: 1px solid #1e2a3a;
+      background: #03050b;
+      border-radius: 24px;
+      border: 1px solid #222c3c;
       margin-bottom: 22px;
-      box-shadow: inset 0 1px 4px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(46, 255, 158, 0.1);
     }
-    .terminal-header {
+    .term-header {
       display: flex;
       align-items: center;
       gap: 8px;
       padding: 12px 14px 6px 14px;
-      border-bottom: 1px solid #1f2a3c;
+      border-bottom: 1px solid #1f2a3a;
     }
-    .led {
+    .term-led {
       width: 10px;
       height: 10px;
       background: #2eff9e;
       border-radius: 50%;
       box-shadow: 0 0 6px #2eff9e;
-      animation: pulse 1.2s infinite;
+      animation: pulseLed 1.4s infinite;
     }
-    .terminal-header span {
-      color: #8f9bb5;
+    .term-header span {
+      color: #90a1c2;
       font-size: 0.7rem;
-      letter-spacing: 1px;
+      letter-spacing: 0.8px;
     }
     .console-window {
       height: 240px;
       overflow-y: auto;
-      padding: 12px 14px;
-      font-size: 0.7rem;
+      padding: 14px 14px 12px 14px;
+      font-size: 0.68rem;
       line-height: 1.5;
-      color: #caf5df;
-      font-family: 'Courier New', monospace;
+      color: #cbf5e2;
+      font-family: 'Share Tech Mono', monospace;
       scroll-behavior: smooth;
     }
     .console-line {
-      border-left: 2px solid #2eff9e80;
-      padding-left: 8px;
+      border-left: 2px solid #2eff9e;
+      padding-left: 10px;
       margin-bottom: 9px;
       word-break: break-word;
       white-space: pre-wrap;
-      font-size: 0.68rem;
-      animation: fadeSlideIn 0.2s ease-out;
+      animation: lineFade 0.2s ease-out;
     }
-    @keyframes fadeSlideIn {
+    @keyframes lineFade {
       0% { opacity: 0; transform: translateX(-4px);}
       100% { opacity: 1; transform: translateX(0);}
     }
-    @keyframes pulse {
+    @keyframes pulseLed {
       0% { opacity: 0.5; transform: scale(0.9);}
       100% { opacity: 1; transform: scale(1);}
     }
+    .blinking-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background-color: #2eff9e;
+      vertical-align: middle;
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+      box-shadow: 0 0 3px #2eff9e;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .terminal-prompt-line {
+      margin-top: 8px;
+      color: #2eff9e;
+      font-size: 0.68rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
     .console-window::-webkit-scrollbar {
-      width: 3px;
+      width: 4px;
     }
     .console-window::-webkit-scrollbar-track {
-      background: #0c1020;
+      background: #0a0e18;
     }
     .console-window::-webkit-scrollbar-thumb {
       background: #2eff9e;
-      border-radius: 10px;
+      border-radius: 8px;
     }
 
-    /* === FOUND COUNTER === */
-    .counter-row {
+    /* ========== FOUND COUNTER ========== */
+    .counter-section {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 14px;
+      margin-bottom: 18px;
     }
-    .found-badge {
-      background: #020408c9;
-      border-radius: 60px;
-      padding: 5px 18px;
-      border: 1px solid #2eff9e50;
-      backdrop-filter: blur(2px);
+    .found-panel {
+      background: #02060ecc;
+      border-radius: 80px;
+      padding: 5px 20px;
+      border: 1px solid #2eff9e60;
+      backdrop-filter: blur(4px);
     }
-    .found-badge .label {
-      font-size: 0.7rem;
-      color: #a0b2cf;
+    .found-panel .label {
+      font-size: 0.75rem;
+      color: #b7c7e5;
       font-weight: 500;
     }
-    .found-badge .number {
-      font-size: 1.8rem;
+    .found-panel .number {
+      font-size: 2rem;
       font-weight: 800;
       color: #2eff9e;
-      text-shadow: 0 0 3px #0aff70;
-      margin-left: 10px;
+      text-shadow: 0 0 5px #1eff8a;
+      margin-left: 12px;
       line-height: 1;
     }
-    .shield-icon {
-      font-size: 0.7rem;
+    .scan-icon {
+      font-size: 0.75rem;
       color: #2eff9e;
     }
 
-    /* === RESULT BOX (Found Wallets Appear Here) === */
-    .result-panel {
-      background: #080c16;
-      border-radius: 20px;
-      border: 1px solid #232e42;
-      padding: 12px 12px;
-      margin-bottom: 24px;
-      max-height: 150px;
+    /* ========== RESULT BOX (Found Wallets) ========== */
+    .result-box {
+      background: #080c18;
+      border-radius: 24px;
+      border: 1px solid #252f42;
+      padding: 14px 12px;
+      margin-bottom: 26px;
+      max-height: 170px;
       overflow-y: auto;
     }
-    .result-panel h4 {
+    .result-box h4 {
       font-size: 0.7rem;
       color: #bbd4ff;
-      letter-spacing: 0.5px;
       border-left: 3px solid #2eff9e;
-      padding-left: 10px;
-      margin-bottom: 12px;
+      padding-left: 12px;
+      margin-bottom: 14px;
       font-weight: 600;
+      letter-spacing: 0.3px;
     }
-    .wallets-list {
+    .wallets-container {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
-    .wallet-entry {
-      background: #0c1122;
-      border-radius: 16px;
+    .wallet-card {
+      background: #0d1222;
+      border-radius: 18px;
       padding: 8px 12px;
       display: flex;
       align-items: center;
       gap: 10px;
-      border-left: 2px solid #2eff9e;
+      border-left: 3px solid #2eff9e;
       font-size: 0.65rem;
       transition: 0.1s;
-      animation: fadeSlideIn 0.2s ease;
+      animation: fadeSlide 0.2s ease;
     }
-    .coin-tag {
-      background: #1f2a44;
-      border-radius: 30px;
-      padding: 2px 10px;
+    .coin-badge {
+      background: #1f2a48;
+      border-radius: 40px;
+      padding: 3px 12px;
       font-weight: bold;
       font-size: 0.6rem;
-      color: #e2ffec;
+      color: #e2ffef;
+      letter-spacing: 0.5px;
     }
-    .wallet-addr {
+    .wallet-address {
       font-family: monospace;
       word-break: break-all;
-      color: #c0e0d0;
+      color: #cdeada;
     }
     .empty-placeholder {
-      color: #54657e;
       text-align: center;
+      color: #6c7a96;
       font-size: 0.7rem;
-      padding: 16px 0;
+      padding: 14px 0;
       font-style: italic;
     }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateX(-5px);}
+      to { opacity: 1; transform: translateX(0);}
+    }
 
-    /* === 3x3 COIN GRID (circular + green check) === */
+    /* ========== 3x3 COIN GRID (circular + green check) ========== */
     .coin-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 20px 12px;
       margin-bottom: 28px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
     .coin-item {
       display: flex;
@@ -239,59 +268,56 @@
     .coin-circle {
       width: 68px;
       height: 68px;
-      background: #1e2438;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.5), 0 0 0 1px rgba(46, 255, 158, 0.25);
-      transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.2s;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5), 0 0 0 1.5px rgba(46, 255, 158, 0.3);
+      transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
       font-size: 2rem;
       color: white;
       margin-bottom: 8px;
     }
-    .coin-circle i, .coin-circle span {
-      filter: drop-shadow(0 1px 2px black);
+    /* glow effect on hover */
+    .coin-circle:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 14px rgba(46, 255, 158, 0.7), 0 0 0 2px #2eff9e;
     }
-    .coin-circle:active {
-      transform: scale(0.94);
-    }
-    .check-icon {
+    .check-mark {
       color: #2eff9e;
-      font-size: 1rem;
-      background: rgba(0,0,0,0.5);
-      width: 26px;
-      height: 26px;
+      font-size: 0.95rem;
+      background: rgba(0, 0, 0, 0.5);
+      width: 28px;
+      height: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 30px;
       backdrop-filter: blur(2px);
-      margin-top: 2px;
+      margin-top: 4px;
     }
-    .check-icon i {
-      font-size: 0.9rem;
+    .check-mark i {
       filter: drop-shadow(0 0 2px #0aff70);
     }
 
-    /* === LARGE START SCAN BUTTON (neon gradient) === */
-    .scan-btn-container {
-      margin-top: 6px;
+    /* ========== START SCAN BUTTON (neon gradient) ========== */
+    .btn-container {
+      margin-top: 4px;
     }
     .start-scan {
       width: 100%;
-      background: linear-gradient(95deg, #0fdd88, #00aa55);
+      background: linear-gradient(100deg, #10dd7a, #009f4d);
       border: none;
-      font-family: 'Courier New', 'Space Mono', monospace;
+      font-family: 'Space Mono', monospace;
       font-weight: 800;
       font-size: 1.2rem;
-      padding: 14px 10px;
+      padding: 14px 12px;
       border-radius: 80px;
       letter-spacing: 1.8px;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 0 10px #00ff8c, 0 2px 5px rgba(0,0,0,0.5);
-      color: #03100a;
+      box-shadow: 0 0 12px #2eff9e, 0 4px 8px rgba(0, 0, 0, 0.4);
+      color: #021f0e;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -299,33 +325,31 @@
     }
     .start-scan i {
       font-size: 1.2rem;
-      color: #021007;
+      color: #011007;
     }
     .start-scan:active {
       transform: scale(0.97);
-      box-shadow: 0 0 16px #3eff9e;
+      box-shadow: 0 0 20px #3effa0;
     }
-    /* hover effect on desktop (optional) */
-    @media (hover: hover) {
-      .start-scan:hover {
-        background: linear-gradient(95deg, #1aff9a, #00cc66);
-        box-shadow: 0 0 16px #2eff9e;
-        transform: scale(1.01);
-      }
+    /* button glow animation (pulse) */
+    .start-scan {
+      animation: btnPulse 1.8s infinite;
+    }
+    @keyframes btnPulse {
+      0% { box-shadow: 0 0 6px #2eff9e, 0 4px 8px rgba(0,0,0,0.4);}
+      50% { box-shadow: 0 0 18px #2eff9e, 0 4px 10px rgba(0,0,0,0.4);}
+      100% { box-shadow: 0 0 6px #2eff9e, 0 4px 8px rgba(0,0,0,0.4);}
     }
 
-    /* responsive touch / mobile spacing */
-    @media (max-width: 400px) {
+    /* responsive tweaks */
+    @media (max-width: 380px) {
       .coin-circle {
         width: 60px;
         height: 60px;
-        font-size: 1.7rem;
+        font-size: 1.6rem;
       }
       .content {
-        padding: 16px 14px 24px;
-      }
-      .console-window {
-        height: 240px;
+        padding: 18px 14px 24px;
       }
     }
   </style>
@@ -335,48 +359,58 @@
   <div class="content">
     <!-- Header -->
     <div class="header">
-      <div class="glitch-title">⛓️ CRYPTO WALLET SCANNER</div>
-      <div class="sub-badge"># TERMINAL_ACCESS v2.4</div>
+      <div class="cyber-title">⚡ CRYPTO WALLET SCANNER</div>
+      <div class="title-badge"># TERMINAL_SCAN_ACTIVE</div>
     </div>
 
-    <!-- Terminal Console Panel -->
+    <!-- Terminal Console -->
     <div class="terminal">
-      <div class="terminal-header">
-        <div class="led"></div>
-        <span>>_ LIVE_WALLET_STREAM</span>
+      <div class="term-header">
+        <div class="term-led"></div>
+        <span>>_ WALLET_SURVEILLANCE_STREAM</span>
         <div style="flex:1"></div>
-        <i class="fas fa-skull" style="color:#2eff9e; font-size:9px;"></i>
+        <i class="fas fa-code-branch" style="color:#2eff9e; font-size:9px;"></i>
       </div>
       <div class="console-window" id="consoleWindow">
-        <!-- lines injected via JS, initial placeholder lines will be added at load -->
+        <!-- dynamic lines injected via js, initial lines will appear -->
+        <div class="console-line">> Wallet Check: energy target ten</div>
+        <div class="console-line">> Wallet Check: panther click lumber</div>
+        <div class="console-line">> Wallet Check: glory witness put</div>
+        <div class="console-line">> Wallet Check: trap trick erode</div>
+        <div class="console-line">> Wallet Check: strong liberty laundry</div>
+        <div class="terminal-prompt-line">
+          <i class="fas fa-circle" style="font-size: 6px; color:#2eff9e;"></i> 
+          <span>listening for entropy</span>
+          <span class="blinking-cursor"></span>
+        </div>
       </div>
     </div>
 
     <!-- Found Counter -->
-    <div class="counter-row">
-      <div class="found-badge">
+    <div class="counter-section">
+      <div class="found-panel">
         <span class="label">FOUND:</span>
-        <span class="number" id="foundCount">0</span>
+        <span class="number" id="foundCounter">0</span>
       </div>
-      <div class="shield-icon"><i class="fas fa-shield-haltered"></i> DARK_SCAN</div>
+      <div class="scan-icon"><i class="fas fa-microchip"></i> 0x7F</div>
     </div>
 
-    <!-- Result Box "Found Wallets Appear Here" -->
-    <div class="result-panel" id="resultPanel">
-      <h4><i class="fas fa-dragon"></i> FOUND WALLETS APPEAR HERE</h4>
-      <div id="walletsList" class="wallets-list">
+    <!-- Result Box (Found Wallets Appear Here) -->
+    <div class="result-box" id="resultBox">
+      <h4><i class="fas fa-database"></i> FOUND WALLETS APPEAR HERE</h4>
+      <div id="walletsList" class="wallets-container">
         <div class="empty-placeholder">⟡ idle — no wallets discovered ⟡</div>
       </div>
     </div>
 
-    <!-- 3x3 Circular Crypto Icons Grid + green checkmark -->
+    <!-- 3x3 Coin Grid (circular + green check) -->
     <div class="coin-grid" id="coinGrid"></div>
 
-    <!-- Start Scan Button (large neon) -->
-    <div class="scan-btn-container">
+    <!-- Start Scan Button -->
+    <div class="btn-container">
       <button class="start-scan" id="startScanBtn">
         <i class="fas fa-radar"></i> START SCAN
-        <i class="fas fa-terminal"></i>
+        <i class="fas fa-skull"></i>
       </button>
     </div>
   </div>
@@ -384,57 +418,51 @@
 
 <script>
   // --------------------------------------------------------------
-  //  COIN DATA: official brand colors + icons
+  // COIN DATA: official colors + icons for 3x3 grid
   // --------------------------------------------------------------
-  const COINS = [
-    { name: "Bitcoin", color: "#f7931a", iconHtml: '<i class="fab fa-bitcoin"></i>' },
-    { name: "Ethereum", color: "#627eea", iconHtml: '<i class="fab fa-ethereum"></i>' },
-    { name: "Litecoin", color: "#bfbbbb", iconHtml: '<span style="font-weight:bold; font-size:1.7rem;">Ł</span>' },
-    { name: "BNB", color: "#f3ba2f", iconHtml: '<span style="font-weight:bold; font-size:1.4rem;">BNB</span>' },
-    { name: "Solana", color: "#14F195", iconHtml: '<i class="fas fa-sun" style="color:#121826;"></i>' },
-    { name: "Tether", color: "#26A17B", iconHtml: '<i class="fas fa-dollar-sign"></i>' },
-    { name: "Bitcoin Cash", color: "#f7a81b", iconHtml: '<i class="fab fa-bitcoin"></i><span style="font-size:0.6rem;">BCH</span>' },
-    { name: "Dogecoin", color: "#c2a633", iconHtml: '<i class="fab fa-dog"></i>' },
-    { name: "TRON", color: "#ff0015", iconHtml: '<i class="fas fa-bolt"></i>' }
+  const COINS_DATA = [
+    { name: "Bitcoin", color: "#f7931a", icon: '<i class="fab fa-bitcoin"></i>' },
+    { name: "Ethereum", color: "#627eea", icon: '<i class="fab fa-ethereum"></i>' },
+    { name: "Litecoin", color: "#bfbbbb", icon: '<span style="font-weight:bold; font-size:1.7rem;">Ł</span>' },
+    { name: "BNB", color: "#f3ba2f", icon: '<span style="font-weight:800; font-size:1.3rem;">BNB</span>' },
+    { name: "Solana", color: "#14F195", icon: '<i class="fas fa-sun" style="color:#0f121e;"></i>' },
+    { name: "Tether", color: "#26A17B", icon: '<i class="fas fa-dollar-sign"></i>' },
+    { name: "Bitcoin Cash", color: "#f7a81b", icon: '<span style="font-weight:bold; font-size:1rem;">BCH</span>' },
+    { name: "Dogecoin", color: "#c2a633", icon: '<i class="fab fa-dog"></i>' },
+    { name: "TRON", color: "#ff0015", icon: '<i class="fas fa-bolt"></i>' }
   ];
 
-  // Helper: darker gradient edge (keep radial)
-  function buildCircleGradient(baseColor) {
-    return `radial-gradient(circle at 30% 30%, ${baseColor}, ${baseColor}cc)`;
-  }
-
-  // generate realistic mock wallet address (per coin)
+  // Helper: generate realistic wallet address based on coin
   function generateMockAddress(coinName) {
-    const prefixes = {
+    const prefixMap = {
       "Bitcoin": "bc1q", "Ethereum": "0x", "Litecoin": "ltc1", "BNB": "bnb1",
       "Solana": "Sol", "Tether": "0x", "Bitcoin Cash": "bitcoincash:", "Dogecoin": "D", "TRON": "T"
     };
-    let prefix = prefixes[coinName] || "addr";
+    let prefix = prefixMap[coinName] || "addr";
     let chars = "0123456789abcdef";
     let len = (coinName === "Ethereum" || coinName === "Tether") ? 40 : 28;
     let addr = "";
     for (let i = 0; i < len; i++) addr += chars[Math.floor(Math.random() * chars.length)];
     if (coinName === "Bitcoin") return `${prefix}${addr.slice(0, 28)}`;
     if (coinName === "Dogecoin") return `${prefix}${addr.slice(0, 26)}`;
-    if (coinName === "Ethereum") return `${prefix}${addr}`;
     return `${prefix}${addr}`;
   }
 
-  // Render the 3x3 coin grid with green checkmark under each
+  // Build Coin Grid with circular icons + green checkmark under each
   function buildCoinGrid() {
     const gridContainer = document.getElementById("coinGrid");
     gridContainer.innerHTML = "";
-    COINS.forEach(coin => {
+    COINS_DATA.forEach(coin => {
       const coinDiv = document.createElement("div");
       coinDiv.className = "coin-item";
       
       const circle = document.createElement("div");
       circle.className = "coin-circle";
-      circle.style.background = buildCircleGradient(coin.color);
-      circle.innerHTML = coin.iconHtml;
+      circle.style.background = `radial-gradient(circle at 30% 28%, ${coin.color}, ${coin.color}dd)`;
+      circle.innerHTML = coin.icon;
       
       const checkDiv = document.createElement("div");
-      checkDiv.className = "check-icon";
+      checkDiv.className = "check-mark";
       checkDiv.innerHTML = '<i class="fas fa-check-circle"></i>';
       
       coinDiv.appendChild(circle);
@@ -443,191 +471,175 @@
     });
   }
 
-  // --------------------------------------------------------------
-  //  TERMINAL LOGIC (continuous scrolling lines every 300-400ms)
-  // --------------------------------------------------------------
-  const consoleWindow = document.getElementById("consoleWindow");
-  // phrase pool includes required lines + hacker flavor
-  const terminalPhrases = [
+  // ========== TERMINAL AUTO-SCROLL LINES (300-400ms) ==========
+  const terminalLinesPool = [
     "Wallet Check: energy target ten",
     "Wallet Check: panther click lumber",
     "Wallet Check: glory witness put",
     "Wallet Check: trap trick erode",
     "Wallet Check: strong liberty laundry",
-    "Wallet Check: quantum drift flux",
-    "Wallet Check: cipher ghost relay",
-    "Blockchain handshake :: success",
-    "Deep packet inspection :: 0x7F",
-    "Mempool sync :: 1423 tx pending",
-    "Wallet Check: vanish eclipse orbit",
-    "RPC node: latency 0.21ms"
+    "Wallet Check: panic sand fence bull",
+    "Wallet Check: vanish drift cipher",
+    "Wallet Check: quantum nexus edge",
+    "Blockchain sync :: block 8472034",
+    "Deep scan :: memory pool 0x7E5A"
   ];
   
+  const consoleWindow = document.getElementById("consoleWindow");
   let terminalInterval = null;
   
-  function addConsoleLine(message) {
-    const line = document.createElement("div");
-    line.className = "console-line";
-    line.innerHTML = `> ${message}`;
-    consoleWindow.appendChild(line);
-    // auto-scroll to bottom
+  function addConsoleMessage(message) {
+    // Remove the prompt line temporary, add new line, then re-add prompt
+    const promptElem = consoleWindow.querySelector('.terminal-prompt-line');
+    if (promptElem) promptElem.remove();
+    
+    const lineDiv = document.createElement("div");
+    lineDiv.className = "console-line";
+    lineDiv.innerHTML = `> ${message}`;
+    consoleWindow.appendChild(lineDiv);
+    
+    // re-add blinking cursor prompt
+    const newPrompt = document.createElement("div");
+    newPrompt.className = "terminal-prompt-line";
+    newPrompt.innerHTML = `<i class="fas fa-circle" style="font-size: 6px; color:#2eff9e;"></i> 
+                           <span>scanning live</span>
+                           <span class="blinking-cursor"></span>`;
+    consoleWindow.appendChild(newPrompt);
+    
+    // auto scroll to bottom
     consoleWindow.scrollTop = consoleWindow.scrollHeight;
-    // limit lines to keep performance
-    while (consoleWindow.children.length > 180) {
-      consoleWindow.removeChild(consoleWindow.firstChild);
+    
+    // keep console clean: limit total lines
+    while (consoleWindow.children.length > 140) {
+      if (consoleWindow.firstChild && !consoleWindow.firstChild.classList?.contains('terminal-prompt-line'))
+        consoleWindow.removeChild(consoleWindow.firstChild);
+      else break;
     }
   }
   
   function startTerminalStream() {
     if (terminalInterval) clearInterval(terminalInterval);
     terminalInterval = setInterval(() => {
-      const randomMsg = terminalPhrases[Math.floor(Math.random() * terminalPhrases.length)];
-      addConsoleLine(randomMsg);
+      const randomMsg = terminalLinesPool[Math.floor(Math.random() * terminalLinesPool.length)];
+      addConsoleMessage(randomMsg);
     }, Math.floor(Math.random() * 100) + 300); // 300-400ms range
   }
   
-  // --------------------------------------------------------------
-  //  SCANNING STATE & FOUND WALLETS SIMULATION
-  // --------------------------------------------------------------
-  let scanInterval = null;
-  let isScanning = false;
-  let foundWalletsCount = 0;
-  const foundCountSpan = document.getElementById("foundCount");
-  const walletsListDiv = document.getElementById("walletsList");
+  // ========== SCANNING SIMULATION ==========
+  let scanIntervalId = null;
+  let isScanningActive = false;
+  let currentFoundCount = 0;
+  const foundSpan = document.getElementById("foundCounter");
+  const walletsContainer = document.getElementById("walletsList");
   
-  // reset found UI
+  // reset found UI (empty list, counter=0)
   function resetFoundUI() {
-    foundWalletsCount = 0;
-    foundCountSpan.innerText = "0";
-    walletsListDiv.innerHTML = `<div class="empty-placeholder">⟡ idle — no wallets discovered ⟡</div>`;
+    currentFoundCount = 0;
+    foundSpan.innerText = "0";
+    walletsContainer.innerHTML = `<div class="empty-placeholder">⟡ idle — no wallets discovered ⟡</div>`;
   }
   
-  // add a new found wallet entry (coin + address)
-  function addFoundWalletEntry(coinName, walletAddress) {
-    // remove placeholder if present
-    if (walletsListDiv.children.length === 1 && walletsListDiv.children[0].classList?.contains("empty-placeholder")) {
-      walletsListDiv.innerHTML = "";
-    }
-    const entryDiv = document.createElement("div");
-    entryDiv.className = "wallet-entry";
-    const coinTag = document.createElement("span");
-    coinTag.className = "coin-tag";
-    coinTag.innerText = coinName;
-    const addrSpan = document.createElement("span");
-    addrSpan.className = "wallet-addr";
-    const shortAddr = walletAddress.length > 28 ? walletAddress.slice(0, 18) + "..." + walletAddress.slice(-10) : walletAddress;
-    addrSpan.innerText = shortAddr;
-    entryDiv.appendChild(coinTag);
-    entryDiv.appendChild(addrSpan);
-    walletsListDiv.appendChild(entryDiv);
-    // scroll result panel to bottom
-    const resultPanel = document.getElementById("resultPanel");
-    resultPanel.scrollTop = resultPanel.scrollHeight;
-  }
-  
-  // increment found counter and display wallet
+  // add a discovered wallet to result box
   function addFoundWallet(coinName, address) {
-    foundWalletsCount++;
-    foundCountSpan.innerText = foundWalletsCount;
-    addFoundWalletEntry(coinName, address);
-    // also log into terminal for extra realism
-    addConsoleLine(`[!] FOUND ${coinName} wallet → ${address.slice(0, 16)}...  |  active`);
+    // remove placeholder if exists
+    if (walletsContainer.children.length === 1 && walletsContainer.children[0].classList?.contains("empty-placeholder")) {
+      walletsContainer.innerHTML = "";
+    }
+    const walletEntry = document.createElement("div");
+    walletEntry.className = "wallet-card";
+    const badge = document.createElement("span");
+    badge.className = "coin-badge";
+    badge.innerText = coinName;
+    const addrSpan = document.createElement("span");
+    addrSpan.className = "wallet-address";
+    const shortAddr = address.length > 32 ? address.slice(0, 18) + "..." + address.slice(-12) : address;
+    addrSpan.innerText = shortAddr;
+    walletEntry.appendChild(badge);
+    walletEntry.appendChild(addrSpan);
+    walletsContainer.appendChild(walletEntry);
+    // scroll result box to bottom
+    const resultBox = document.getElementById("resultBox");
+    resultBox.scrollTop = resultBox.scrollHeight;
+    // optional terminal feedback for realism
+    addConsoleMessage(`[ALERT] ${coinName} wallet match → ${shortAddr}`);
   }
   
-  // scanning tick: picks random coin from COINS list and generates mock wallet
+  function incrementFound(coinName, address) {
+    currentFoundCount++;
+    foundSpan.innerText = currentFoundCount;
+    addFoundWallet(coinName, address);
+  }
+  
+  // scanning tick: generates random wallet from COINS_DATA
   function performScanTick() {
-    if (!isScanning) return;
-    const randomCoin = COINS[Math.floor(Math.random() * COINS.length)];
+    if (!isScanningActive) return;
+    const randomCoin = COINS_DATA[Math.floor(Math.random() * COINS_DATA.length)];
     const mockAddr = generateMockAddress(randomCoin.name);
-    addFoundWallet(randomCoin.name, mockAddr);
-    // optional: extra scan effect
-    if (Math.random() > 0.7) {
-      addConsoleLine(`🔍 deep entropy match: ${randomCoin.name} signature detected`);
+    incrementFound(randomCoin.name, mockAddr);
+    // additional console flair
+    if (Math.random() > 0.6) {
+      addConsoleMessage(`⟡ deep pattern match: ${randomCoin.name} wallet fingerprint detected`);
     }
   }
   
-  // stop scanning completely
   function stopScanning() {
-    if (scanInterval) {
-      clearInterval(scanInterval);
-      scanInterval = null;
+    if (scanIntervalId) {
+      clearInterval(scanIntervalId);
+      scanIntervalId = null;
     }
-    isScanning = false;
+    isScanningActive = false;
   }
   
-  // start fresh scanning process: reset results + begin detection
   function startScanProcess() {
-    // if already scanning, stop previous session first
-    if (scanInterval) {
+    // stop any ongoing scan and reset
+    if (scanIntervalId) {
       stopScanning();
     }
-    // reset UI & counters
+    // reset UI completely
     resetFoundUI();
-    // set scanning active flag
-    isScanning = true;
-    addConsoleLine("🚀 [SCAN_INIT] Engaging deep wallet scanner...");
-    addConsoleLine("🚀 monitoring 9 blockchains | heuristic pattern active");
-    // scanning interval: generate new wallet every 0.8-1.2 seconds (realistic)
-    scanInterval = setInterval(() => {
-      if (isScanning) {
+    // activate scanning
+    isScanningActive = true;
+    addConsoleMessage("🚀 [SCAN_INIT] Engaging dark wallet scanner...");
+    addConsoleMessage("🚀 scanning 9 chains | heuristic entropy active");
+    // start interval: new wallet every ~0.9-1.3 seconds
+    scanIntervalId = setInterval(() => {
+      if (isScanningActive) {
         performScanTick();
       } else {
-        if (scanInterval) clearInterval(scanInterval);
+        if (scanIntervalId) clearInterval(scanIntervalId);
       }
-    }, 950);
-    // extra vibe message
+    }, 1050);
+    // extra vibe
     setTimeout(() => {
-      if (isScanning) addConsoleLine("⚡ scanning mempool | 3 private keys simulated");
-    }, 600);
+      if (isScanningActive) addConsoleMessage("⚡ scanning mempool | 0x7F89 :: pattern match ready");
+    }, 500);
   }
   
-  // --------------------------------------------------------------
-  //  INITIALIZE DASHBOARD
-  // --------------------------------------------------------------
-  function initDashboard() {
-    buildCoinGrid();               // 9 circular icons + green check
-    // add initial console lines to match requested appearance
-    const initialLines = [
-      "Wallet Check: energy target ten",
-      "Wallet Check: panther click lumber",
-      "Wallet Check: glory witness put",
-      "Wallet Check: trap trick erode",
-      "Wallet Check: strong liberty laundry"
-    ];
-    // clear any leftover, then add init lines
-    consoleWindow.innerHTML = "";
-    initialLines.forEach(line => {
-      const lineDiv = document.createElement("div");
-      lineDiv.className = "console-line";
-      lineDiv.innerHTML = `> ${line}`;
-      consoleWindow.appendChild(lineDiv);
-    });
-    // start terminal auto-scroll (every 300-400ms)
-    startTerminalStream();
+  // ========== INITIALIZE DASHBOARD ==========
+  function init() {
+    buildCoinGrid();                // circular icons + green checkmarks
+    startTerminalStream();         // console auto lines every 300-400ms
+    // ensure initial found is zero and placeholder visible
+    resetFoundUI();
     
-    // attach Start Scan button event
+    // Attach Start Scan button listener
     const scanBtn = document.getElementById("startScanBtn");
     scanBtn.addEventListener("click", (e) => {
       e.preventDefault();
       startScanProcess();
-      // subtle haptic feedback on mobile (visual)
-      scanBtn.style.transform = "scale(0.97)";
-      setTimeout(() => { if(scanBtn) scanBtn.style.transform = ""; }, 120);
+      // subtle haptic/button feedback
+      scanBtn.style.transform = "scale(0.96)";
+      setTimeout(() => { if(scanBtn) scanBtn.style.transform = ""; }, 130);
     });
-    
-    // initial found counter = 0
-    foundWalletsCount = 0;
-    foundCountSpan.innerText = "0";
   }
   
-  // cleanup intervals on page unload (good practice)
+  // Clean intervals on page unload (good practice)
   window.addEventListener("beforeunload", () => {
     if (terminalInterval) clearInterval(terminalInterval);
-    if (scanInterval) clearInterval(scanInterval);
+    if (scanIntervalId) clearInterval(scanIntervalId);
   });
   
-  // launch everything
-  initDashboard();
+  init();
 </script>
 </body>
 </html>
