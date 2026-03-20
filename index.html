@@ -3,89 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Crash Pro - TON</title>
+    <title>Pixel Rocket Pro V2</title>
     <style>
         :root {
-            --primary: #00ffa3;
-            --bg-dark: #020617;
-            --surface: #1e293b;
+            --primary-glow: #00ffa3;
+            --rocket-main: #e2e8f0;
+            --rocket-dark: #cbd5e1;
+            --accent-red: #ef4444;
+            --accent-dark-red: #b91c1c;
         }
 
         body {
-            margin: 0; background-color: var(--bg-dark);
+            margin: 0; background-color: #020617;
             color: white; font-family: 'Courier New', Courier, monospace;
             display: flex; flex-direction: column; align-items: center;
             justify-content: center; height: 100vh; overflow: hidden;
             image-rendering: pixelated;
         }
 
-        /* شاشەیا یاریێ */
+        /* 1. پاشبنەمایێ ئاسمانی (هەمان ستایلێ تە ب دڵ) */
         #game-screen {
             width: 360px; height: 500px;
-            background: linear-gradient(to bottom, #020617, #1e1b4b);
+            background: linear-gradient(to bottom, #020617, #0f172a);
             border: 4px solid #334155; position: relative;
-            overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,0.6);
         }
 
-        /* ستارەیێن Parallax */
-        .star { position: absolute; background: white; border-radius: 0; }
-        .star-slow { width: 1px; height: 1px; opacity: 0.3; }
-        .star-fast { width: 2px; height: 2px; opacity: 0.7; }
+        .star { position: absolute; background: white; width: 2px; height: 2px; opacity: 0.5; }
 
-        /* موشەکا پیکسڵی یا پێشکەفتی */
+        /* 2. دیزاینێ پێشکەفتی یێ موشەکێ */
         #rocket-container {
-            position: absolute; bottom: 80px; left: 50%;
+            position: absolute; bottom: 50px; left: 50%;
             transform: translateX(-50%); transition: bottom 0.1s linear;
         }
 
         #rocket {
-            width: 34px; height: 50px; background: #f1f5f9;
+            width: 40px; height: 65px; background: var(--rocket-main);
             position: relative; border: 3px solid #000;
+            box-shadow: inset -8px 0px 0px var(--rocket-dark);
         }
 
-        #rocket::before { /* سەرێ سۆر */
-            content: ""; position: absolute; top: -12px; left: -3px;
-            width: 34px; height: 12px; background: #ef4444; border: 3px solid #000;
+        #rocket::before { /* سەرێ موشەکێ */
+            content: ""; position: absolute; top: -18px; left: -3px;
+            width: 40px; height: 15px; background: var(--accent-red);
+            border: 3px solid #000; box-shadow: inset -8px 0px 0px var(--accent-dark-red);
         }
 
-        /* ئاگرێ پیکسڵی */
-        .flame {
-            position: absolute; bottom: -20px; left: 50%;
-            transform: translateX(-50%); width: 16px; height: 20px;
-            background: #f59e0b; display: none;
-            box-shadow: 0 5px 0 #ef4444, 0 10px 0 #7c2d12;
-            animation: flicker 0.1s infinite;
+        .window {
+            position: absolute; top: 15px; left: 10px;
+            width: 12px; height: 12px; background: #38bdf8;
+            border: 3px solid #000; box-shadow: inset -3px -3px 0px #0ea5e9;
         }
 
-        @keyframes flicker {
-            0% { height: 18px; opacity: 0.8; }
-            100% { height: 22px; opacity: 1; }
+        .wing-l, .wing-r {
+            position: absolute; bottom: 5px; width: 12px; height: 20px;
+            background: var(--accent-red); border: 3px solid #000;
+        }
+        .wing-l { left: -18px; box-shadow: inset 4px 0px 0px var(--accent-dark-red); }
+        .wing-r { right: -18px; box-shadow: inset -4px 0px 0px var(--accent-dark-red); }
+
+        /* ئاگرێ سێ ڕەنگی */
+        .exhaust {
+            position: absolute; bottom: -28px; left: 50%;
+            transform: translateX(-50%); width: 20px; height: 25px;
+            background: #fbbf24; display: none;
+            box-shadow: 0 8px 0 #f97316, 0 16px 0 #ef4444;
+            animation: thrust 0.15s infinite;
         }
 
-        /* مڵتیپلایەر */
+        @keyframes thrust {
+            0% { height: 20px; } 50% { height: 30px; } 100% { height: 20px; }
+        }
+
+        /* 3. UI و کەنترۆل */
         #multiplier {
-            position: absolute; top: 50px; width: 100%;
+            position: absolute; top: 40px; width: 100%;
             text-align: center; font-size: 3.5rem; font-weight: bold;
-            color: var(--primary); text-shadow: 4px 4px 0px #000; z-index: 20;
+            color: var(--primary-glow); text-shadow: 4px 4px 0px #000; z-index: 10;
         }
 
-        /* پانێلا کەنترۆلێ */
         .controls {
-            width: 360px; background: #111827; padding: 25px;
+            width: 360px; background: #1e293b; padding: 20px;
             border: 4px solid #334155; border-top: none; box-sizing: border-box;
         }
 
         .btn {
-            width: 100%; padding: 18px; font-size: 1.4rem;
+            width: 100%; padding: 15px; font-size: 1.3rem;
             font-family: 'Courier New', Courier, monospace; font-weight: bold;
-            color: white; background: #059669; border: none;
-            border-bottom: 8px solid #064e3b; cursor: pointer;
+            color: white; background: #22c55e; border: none;
+            border-bottom: 8px solid #166534; cursor: pointer;
         }
 
-        .btn:active { border-bottom: 2px solid #064e3b; transform: translateY(6px); }
-        .btn.cashout { background: #d97706; border-bottom-color: #78350f; }
+        .btn.cashout { background: #d97706; border-bottom-color: #92400e; }
+        .btn:disabled { background: #475569; border-bottom: 4px solid #1e293b; opacity: 0.7; }
 
-        #log { margin-top: 15px; text-align: center; font-size: 0.9rem; color: #94a3b8; }
+        #status-text { margin-top: 10px; text-align: center; font-size: 0.85rem; color: #94a3b8; }
     </style>
 </head>
 <body>
@@ -94,14 +106,17 @@
         <div id="multiplier">1.00x</div>
         <div id="rocket-container">
             <div id="rocket">
-                <div class="flame" id="flame"></div>
+                <div class="window"></div>
+                <div class="wing-l"></div>
+                <div class="wing-r"></div>
+                <div class="exhaust" id="fire"></div>
             </div>
         </div>
     </div>
 
     <div class="controls">
-        <button id="actionBtn" class="btn" onclick="handleAction()">دەستپێبکە</button>
-        <div id="log">ئامادەیە بۆ گەشتێ...</div>
+        <button id="actionBtn" class="btn" onclick="handleAction()">دەستپێبکە (BET)</button>
+        <div id="status-text">ئامادەیە بۆ گەشتەکا نوی</div>
     </div>
 
     <script>
@@ -110,27 +125,24 @@
         let gameLoop;
         let crashPoint;
 
-        const screen = document.getElementById('game-screen');
         const rocketCont = document.getElementById('rocket-container');
-        const flame = document.getElementById('flame');
+        const rocketBody = document.getElementById('rocket');
+        const fire = document.getElementById('fire');
         const multEl = document.getElementById('multiplier');
         const actionBtn = document.getElementById('actionBtn');
-        const logEl = document.getElementById('log');
+        const statusEl = document.getElementById('status-text');
+        const screen = document.getElementById('game-screen');
 
-        // دروستکرنا ستارەیێن Parallax
-        function spawnStar(type) {
+        // دروستکرنا ستارەیان
+        function spawnStar() {
             const star = document.createElement('div');
-            star.className = `star ${type}`;
-            star.style.left = Math.random() * 100 + '%';
+            star.className = 'star';
+            star.style.left = Math.random() * 350 + 'px';
             star.style.top = '-10px';
             screen.appendChild(star);
-
-            let speed = type === 'star-fast' ? 5 : 2;
             let pos = -10;
-            
             let move = setInterval(() => {
-                if(!isRunning) { clearInterval(move); star.remove(); return; }
-                pos += speed;
+                pos += 3;
                 star.style.top = pos + 'px';
                 if (pos > 500) { clearInterval(move); star.remove(); }
             }, 30);
@@ -144,55 +156,49 @@
         function startGame() {
             isRunning = true;
             multiplier = 1.00;
-            crashPoint = (Math.random() * 4 + 1.1).toFixed(2);
+            crashPoint = (Math.random() * 6 + 1.1).toFixed(2);
             
             actionBtn.innerText = "CASH OUT";
             actionBtn.classList.add('cashout');
-            flame.style.display = 'block';
-            logEl.innerText = "موشەک بەرەف گەردوونێ دچیت!";
+            fire.style.display = 'block';
+            statusEl.innerText = "موشەک یا بلند دبیت...";
+            multEl.style.color = "#00ffa3";
+            rocketBody.style.background = "var(--rocket-main)";
 
-            // دروستکرنا ستارەیان ب بەردەوامی
-            let starGen = setInterval(() => {
-                if(!isRunning) clearInterval(starGen);
-                spawnStar(Math.random() > 0.7 ? 'star-fast' : 'star-slow');
-            }, 100);
+            let starInterval = setInterval(() => { if(!isRunning) clearInterval(starInterval); spawnStar(); }, 100);
 
             gameLoop = setInterval(() => {
-                multiplier += 0.02;
+                multiplier += 0.03;
                 multEl.innerText = multiplier.toFixed(2) + "x";
 
-                // لڤینا موشەکێ بەرەف سەر
-                let moveY = Math.min((multiplier - 1) * 50, 250);
-                rocketCont.style.bottom = (80 + moveY) + 'px';
-                rocketCont.style.transform = `translateX(-50%) rotate(${(Math.random()-0.5)*3}deg)`;
+                let yPos = Math.min((multiplier - 1) * 45, 250);
+                rocketCont.style.bottom = (50 + yPos) + 'px';
+                rocketCont.style.transform = `translateX(-50%) rotate(${(Math.random()-0.5)*4}deg)`;
 
                 if (multiplier >= crashPoint) endGame(true);
-            }, 80);
+            }, 100);
         }
 
         function cashOut() {
             endGame(false);
-            logEl.innerText = `✅ پیرۆزە! تە ${multiplier.toFixed(2)}x قازانج کر.`;
+            statusEl.innerText = `✅ پیرۆزە! تە ${multiplier.toFixed(2)}x قازانج کر.`;
             multEl.style.color = "#38bdf8";
-            rocketCont.style.transition = "bottom 2s ease-in";
-            rocketCont.style.bottom = "800px"; // دچیتە دەرڤە
+            rocketCont.style.transition = "bottom 1.5s ease-in";
+            rocketCont.style.bottom = "700px";
         }
 
         function endGame(isCrash) {
             clearInterval(gameLoop);
             isRunning = false;
-            flame.style.display = 'none';
+            fire.style.display = 'none';
             actionBtn.innerText = "دووبارە هەوڵبدە";
             actionBtn.classList.remove('cashout');
 
             if (isCrash) {
-                logEl.innerText = "💥 موشەک تەقیا! پارە دۆڕا.";
-                multEl.style.color = "#f87171";
-                document.getElementById('rocket').style.background = "orange";
-                setTimeout(() => {
-                    document.getElementById('rocket').style.background = "#f1f5f9";
-                    rocketCont.style.bottom = "80px";
-                }, 2000);
+                statusEl.innerText = "💥 موشەک تەقیا! تە دۆڕاندن.";
+                multEl.style.color = "#ef4444";
+                rocketBody.style.background = "#7c2d12"; // ڕەنگێ سوتی
+                rocketCont.style.transform = "translateX(-50%) scale(0.8)";
             }
         }
     </script>
