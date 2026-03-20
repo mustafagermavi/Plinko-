@@ -3,198 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TON Pixel Live</title>
+    <title>TON APEX TRADER</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-blue: #00f3ff;
-            --neon-green: #39ff14;
-            --neon-red: #ff0055;
-            --dark-bg: #050505;
+            --neon-blue: #00f3ff; --neon-green: #39ff14; --neon-red: #ff0055;
+            --neon-yellow: #fefe33; --dark-bg: #050508;
         }
 
         body {
             margin: 0; background: var(--dark-bg); color: white;
-            font-family: 'Press Start 2P', cursive; overflow: hidden;
+            font-family: 'Press Start 2P', cursive; overflow-x: hidden;
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* ستایلی شاشەی ئارکەید (CRT Effect) */
-        .screen {
-            width: 90%; max-width: 380px; margin-top: 20px;
-            border: 6px solid #1a1a1a; border-radius: 10px;
-            background: #080808; position: relative;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+        /* Arcade Screen */
+        .game-frame {
+            width: 92%; max-width: 400px; margin-top: 15px;
+            border: 4px solid #1a1a2e; border-radius: 12px;
+            background: #000; position: relative;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.15);
         }
 
-        .header {
-            padding: 10px; border-bottom: 2px solid #222;
-            display: flex; justify-content: space-between; font-size: 8px;
+        .top-bar {
+            padding: 10px; border-bottom: 2px solid #111;
+            display: flex; justify-content: space-between; font-size: 8px; color: var(--neon-blue);
         }
 
-        .live-indicator { color: var(--neon-red); animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
+        .price-section { padding: 15px 0; text-align: center; }
+        #price { font-size: 26px; color: var(--neon-yellow); text-shadow: 0 0 8px var(--neon-yellow); }
 
-        .price-panel {
-            padding: 20px 0; text-align: center;
-            background: linear-gradient(180deg, rgba(0, 243, 255, 0.05) 0%, transparent 100%);
+        canvas { width: 100%; height: 180px; image-rendering: pixelated; }
+
+        /* Whale Alert Box */
+        .whale-box {
+            background: rgba(0, 243, 255, 0.05); border: 1px dashed var(--neon-blue);
+            margin: 10px; padding: 8px; font-size: 7px; color: var(--neon-blue);
+            height: 20px; overflow: hidden; display: flex; align-items: center;
         }
 
-        #price { font-size: 24px; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
-
-        canvas { 
-            width: 100%; height: 160px; 
-            image-rendering: pixelated; 
-        }
-
-        /* بەشی کۆنتڕۆڵ و دوگمەکان */
-        .controls {
-            width: 90%; max-width: 380px; margin-top: 20px;
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
-        }
-
+        /* Controls */
+        .ui-panel { width: 92%; max-width: 400px; margin-top: 15px; }
         .bet-input {
-            grid-column: span 2; background: #111; border: 3px solid #333;
+            width: 100%; background: #000; border: 2px solid #222;
             color: var(--neon-green); font-family: 'Press Start 2P';
-            padding: 15px; text-align: center; font-size: 14px; margin-bottom: 10px;
+            padding: 12px; text-align: center; font-size: 14px; box-sizing: border-box;
         }
 
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .btn {
-            border: 4px solid; padding: 18px; font-family: 'Press Start 2P';
-            font-size: 12px; color: white; cursor: pointer;
-            box-shadow: 0 6px 0 #000; transition: 0.1s;
+            border: 4px solid; padding: 15px; font-family: 'Press Start 2P';
+            font-size: 12px; color: white; cursor: pointer; transition: 0.1s;
         }
-        .btn-up { background: #006400; border-color: var(--neon-green); }
-        .btn-down { background: #8B0000; border-color: var(--neon-red); }
-        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #000; }
+        .up { background: #064e3b; border-color: var(--neon-green); }
+        .down { background: #7f1d1d; border-color: var(--neon-red); }
+        .btn:active { transform: scale(0.95); }
 
-        /* کارەکتەری پیکسڵ (Mascot) */
-        .mascot-box {
-            position: absolute; bottom: 10px; right: 10px;
-            width: 40px; height: 40px; border: 2px solid #222; background: #000;
-            display: flex; align-items: center; justify-content: center; font-size: 20px;
-        }
+        /* History */
+        .history { margin-top: 15px; width: 100%; font-size: 7px; color: #444; }
+        .hist-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #111; }
 
+        /* Mascot Animation */
+        #mascot { position: absolute; bottom: 5px; left: 5px; font-size: 18px; }
     </style>
 </head>
 <body>
 
-    <div class="screen">
-        <div class="header">
-            <span><span class="live-indicator">●</span> LIVE TON/USDT</span>
-            <span id="balance">CREDITS: 1000</span>
+    <div class="game-frame">
+        <div class="top-bar">
+            <span id="user-name">GUEST</span>
+            <span id="balance">1000 PTS</span>
         </div>
         
-        <div class="price-panel">
-            <div id="price">LOADING...</div>
-            <div id="status" style="font-size: 8px; margin-top: 5px; color: #555;">SCANNING NETWORK...</div>
+        <div class="price-section">
+            <div id="price">SYNCING...</div>
+            <div id="whale-msg" class="whale-box">SCANNING WHALE WALLETS...</div>
         </div>
 
-        <canvas id="tradeChart"></canvas>
-
-        <div class="mascot-box" id="mascot">🤖</div>
+        <canvas id="chart"></canvas>
+        <div id="mascot">👾</div>
     </div>
 
-    <div class="controls">
+    <div class="ui-panel">
         <input type="number" id="betAmount" class="bet-input" value="100">
-        <button class="btn btn-up" onclick="startTrade('up')">LONG</button>
-        <button class="btn btn-down" onclick="startTrade('down')">SHORT</button>
+        <div class="btn-grid">
+            <button class="btn up" onclick="trade('up')">BULL ▲</button>
+            <button class="btn down" onclick="trade('down')">BEAR ▼</button>
+        </div>
+        <div id="historyList" class="history"></div>
     </div>
 
 <script>
     const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+    tg.ready(); tg.expand();
+
+    if(tg.initDataUnsafe?.user) document.getElementById('user-name').innerText = tg.initDataUnsafe.user.first_name.toUpperCase();
 
     let balance = 1000;
     let currentPrice = 0;
-    let prices = Array(40).fill(0);
-    let isTrading = false;
+    let prices = Array(50).fill(0);
+    let entryPrice = 0;
+    let isActive = false;
 
-    const canvas = document.getElementById('tradeChart');
+    const canvas = document.getElementById('chart');
     const ctx = canvas.getContext('2d');
     canvas.width = 400; canvas.height = 200;
 
-    // وەرگرتنی نرخی ڕاستەقینە لە Binance
-    async function fetchPrice() {
+    // 1. نرخە ڕاستەقینەکان
+    async function syncPrice() {
         try {
             const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=TONUSDT');
             const data = await res.json();
-            let newPrice = parseFloat(data.price);
-            
-            if (currentPrice === 0) prices.fill(newPrice);
-            currentPrice = newPrice;
-            
-            prices.push(currentPrice);
-            prices.shift();
-            
+            let p = parseFloat(data.price);
+            if(currentPrice === 0) prices.fill(p);
+            currentPrice = p;
+            prices.push(p); prices.shift();
             document.getElementById('price').innerText = currentPrice.toFixed(4);
-            draw();
-        } catch (e) {
-            console.error("Price fetch error");
-        }
+            render();
+        } catch(e) {}
     }
 
-    function draw() {
+    // 2. نەهەنگەکان (Whale Tracker)
+    const whaleActions = ["🐳 Whale moved 500k TON to Wallet", "🚀 Huge Buy Order detected!", "📉 Whale dumping 200k TON", "🏦 Institutional Buy in progress"];
+    function updateWhale() {
+        document.getElementById('whale-msg').innerText = whaleActions[Math.floor(Math.random()*whaleActions.length)];
+    }
+
+    function render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Grid
+        ctx.strokeStyle = '#0a0a1a'; ctx.lineWidth = 1;
+        for(let i=0; i<canvas.width; i+=25) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); ctx.stroke(); }
         
-        // Grid lines (بۆ هەستی ئارکەید)
-        ctx.strokeStyle = '#111';
-        ctx.lineWidth = 1;
-        for(let i=0; i<canvas.width; i+=20) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); ctx.stroke(); }
-        for(let i=0; i<canvas.height; i+=20) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(canvas.width,i); ctx.stroke(); }
-
-        // کێشانی گراف
-        ctx.strokeStyle = isTrading ? (currentPrice > entryPrice ? "#39ff14" : "#ff0055") : "#00f3ff";
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        
-        let min = Math.min(...prices);
-        let max = Math.max(...prices);
-        let range = max - min || 0.01;
-
+        // Chart Line
+        ctx.strokeStyle = isActive ? (currentPrice >= entryPrice ? "#39ff14" : "#ff0055") : "#00f3ff";
+        ctx.lineWidth = 4; ctx.beginPath();
+        let min = Math.min(...prices), max = Math.max(...prices);
         prices.forEach((p, i) => {
             let x = (i / (prices.length - 1)) * canvas.width;
-            let y = canvas.height - ((p - min) / range) * canvas.height;
+            let y = canvas.height - ((p - min) / (max - min || 1)) * canvas.height;
             if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         });
         ctx.stroke();
     }
 
-    let entryPrice = 0;
-    function startTrade(type) {
+    function trade(dir) {
         let amt = parseInt(document.getElementById('betAmount').value);
-        if(amt > balance || isTrading) return;
+        if(amt > balance || isActive) return;
 
-        isTrading = true;
-        balance -= amt;
+        isActive = true; balance -= amt;
         entryPrice = currentPrice;
-        document.getElementById('balance').innerText = `CREDITS: ${balance}`;
-        document.getElementById('status').innerText = `TRADE ACTIVE AT ${entryPrice}`;
-        document.getElementById('mascot').innerText = "🔭";
-
-        tg.HapticFeedback.impactOccurred('heavy');
+        document.getElementById('balance').innerText = `${balance} PTS`;
+        document.getElementById('mascot').innerText = "🤔";
+        tg.HapticFeedback.impactOccurred('medium');
 
         setTimeout(() => {
-            let win = (type === 'up' && currentPrice > entryPrice) || (type === 'down' && currentPrice < entryPrice);
+            let win = (dir === 'up' && currentPrice > entryPrice) || (dir === 'down' && currentPrice < entryPrice);
             if(win) {
                 balance += Math.floor(amt * 1.9);
-                document.getElementById('mascot').innerText = "🤑";
+                document.getElementById('mascot').innerText = "😎";
                 tg.HapticFeedback.notificationOccurred('success');
             } else {
-                document.getElementById('mascot').innerText = "📉";
+                document.getElementById('mascot').innerText = "💀";
                 tg.HapticFeedback.notificationOccurred('error');
             }
-            
-            document.getElementById('balance').innerText = `CREDITS: ${balance}`;
-            document.getElementById('status').innerText = "SCANNING NETWORK...";
-            isTrading = false;
+            addLog(dir, amt, win);
+            document.getElementById('balance').innerText = `${balance} PTS`;
+            isActive = false;
         }, 5000);
     }
 
-    setInterval(fetchPrice, 1000); // نوێکردنەوەی نرخ هەر چرکەیەک جارێک
-</script>
+    function addLog(dir, amt, win) {
+        const item = document.createElement('div');
+        item.className = 'hist-item';
+        item.style.color = win ? '#39ff14' : '#ff0055';
+        item.innerHTML = `<span>${dir.toUpperCase()} ${amt}</span> <span>${win ? '+'+Math.floor(amt*0.9) : '-'+amt}</span>`;
+        document.getElementById('historyList').prepend(item);
+    }
 
+    setInterval(syncPrice, 1000);
+    setInterval(updateWhale, 7000);
+</script>
 </body>
 </html>
