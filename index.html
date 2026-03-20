@@ -3,208 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TON Pixel Galaxy</title>
+    <title>TON Pixel Live</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #050510;
+            --neon-blue: #00f3ff;
             --neon-green: #39ff14;
-            --neon-red: #ff3131;
-            --neon-blue: #00d2ff;
-            --neon-yellow: #fefe33;
+            --neon-red: #ff0055;
+            --dark-bg: #050505;
         }
 
-        body, html {
-            margin: 0; padding: 0;
-            background-color: var(--bg);
-            color: white;
-            font-family: 'Press Start 2P', cursive;
-            overflow: hidden;
-            height: 100vh;
+        body {
+            margin: 0; background: var(--dark-bg); color: white;
+            font-family: 'Press Start 2P', cursive; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center;
         }
 
-        /* پاشبنەمای ئەستێرە جوڵاوەکان */
-        #bgCanvas {
-            position: fixed; top: 0; left: 0;
-            z-index: -1; width: 100%; height: 100%;
+        /* ستایلی شاشەی ئارکەید (CRT Effect) */
+        .screen {
+            width: 90%; max-width: 380px; margin-top: 20px;
+            border: 6px solid #1a1a1a; border-radius: 10px;
+            background: #080808; position: relative;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
         }
 
-        .container {
-            position: relative; z-index: 1;
-            padding: 20px; display: flex; flex-direction: column; align-items: center;
-            height: 100vh; justify-content: space-around;
+        .header {
+            padding: 10px; border-bottom: 2px solid #222;
+            display: flex; justify-content: space-between; font-size: 8px;
         }
 
-        /* Bento Pixel Cards */
-        .card {
-            background: rgba(15, 23, 42, 0.8);
-            border: 4px solid #1e293b;
-            box-shadow: 6px 6px 0px #000;
-            padding: 15px; width: 90%; max-width: 350px;
-            text-align: center; backdrop-filter: blur(5px);
+        .live-indicator { color: var(--neon-red); animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .price-panel {
+            padding: 20px 0; text-align: center;
+            background: linear-gradient(180deg, rgba(0, 243, 255, 0.05) 0%, transparent 100%);
         }
 
-        .price-display {
-            font-size: 20px; color: var(--neon-yellow);
-            text-shadow: 2px 2px #ff00ff; margin-bottom: 10px;
+        #price { font-size: 24px; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
+
+        canvas { 
+            width: 100%; height: 160px; 
+            image-rendering: pixelated; 
         }
 
-        #gameCanvas {
-            width: 100%; height: 150px;
-            background: #000; border: 2px solid var(--neon-blue);
-            image-rendering: pixelated;
-        }
-
+        /* بەشی کۆنتڕۆڵ و دوگمەکان */
         .controls {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 350px;
+            width: 90%; max-width: 380px; margin-top: 20px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
         }
 
-        input {
-            grid-column: span 2; background: #000; border: 3px solid var(--neon-blue);
-            padding: 15px; color: var(--neon-green); font-family: 'Press Start 2P';
-            font-size: 14px; text-align: center; outline: none;
+        .bet-input {
+            grid-column: span 2; background: #111; border: 3px solid #333;
+            color: var(--neon-green); font-family: 'Press Start 2P';
+            padding: 15px; text-align: center; font-size: 14px; margin-bottom: 10px;
         }
 
         .btn {
-            padding: 20px 10px; border: 4px solid; font-size: 12px;
-            font-family: 'Press Start 2P'; color: white; cursor: pointer;
-            transition: 0.1s;
+            border: 4px solid; padding: 18px; font-family: 'Press Start 2P';
+            font-size: 12px; color: white; cursor: pointer;
+            box-shadow: 0 6px 0 #000; transition: 0.1s;
         }
-        .up { background: #064e3b; border-color: var(--neon-green); }
-        .down { background: #7f1d1d; border-color: var(--neon-red); }
-        .btn:active { transform: translateY(4px); box-shadow: none; }
+        .btn-up { background: #006400; border-color: var(--neon-green); }
+        .btn-down { background: #8B0000; border-color: var(--neon-red); }
+        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #000; }
 
-        .header-info {
-            width: 100%; display: flex; justify-content: space-between;
-            font-size: 10px; color: var(--neon-blue); padding: 0 10px;
+        /* کارەکتەری پیکسڵ (Mascot) */
+        .mascot-box {
+            position: absolute; bottom: 10px; right: 10px;
+            width: 40px; height: 40px; border: 2px solid #222; background: #000;
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
         }
 
-        /* Scanline Effect */
-        .scanlines {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 118, 0.06));
-            background-size: 100% 4px, 3px 100%; pointer-events: none; z-index: 10;
-        }
     </style>
 </head>
 <body>
 
-<canvas id="bgCanvas"></canvas>
-<div class="scanlines"></div>
+    <div class="screen">
+        <div class="header">
+            <span><span class="live-indicator">●</span> LIVE TON/USDT</span>
+            <span id="balance">CREDITS: 1000</span>
+        </div>
+        
+        <div class="price-panel">
+            <div id="price">LOADING...</div>
+            <div id="status" style="font-size: 8px; margin-top: 5px; color: #555;">SCANNING NETWORK...</div>
+        </div>
 
-<div class="container">
-    <div class="header-info">
-        <span>CREDITS: <span id="balance">1000</span></span>
-        <span>TON LIVE</span>
-    </div>
+        <canvas id="tradeChart"></canvas>
 
-    <div class="card">
-        <div class="price-display">$<span id="price">5.4200</span></div>
-        <canvas id="gameCanvas"></canvas>
+        <div class="mascot-box" id="mascot">🤖</div>
     </div>
 
     <div class="controls">
-        <input type="number" id="betAmount" value="100">
-        <button class="btn up" onclick="play('up')">UP</button>
-        <button class="btn down" onclick="play('down')">DOWN</button>
+        <input type="number" id="betAmount" class="bet-input" value="100">
+        <button class="btn btn-up" onclick="startTrade('up')">LONG</button>
+        <button class="btn btn-down" onclick="startTrade('down')">SHORT</button>
     </div>
-</div>
 
 <script>
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
 
-    // پاشبنەمای ئەستێرەکان
-    const bgCanvas = document.getElementById('bgCanvas');
-    const bgCtx = bgCanvas.getContext('2d');
-    let stars = [];
+    let balance = 1000;
+    let currentPrice = 0;
+    let prices = Array(40).fill(0);
+    let isTrading = false;
 
-    function initStars() {
-        bgCanvas.width = window.innerWidth;
-        bgCanvas.height = window.innerHeight;
-        stars = [];
-        for(let i=0; i<100; i++) {
-            stars.push({
-                x: Math.random() * bgCanvas.width,
-                y: Math.random() * bgCanvas.height,
-                size: Math.random() * 3,
-                speed: Math.random() * 0.5 + 0.1
-            });
+    const canvas = document.getElementById('tradeChart');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 400; canvas.height = 200;
+
+    // وەرگرتنی نرخی ڕاستەقینە لە Binance
+    async function fetchPrice() {
+        try {
+            const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=TONUSDT');
+            const data = await res.json();
+            let newPrice = parseFloat(data.price);
+            
+            if (currentPrice === 0) prices.fill(newPrice);
+            currentPrice = newPrice;
+            
+            prices.push(currentPrice);
+            prices.shift();
+            
+            document.getElementById('price').innerText = currentPrice.toFixed(4);
+            draw();
+        } catch (e) {
+            console.error("Price fetch error");
         }
     }
 
-    function drawStars() {
-        bgCtx.fillStyle = '#050510';
-        bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
-        bgCtx.fillStyle = '#ffffff';
-        stars.forEach(s => {
-            bgCtx.fillRect(s.x, s.y, s.size, s.size);
-            s.y += s.speed;
-            if(s.y > bgCanvas.height) s.y = 0;
-        });
-        requestAnimationFrame(drawStars);
-    }
-
-    // لۆجیکی یاری
-    let balance = 1000;
-    let currentPrice = 5.4200;
-    let prices = Array(40).fill(5.4200);
-    const gCanvas = document.getElementById('gameCanvas');
-    const gCtx = gCanvas.getContext('2d');
-    gCanvas.width = 300; gCanvas.height = 150;
-
-    function updateGame() {
-        currentPrice += (Math.random() - 0.5) * 0.01;
-        prices.push(currentPrice);
-        prices.shift();
-        document.getElementById('price').innerText = currentPrice.toFixed(4);
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        gCtx.fillStyle = '#000';
-        gCtx.fillRect(0, 0, gCanvas.width, gCanvas.height);
-        gCtx.strokeStyle = '#00d2ff';
-        gCtx.lineWidth = 4;
-        gCtx.beginPath();
+        // Grid lines (بۆ هەستی ئارکەید)
+        ctx.strokeStyle = '#111';
+        ctx.lineWidth = 1;
+        for(let i=0; i<canvas.width; i+=20) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); ctx.stroke(); }
+        for(let i=0; i<canvas.height; i+=20) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(canvas.width,i); ctx.stroke(); }
+
+        // کێشانی گراف
+        ctx.strokeStyle = isTrading ? (currentPrice > entryPrice ? "#39ff14" : "#ff0055") : "#00f3ff";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
         
-        let min = Math.min(...prices) - 0.01;
-        let max = Math.max(...prices) + 0.01;
+        let min = Math.min(...prices);
+        let max = Math.max(...prices);
+        let range = max - min || 0.01;
 
         prices.forEach((p, i) => {
-            let x = (i / (prices.length - 1)) * gCanvas.width;
-            let y = gCanvas.height - ((p - min) / (max - min)) * gCanvas.height;
-            if(i === 0) gCtx.moveTo(x, y); else gCtx.lineTo(x, y);
+            let x = (i / (prices.length - 1)) * canvas.width;
+            let y = canvas.height - ((p - min) / range) * canvas.height;
+            if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         });
-        gCtx.stroke();
+        ctx.stroke();
     }
 
-    function play(type) {
+    let entryPrice = 0;
+    function startTrade(type) {
         let amt = parseInt(document.getElementById('betAmount').value);
-        if(amt > balance) { tg.showAlert("No Credits!"); return; }
-        
+        if(amt > balance || isTrading) return;
+
+        isTrading = true;
         balance -= amt;
-        document.getElementById('balance').innerText = balance;
-        tg.HapticFeedback.impactOccurred('medium');
-        
-        let startP = currentPrice;
+        entryPrice = currentPrice;
+        document.getElementById('balance').innerText = `CREDITS: ${balance}`;
+        document.getElementById('status').innerText = `TRADE ACTIVE AT ${entryPrice}`;
+        document.getElementById('mascot').innerText = "🔭";
+
+        tg.HapticFeedback.impactOccurred('heavy');
+
         setTimeout(() => {
-            let win = (type === 'up' && currentPrice > startP) || (type === 'down' && currentPrice < startP);
+            let win = (type === 'up' && currentPrice > entryPrice) || (type === 'down' && currentPrice < entryPrice);
             if(win) {
                 balance += Math.floor(amt * 1.9);
+                document.getElementById('mascot').innerText = "🤑";
                 tg.HapticFeedback.notificationOccurred('success');
-                tg.showAlert("WINNER! +"+Math.floor(amt*0.9));
             } else {
+                document.getElementById('mascot').innerText = "📉";
                 tg.HapticFeedback.notificationOccurred('error');
             }
-            document.getElementById('balance').innerText = balance;
-        }, 3000);
+            
+            document.getElementById('balance').innerText = `CREDITS: ${balance}`;
+            document.getElementById('status').innerText = "SCANNING NETWORK...";
+            isTrading = false;
+        }, 5000);
     }
 
-    initStars();
-    drawStars();
-    setInterval(updateGame, 150);
-    window.onresize = initStars;
+    setInterval(fetchPrice, 1000); // نوێکردنەوەی نرخ هەر چرکەیەک جارێک
 </script>
 
 </body>
